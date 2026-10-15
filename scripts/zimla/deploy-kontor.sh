@@ -14,7 +14,7 @@ git fetch -q origin && git merge-base --is-ancestor HEAD origin/main || { echo "
 FULL=$(git rev-parse HEAD)
 echo "→ väntar på imagen för $SHA (GitHub Actions)"
 for i in $(seq 1 90); do
-  RUN=$(gh run list --workflow image.yml --commit "$FULL" --json databaseId,status,conclusion -q '.[0]' 2>/dev/null || true)
+  RUN=$(gh run list -R whipflashx/zimla-kontor --workflow image.yml --commit "$FULL" --json databaseId,status,conclusion -q '.[0]' 2>/dev/null || true)
   case "$RUN" in
     *'"conclusion":"success"'*) break ;;
     *'"conclusion":"'[a-z]*) echo "Bygget i GitHub Actions misslyckades: $RUN" >&2; exit 1 ;;
