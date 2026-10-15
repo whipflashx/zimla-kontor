@@ -1,3 +1,16 @@
+Zimla Kontor
+Ändrad version av gnubok (erp-base), utgiven under GNU Affero General Public License v3.0
+or later (AGPL-3.0-or-later). Se LICENSE.
+
+Ändringar: Zimla AB har ändrat programmet från och med 2026-10-15. Grundversionen är
+gnubok commit b0b481b9d902546aa0b8670154d4388ea9014305 (2026-10-04). Varje ändring, med
+datum, framgår av versionshistoriken i det här repot och av källkodsarkivet som Zimla Kontor
+erbjuder sina användare (AGPL-3.0 avsnitt 5 och 13).
+
+Ursprungliga upphovsrättsinnehavare (oförändrat nedan och i LICENSE):
+
+----------------------------------------------------------------------
+
 erp-base
 Copyright 2024-2026 Arcim
 
