@@ -1,0 +1,1724 @@
+#!/usr/bin/env node
+/**
+ * Ratchet guard against post-audit antipatterns.
+ *
+ * The audit found two repository-wide problems that are being remediated in
+ * dedicated campaigns (A1 = route auth/MFA, D1 = money rounding). Those touch
+ * hundreds of sites and won't land in one PR: so this guard makes sure the
+ * count can only go DOWN, never up, while the migrations are in flight.
+ *
+ * Checks:
+ *   1. raw-route-auth : an `app/api/**\/route.ts` that calls
+ *      `supabase.auth.getUser()` directly instead of going through
+ *      `requireAuth()` / `withRouteContext()` (the only guards that enforce
+ *      MFA AAL2 on hosted). Judged per exported handler, not per file: a
+ *      wrapped PATCH next to a hand-rolled DELETE in the same file is still
+ *      a violation (that exact shape hid two MFA bypasses until 2026-08-26).
+ *      Tracked as a file-set so a NEW offending route fails CI even if an
+ *      old one was fixed in the same PR.
+ *   2. naive-ore-round: `Math.round(x * 100) / 100`, which is subtly wrong on
+ *      exact-half values (see lib/money.ts `roundOre`). Tracked as a count.
+ *      The canonical rounding modules are excluded.
+ *   3. direct-jel-insert: a file that inserts into `journal_entry_lines`
+ *      outside the sanctioned writers. During the dimensions dual-write window
+ *      every line writer must derive cost_center/project via
+ *      lineDimensionColumns() from the dimensions JSONB map
+ *      (lib/bookkeeping/dimension-resolver.ts): a new direct insert site can
+ *      silently diverge the mirror columns. Tracked as a file-set.
+ *   3b. ledger-scanning-report: a statement generator under lib/reports or
+ *      lib/bokslut that aggregates `journal_entry_lines` itself instead of
+ *      going through generateTrialBalance. Aggregating raw lines means
+ *      remembering, per report, that the resultatavslut posts the mirror image
+ *      of every P&L account into 2099 inside the same fiscal period. Three
+ *      reports forgot (årsredovisning 2026-07-23, INK2R and NE-bilaga
+ *      2026-07-29) and each read ZERO revenue for a closed year while the
+ *      balance sheet still tied out, so nothing warned. generateTrialBalance
+ *      now requires an explicit closingEntry mode, which turns the decision
+ *      into a compile error; this guard keeps new reports on that path.
+ *      Tracked as a file-set. Voucher/line LISTINGS are sanctioned in
+ *      LEDGER_SCAN_SANCTIONED: they have no closingEntry decision to make.
+ *   3c. direct-invoice-payment-insert: a file that inserts into
+ *      `invoice_payments` outside lib/invoices/invoice-payment-row.ts. Five
+ *      hand-built inserts each computed their own `amount`, and the bank-match
+ *      ones stored the cash received instead of the amount applied to the
+ *      invoice, so a whole-krona overshoot absorbed on 3740 made the row
+ *      exceed the receivable (#2250). recordInvoicePaymentRow() is the one
+ *      writer. Tracked as a file-set, no baseline: the count is 0 today.
+ *   4. pinned-dep    : a dependency pinned to an exact version (PINNED_DEPS)
+ *      whose package.json spec or locked version drifted from the pin. Guards
+ *      against a repeat of the @anthropic-ai/bedrock-sdk 0.32.0 prod outage
+ *      (empty Bedrock stream). No baseline: any drift is a hard failure.
+ *   5. raw-user-error: raw caught-error messages passed to API response fields,
+ *      client error state, or toast fields. Engine, database, and upstream
+ *      messages must pass through getErrorMessage() or errorResponse().
+ *   6. sek-labelled-amount: a single-argument formatCurrency() call on a value
+ *      read off a record the same file reads `.currency` from, which prints a
+ *      foreign amount with the SEK symbol. Implementation and rationale in
+ *      format-currency-sek-label.mjs. No baseline: the count is 0 today.
+ *   7. extension-route guards: physical routes under app/api/extensions/<id>/
+ *      (the sanctioned core-build carve-out for crons/OAuth callbacks) may
+ *      only import their OWN extension (hard fail, 0 today) and must gate on
+ *      extensionRegistry.get('<id>') so a disabled extension never exposes a
+ *      live surface (allowlisted file-set, may only shrink). Implementation
+ *      and rationale in extension-route-guards.mjs.
+ *   8. hand-rolled-invariant: a shared format rule (BAS account number, ISO
+ *      date, four-digit fiscal year) spelled out inline instead of imported
+ *      from lib/invariants/. The BAS account rule was written out at 20 sites
+ *      and the ISO date rule at 68, with error messages that differed per site;
+ *      the four Skatteverket-bound org-number paths disagreed outright about
+ *      what "valid" meant, which is the kind of drift a customer only discovers
+ *      when a filing fails at the deadline. Tracked as a count.
+ *   9. leaky-supabase-client: server code importing supabase-js's `createClient`
+ *      as a value instead of `createServiceRoleClient()`. The default
+ *      `autoRefreshToken: true` starts a 30 s setInterval that is never
+ *      cleared; `unref()` keeps the process exitable but not the timer
+ *      collectable, so each constructed client retains its whole request scope.
+ *      Killed a self-hosted instance after 42 idle hours (2026-08-13). No
+ *      baseline: the count is 0 today.
+ *   10. off-ladder-radius: a border-radius class outside the locked ladder
+ *      (pill / rounded-xl overlays / rounded-lg surfaces / rounded-sm leaves;
+ *      see .claude/rules/design.md). Before the 2026-08 migration the UI had
+ *      seven radii in circulation (4/5/6/8/12/16px + pill) and one toolbar row
+ *      could mix four of them. `rounded-md`, bare `rounded`, `rounded-2xl`+
+ *      and arbitrary `rounded-[Npx]` are dead vocabulary in app/ and
+ *      components/. No baseline: the count is 0, any new one is a hard
+ *      failure.
+ *  10. folded-public-flag: `process.env.NEXT_PUBLIC_X === 'true'` compared in
+ *      place. The Docker image bakes sentinels that docker-entrypoint.sh
+ *      substitutes at container start; an in-place comparison is constant-
+ *      folded and dead-code-eliminated at build time, erasing both the name
+ *      and the sentinel, so the flag is permanently false however the operator
+ *      configures it. Every Docker self-host consequently ran with the
+ *      entitlement paywall live (diagnosed 2026-08-17). Read flags as values
+ *      via lib/env/public-flags. No baseline: the count is 0, any new one is
+ *      a hard failure.
+ *   11. dialog-overflow-risk: patterns that make a dialog scroll sideways.
+ *      (a) a bare `1fr` grid track inside grid-cols-[...] in a file that
+ *      imports DialogContent/SheetContent: per the CSS Grid spec a bare fr
+ *      track's implicit minimum is auto (its content's min-content size), so
+ *      the track refuses to shrink below its content and overflows the dialog
+ *      (StrikeLinesDialog and CorrectionEntryDialog shipped this, fixed
+ *      2026-08-19; TransactionBookingDialog had the safe minmax(0,1fr) idiom
+ *      all along). (b) whitespace-nowrap inside a <DialogContent>/
+ *      <SheetContent> JSX region outside DIALOG_NOWRAP_ALLOWED (numeric
+ *      columns inside their own overflow-x-auto wrapper are fine and
+ *      allowlisted per file). (c) a hand-rolled absolute overlay forcing
+ *      min-w-[>=20rem] in a file that never portals anything to
+ *      document.body: DialogContent's overflow-y-auto computes overflow-x to
+ *      auto as well, so an oversized non-portaled panel grows the dialog a
+ *      horizontal scrollbar instead of repositioning (AccountCombobox's
+ *      dropdown pre-2026-08-19). Tracked as a per-file baseline set that may
+ *      only shrink.
+ *   12. ambiguous-embed: a PostgREST `.select()` that embeds a table joined to
+ *      the from-table by more than one foreign key, without naming the
+ *      relationship. PostgREST answers PGRST201 instead of picking one, and
+ *      neither a mocked-Supabase unit test (a mock never resolves a
+ *      relationship) nor a pg-real test (it bypasses PostgREST) can see that,
+ *      so a static guard is the only thing that catches the class. Two sites
+ *      shipped the same journal_entries -> fiscal_periods embed: the nightly
+ *      underlag cron (fixed 2026-08-31, ~60 period-lock trigger rejections a
+ *      night) and supplier-invoice underlag anchoring, which swallowed the
+ *      error and therefore never anchored a single document in production.
+ *      The ambiguous pairs are derived from supabase/migrations; both hint
+ *      forms PostgREST accepts count as disambiguated. Implementation and
+ *      rationale in ambiguous-embed.mjs. No baseline: the count is 0 today.
+ *   13. ui-uniformity: the design-system rules that drifted because nothing
+ *      checked them (button heights and spinners, motion durations and easing,
+ *      Tailwind shadows, faded borders, hover tints, raw colours, native
+ *      dialogs, focus rings, off-scale text, decorative animation). A
+ *      2026-09-24 scan found the one guarded design rule (radius ladder) clean
+ *      and every unguarded one drifted. Implementation, rule list and
+ *      rationale in ui-uniformity.mjs. No baseline: the count is 0 today.
+ *   14. table-without-grant: a migration that creates a public table, view or
+ *      sequence without granting it to service_role and authenticated (or a
+ *      reasoned `-- no-grant:` waiver), a serial column without a sequence
+ *      grant, or a bulk grant to the API roles. Since 20260929220000 (and on
+ *      every Supabase project from 2026-10-30) a new table gets no grants by
+ *      default, so it answers 42501 to every supabase-js client. The
+ *      migrations written before that relied on the old default and are
+ *      grandfathered as a file set that never grows. Implementation and
+ *      rationale in table-without-grant.mjs.
+ *   15. uninitialized-event-route: an app/api route whose runtime import
+ *      closure reaches `eventBus.emit` but that never calls
+ *      ensureInitialized() at module scope (in the route file or a module it
+ *      imports), so every event it emits is dropped by the bus (no handler
+ *      registered). withRouteContext does not wire the bus, by design: it
+ *      keeps lib/init out of the cold start of routes that never emit.
+ *      Implementation and rationale in event-route-init.mjs. Allowlisted
+ *      file-set, may only shrink.
+ *
+ * Usage:
+ *   node scripts/checks/no-new-antipatterns.mjs            # check (CI)
+ *  11. direct-ai-client: a file outside lib/ai that imports createAiClient,
+ *      calls `.messages.create/stream(` on an Anthropic client, or imports
+ *      the Vercel AI SDK. Every model call goes through getAiService() so the
+ *      backend (Bedrock on hosted, a Swedish OpenAI-compatible endpoint on a
+ *      sovereign self-host) stays an environment decision. Allowlist of the
+ *      pre-abstraction call sites in this file, may only shrink.
+ *
+ *   node scripts/checks/no-new-antipatterns.mjs --update   # re-baseline after a migration ratchets the count down
+ *
+ * Exit code 1 if either check regressed past its baseline.
+ */
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import ts from 'typescript'
+import { findSekLabelledFxAmounts } from './format-currency-sek-label.mjs'
+import { findRawReferenceFetches } from './raw-reference-fetch.mjs'
+import { findLiteralLegalForms } from './literal-legal-form.mjs'
+import { findClientNodeBuiltins } from './client-node-builtin.mjs'
+import { findAmbiguousEmbeds } from './ambiguous-embed.mjs'
+import { findUiUniformityFindings, UI_UNIFORMITY_HINTS } from './ui-uniformity.mjs'
+import { findTablesWithoutGrant, grandfatheredFiles, grantHint } from './table-without-grant.mjs'
+import {
+  findExtensionRouteFindings,
+  UNGATED_EXTENSION_ROUTES,
+} from './extension-route-guards.mjs'
+import {
+  findUninitializedEmittingRoutes,
+  UNINITIALIZED_EMITTING_ROUTES,
+} from './event-route-init.mjs'
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
+const SOURCE_ROOT = path.join(ROOT, 'src')
+const BASELINE_PATH = path.join(ROOT, 'scripts', 'checks', 'antipatterns-baseline.json')
+
+const IGNORE_DIRS = new Set(['node_modules', '.next', '.git', 'dist', 'build', 'coverage'])
+// The sanctioned home of the öre-round implementation: must not count against itself.
+const ROUND_EXEMPT = new Set(['lib/money.ts', 'lib/bokslut/rounding.ts'])
+
+const RAW_AUTH_RE = /\.auth\.getUser\(/
+// Match the guard at its CALL site, not a bare import, so a file that imports
+// withRouteContext but still hand-rolls getUser() on another handler is still
+// flagged. withRouteContext is usually called with a generic (`withRouteContext<…>(`),
+// so accept either `<` or `(` after the name.
+const GUARD_RE = /requireAuth\(|withRouteContext[<(]/
+// Each top-level `export` starts a new segment, so every handler (and the
+// preamble of shared helpers above the first export) is judged on its own.
+// Without this split, one wrapped handler exempted the whole file.
+const TOP_LEVEL_EXPORT_RE = /^(?=export\s)/m
+const NAIVE_ROUND_RE = /Math\.round\([^\n]*\*\s*100\s*\)\s*\/\s*100/
+
+// 8. hand-rolled-invariant. Shared format contracts live in lib/invariants/
+// (account number, ISO date, four-digit fiscal year, org number). Before that
+// module the BAS account rule was written out at 20 sites and the ISO date rule
+// at 68, with error messages that differed per site, and the four
+// Skatteverket-bound org-number paths did not agree on what "valid" meant.
+//
+// Only the two unambiguous regex families are counted. An org-number
+// digit-strip is too varied in shape to match reliably by regex; the
+// cross-path test in lib/invariants/__tests__/org-number-cross-path.test.ts is
+// the guard on that one instead.
+const HAND_ROLLED_INVARIANT_RES = [
+  // /^\d{4}$/ or /^[0-9]{4}$/  → accountNumberSchema or fiscalYearSchema
+  /\/\^(?:\\d|\[0-9\])\{4\}\$\//,
+  // /^\d{4}-\d{2}-\d{2}$/      → isoDateSchema or ISO_DATE_RE
+  /\/\^(?:\\d|\[0-9\])\{4\}-(?:\\d|\[0-9\])\{2\}-(?:\\d|\[0-9\])\{2\}\$\//,
+]
+// The sanctioned home of these rules: must not count against itself.
+const INVARIANT_EXEMPT_PREFIX = 'lib/invariants/'
+
+function walk(dir, exts, out = []) {
+  let entries
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true })
+  } catch {
+    return out
+  }
+  for (const e of entries) {
+    if (e.name.startsWith('.') && e.name !== '.well-known') continue
+    const full = path.join(dir, e.name)
+    if (e.isDirectory()) {
+      if (!IGNORE_DIRS.has(e.name)) walk(full, exts, out)
+    } else if (exts.some((x) => e.name.endsWith(x))) {
+      out.push(full)
+    }
+  }
+  return out
+}
+
+const rel = (p) => path.relative(ROOT, p).split(path.sep).join('/').replace(/^src\//, '')
+
+/** True when any handler segment calls getUser() without an MFA-enforcing guard. */
+function handRollsRouteAuth(src) {
+  return src
+    .split(TOP_LEVEL_EXPORT_RE)
+    .some((segment) => RAW_AUTH_RE.test(segment) && !GUARD_RE.test(segment))
+}
+
+/** Route files that hand-roll auth instead of the MFA-enforcing guard. */
+function findRawRouteAuth() {
+  const apiDir = path.join(SOURCE_ROOT, 'app', 'api')
+  return walk(apiDir, ['route.ts'])
+    .filter((f) => handRollsRouteAuth(fs.readFileSync(f, 'utf8')))
+    .map(rel)
+    .sort()
+}
+
+// Sanctioned journal_entry_lines insert sites. engine/storno write mirrors via
+// dimension-resolver; sie-import and sandbox seed write neither dims nor
+// mirrors (DB defaults keep them consistent).
+const JEL_INSERT_SANCTIONED = new Set([
+  'lib/bookkeeping/engine.ts',
+  'lib/core/bookkeeping/storno-service.ts',
+  'lib/import/sie-import.ts',
+  'app/api/sandbox/seed/route.ts',
+])
+// Matches an insert CHAINED on the lines table (`.from('journal_entry_lines').insert(`,
+// with optional whitespace/newlines in the chain): select-only readers don't count.
+const JEL_INSERT_CHAIN_RE = /\.from\(\s*['"]journal_entry_lines['"]\s*\)\s*\.\s*(insert|upsert)\(/
+
+/** Files that insert into journal_entry_lines outside the sanctioned writers. */
+function findDirectJelInserts() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  return files
+    .filter((f) => {
+      const r = rel(f)
+      if (JEL_INSERT_SANCTIONED.has(r)) return false
+      if (r.includes('__tests__/') || r.endsWith('.test.ts')) return false
+      return JEL_INSERT_CHAIN_RE.test(fs.readFileSync(f, 'utf8'))
+    })
+    .map(rel)
+    .sort()
+}
+
+// The one writer of invoice_payments rows: recordInvoicePaymentRow() owns the
+// field semantics (amount = applied to the invoice, never the cash received).
+const INVOICE_PAYMENT_INSERT_SANCTIONED = new Set(['lib/invoices/invoice-payment-row.ts'])
+const INVOICE_PAYMENT_INSERT_CHAIN_RE =
+  /\.from\(\s*['"]invoice_payments['"]\s*\)\s*\.\s*(insert|upsert)\(/
+
+/** Files that insert into invoice_payments outside the sanctioned writer. */
+function findDirectInvoicePaymentInserts() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  return files
+    .filter((f) => {
+      const r = rel(f)
+      if (INVOICE_PAYMENT_INSERT_SANCTIONED.has(r)) return false
+      if (r.includes('__tests__/') || r.endsWith('.test.ts')) return false
+      return INVOICE_PAYMENT_INSERT_CHAIN_RE.test(fs.readFileSync(f, 'utf8'))
+    })
+    .map(rel)
+    .sort()
+}
+
+// The one module allowed to import supabase-js's createClient as a value: it
+// is the wrapper that applies SERVER_AUTH_OPTIONS.
+const LEAKY_CLIENT_SANCTIONED = new Set(['lib/supabase/service-client.ts'])
+const SUPABASE_JS_IMPORT_RE = /import\s+(type\s+)?\{([^}]*)\}\s*from\s*['"]@supabase\/supabase-js['"]/g
+// A namespace import hands over the whole module, so `sb.createClient(...)` is
+// reachable without ever naming it in the import. Treat any value-namespace
+// import as leaky rather than trying to track member access.
+const SUPABASE_JS_NAMESPACE_RE =
+  /import\s+(type\s+)?\*\s+as\s+\w+\s+from\s*['"]@supabase\/supabase-js['"]/g
+
+/**
+ * Files that import supabase-js's `createClient` as a VALUE instead of going
+ * through createServiceRoleClient().
+ *
+ * `autoRefreshToken` defaults to true, and auth-js starts the 30 s refresh
+ * ticker unconditionally off-browser. The ticker calls unref(), so the process
+ * still exits and nothing fails in tests or on Vercel, but unref does not make
+ * a timer collectable: it stays a GC root for its callback and retains the
+ * client plus the whole request scope around it. A self-hosted instance died of
+ * heap exhaustion after 42 idle hours this way (2026-08-13), holding 445
+ * request graphs and ~1050 Timeouts in the 30 000 ms bucket.
+ *
+ * Both named (`{ createClient }`) and namespace (`* as sb`) value imports count:
+ * the latter reaches createClient through member access without naming it.
+ *
+ * Type-only imports are fine; so is the browser client, which needs the ticker
+ * and is built on @supabase/ssr's createBrowserClient anyway.
+ */
+function findLeakySupabaseClients() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  return files
+    .filter((f) => {
+      const r = rel(f)
+      if (LEAKY_CLIENT_SANCTIONED.has(r)) return false
+      if (r.includes('__tests__/') || r.endsWith('.test.ts')) return false
+      const src = fs.readFileSync(f, 'utf8')
+      for (const m of src.matchAll(SUPABASE_JS_IMPORT_RE)) {
+        const [, typeOnly, bindings] = m
+        if (typeOnly) continue
+        const bindsCreateClient = bindings
+          .split(',')
+          .map((b) => b.trim())
+          .some((b) => b === 'createClient' || b.startsWith('createClient as'))
+        if (bindsCreateClient) return true
+      }
+      for (const m of src.matchAll(SUPABASE_JS_NAMESPACE_RE)) {
+        if (!m[1]) return true
+      }
+      return false
+    })
+    .map(rel)
+    .sort()
+}
+
+// Statement generators that legitimately read journal_entry_lines directly:
+// the trial-balance stack itself, and the reports whose whole job is to list
+// vouchers or lines rather than to aggregate a fiscal year's balances.
+const LEDGER_SCAN_SANCTIONED = new Set([
+  // The shared balance source and its helpers.
+  'lib/reports/trial-balance.ts',
+  'lib/reports/opening-balances.ts',
+  // Voucher/line listings: they must show the ledger as posted, closing
+  // verifikat included, so there is no closingEntry decision to get wrong.
+  'lib/reports/general-ledger.ts',
+  'lib/reports/journal-register.ts',
+  'lib/reports/latest-vouchers.ts',
+  'lib/reports/source-lines.ts',
+  'lib/reports/sie-export.ts',
+  'lib/reports/full-archive-export.ts',
+  // Aggregate their own dimension-tagged or month-bucketed slice, and each
+  // carries an explicit year-end exclusion of its own.
+  'lib/reports/dimension-pnl.ts',
+  'lib/reports/monthly-breakdown.ts',
+  // Tax balances/expenses come from generateTrialBalance; only mixed 2510
+  // counterpart evidence needs vouchers, which account totals cannot retain.
+  // Mirrors exclude-all-year-end (including reversal/correction chains and
+  // linked opening entry); kassaflodesanalys-tax.test.ts pins those filters.
+  'lib/reports/cash-flow-tax.ts',
+  // Reconciliation and diagnostics: they compare against the ledger as posted.
+  'lib/reports/ar-reconciliation.ts',
+  'lib/reports/supplier-reconciliation.ts',
+  'lib/reports/reskontra-payments.ts',
+  'lib/reports/imbalance-diagnosis.ts',
+  'lib/reports/continuity-check.ts',
+  'lib/reports/rc-basis-gaps.ts',
+  'lib/reports/vat-settlement.ts',
+  'lib/reports/vat-declaration.ts',
+  'lib/reports/periodisk-sammanstallning.ts',
+  'lib/reports/avgifter-basis.ts',
+  'lib/reports/salary-journal.ts',
+  'lib/reports/vacation-liability.ts',
+])
+
+const LEDGER_SCAN_RE =
+  /\.from\(\s*['"]journal_entry_lines['"]\s*\)|fetchEntryLines\s*[<(]|lines:\s*journal_entry_lines\(/
+
+/**
+ * Statement generators that scan journal_entry_lines instead of going through
+ * generateTrialBalance.
+ *
+ * WHY: a generator that aggregates a fiscal year's balances from raw lines has
+ * to remember, on its own, that the resultatavslut posts the mirror image of
+ * every P&L account into 2099 inside the same period. Three shipped without
+ * remembering (årsredovisning 2026-07-23, INK2R and NE-bilaga 2026-07-29) and
+ * each reported ZERO revenue for a closed year while the balance sheet still
+ * tied out, so nothing warned. generateTrialBalance now REQUIRES a
+ * closingEntry mode, which makes the decision a compile error instead: this
+ * guard is what keeps new generators on that path.
+ */
+function findLedgerScanningReports() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib', 'reports'), ['.ts']),
+    ...walk(path.join(SOURCE_ROOT, 'lib', 'bokslut'), ['.ts']),
+  ]
+  return files
+    .filter((f) => {
+      const r = rel(f)
+      if (LEDGER_SCAN_SANCTIONED.has(r)) return false
+      if (r.includes('__tests__/') || r.endsWith('.test.ts')) return false
+      return LEDGER_SCAN_RE.test(fs.readFileSync(f, 'utf8'))
+    })
+    .map(rel)
+    .sort()
+}
+
+/** Count of naive Math.round(x*100)/100 occurrences (lines) across source. */
+function countNaiveRound() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'components'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  let count = 0
+  for (const f of files) {
+    if (ROUND_EXEMPT.has(rel(f))) continue
+    for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
+      if (NAIVE_ROUND_RE.test(line)) count++
+    }
+  }
+  return count
+}
+
+/**
+ * 9. provider-host: files that talk to an external provider API directly.
+ * Provider integration logic is moving behind the connector (hosted
+ * `app/api/connect/*` today, the Accounted Connect service later): the open
+ * repo keeps the ledger, the contract and the manual file paths, and a
+ * self-hosted instance reaches every provider through its connector key.
+ * Per-file ratchet: the grandfathered set may only shrink. A NEW file naming a
+ * provider API host is a boundary violation unless it is the connector's own
+ * hosted adapter side.
+ */
+const PROVIDER_HOST_RE =
+  /api\.enablebanking\.com|api\.tilisy\.com|api\.skatteverket\.se|peroauth2\.skatteverket\.se|sso\.skatteverket\.se|api\.qvalia\.com|api-test\.qvalia\.com|api\.fortnox\.se|apps\.fortnox\.se|vismaonline\.com|briox\.services|apigateway\.blinfo\.se|api\.bokio\.se|api\.bolagsverket\.se|api-accept2\.bolagsverket\.se|id\.tic\.io|graph\.facebook\.com|gmail\.googleapis\.com/i
+
+function findProviderHostFiles() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  const found = []
+  for (const f of files) {
+    const r = rel(f)
+    if (r.includes('__tests__/') || r.endsWith('.test.ts') || r.endsWith('.test.tsx')) continue
+    if (PROVIDER_HOST_RE.test(fs.readFileSync(f, 'utf8'))) found.push(r)
+  }
+  return found.sort()
+}
+
+/**
+ * Occurrences of a shared format rule written out by hand instead of imported
+ * from lib/invariants/. Counted, not file-setted: the campaign lowers the
+ * number file by file and the count may only go down.
+ */
+function countHandRolledInvariants() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'components'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  let count = 0
+  for (const f of files) {
+    const relPath = rel(f)
+    if (relPath.startsWith(INVARIANT_EXEMPT_PREFIX)) continue
+    // Tests legitimately spell out the pattern they are asserting about.
+    if (relPath.includes('__tests__/') || relPath.endsWith('.test.ts')) continue
+    for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
+      if (HAND_ROLLED_INVARIANT_RES.some((re) => re.test(line))) count++
+    }
+  }
+  return count
+}
+
+// 9. off-ladder-radius. The radius ladder (.claude/rules/design.md) allows
+// exactly: rounded-full (interactive toolbar controls, chips, dots),
+// rounded-xl (page panel, dialogs, slide-overs, hero surfaces), rounded-lg
+// (cards, form fields, popover/menu content, bordered boxes), rounded-sm
+// (nested leaf elements), rounded-none, and directional variants of those.
+// Everything else is off-ladder. Bare `rounded` is banned as vocabulary: it
+// renders the same 4px as rounded-sm but hides from a rounded-sm grep.
+const OFF_LADDER_RADIUS_RES = [
+  // rounded-md and any directional variant (rounded-t-md, rounded-bl-md, ...)
+  /\brounded(?:-[trbl]{1,2})?-(?:md|2xl|3xl|4xl)\b/,
+  // arbitrary radius values: rounded-[5px], rounded-t-[10px], ...
+  /\brounded(?:-[trbl]{1,2})?-\[/,
+]
+
+// Bare `rounded` as a class token (not rounded-*): renders the same 4px as
+// rounded-sm but hides from a rounded-sm grep. `rounded` is also a common
+// variable name and an ordinary English word, so this one only counts inside
+// a quoted string that looks like a Tailwind class list (contains at least
+// one other utility-class token).
+const BARE_ROUNDED_RE = /(?<![-\w])rounded(?![-\w])/
+const CLASS_LIST_HINT_RE =
+  /(?:^|\s)(?:[a-z-]+:)*(?:flex|inline-flex|grid|hidden|absolute|relative|sticky|fixed|bg-\S|text-\S|border\b|border-\S|shadow\S*|p-\d|px-\S|py-\S|pl-\S|pr-\S|pt-\S|pb-\S|h-\S|w-\S|gap-\S|items-\S|justify-\S|font-\S|overflow-\S|transition\S*|animate-\S)/
+
+function lineHasBareRoundedClass(line) {
+  const strings = line.match(/"[^"]*"|'[^']*'|`[^`]*`/g)
+  if (!strings) return false
+  return strings.some(
+    (s) => BARE_ROUNDED_RE.test(s) && CLASS_LIST_HINT_RE.test(s.slice(1, -1)),
+  )
+}
+
+/** Off-ladder border-radius classes in UI code. */
+function findOffLadderRadii() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'components'), ['.ts', '.tsx']),
+  ]
+  const findings = []
+  for (const f of files) {
+    const lines = fs.readFileSync(f, 'utf8').split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]
+      // Prose mentions of "rounded" in comments are not class tokens.
+      const trimmed = line.trim()
+      if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*')) continue
+      if (OFF_LADDER_RADIUS_RES.some((re) => re.test(line)) || lineHasBareRoundedClass(line)) {
+        findings.push(`${rel(f)}:${i + 1}`)
+      }
+    }
+  }
+  return findings.sort()
+}
+
+// 10. folded-public-flag. The Docker image is built once with sentinel values
+// (ENV NEXT_PUBLIC_SELF_HOSTED=__NEXT_PUBLIC_SELF_HOSTED__) that
+// docker-entrypoint.sh seds into .next at container start. Comparing the var in
+// place defeats that: the bundler inlines the sentinel, the minifier folds
+// `"__NEXT_PUBLIC_SELF_HOSTED__" === 'true'` to false and eliminates the
+// branch, so BOTH the name and the sentinel vanish and sed has nothing to
+// replace. The flag is then permanently false whatever the operator sets.
+//
+// That shipped and stayed invisible for weeks: every Docker self-host ran with
+// the entitlement paywall live, killing ai/bank_sync/skatteverket/email_send 30
+// days after company creation. Read public flags as VALUES instead
+// (flagEnabled(process.env.NEXT_PUBLIC_X) from lib/env/public-flags), which
+// keeps the sentinel in the output as a live string literal.
+//
+// No baseline: the count is 0, any new one is a hard failure.
+const PUBLIC_FLAG_EXEMPT = new Set(['lib/env/public-flags.ts'])
+
+const EQUALITY_OPS = new Set([
+  ts.SyntaxKind.EqualsEqualsEqualsToken,
+  ts.SyntaxKind.ExclamationEqualsEqualsToken,
+  ts.SyntaxKind.EqualsEqualsToken,
+  ts.SyntaxKind.ExclamationEqualsToken,
+])
+
+/** `process.env.NEXT_PUBLIC_ANYTHING` as an expression node. */
+function isPublicEnvRead(node) {
+  return (
+    ts.isPropertyAccessExpression(node) &&
+    ts.isPropertyAccessExpression(node.expression) &&
+    ts.isIdentifier(node.expression.expression) &&
+    node.expression.expression.text === 'process' &&
+    node.expression.name.text === 'env' &&
+    ts.isIdentifier(node.name) &&
+    node.name.text.startsWith('NEXT_PUBLIC_')
+  )
+}
+
+/** Public env flags compared in place, which the Docker build folds away. */
+function findFoldedPublicFlags() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'components'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'lib'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'contexts'), ['.ts', '.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.ts', '.tsx']),
+  ]
+  const findings = []
+  for (const file of files) {
+    const relPath = rel(file)
+    if (PUBLIC_FLAG_EXEMPT.has(relPath)) continue
+    // Tests never ship in the image, and they legitimately assert on raw env.
+    // Both layouts: the __tests__/ convention, and a colocated *.test.ts(x),
+    // which would otherwise be a false positive that invites weakening this
+    // guard rather than fixing a real call site.
+    if (relPath.includes('__tests__/') || /\.test\.tsx?$/.test(relPath)) continue
+    const text = fs.readFileSync(file, 'utf8')
+    if (!text.includes('NEXT_PUBLIC_')) continue
+
+    const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true)
+    const visit = (node) => {
+      if (
+        ts.isBinaryExpression(node) &&
+        EQUALITY_OPS.has(node.operatorToken.kind) &&
+        (isPublicEnvRead(node.left) || isPublicEnvRead(node.right))
+      ) {
+        const pos = source.getLineAndCharacterOfPosition(node.getStart(source))
+        findings.push(`${relPath}:${pos.line + 1}`)
+      }
+      ts.forEachChild(node, visit)
+    }
+    visit(source)
+  }
+  return [...new Set(findings)].sort()
+}
+
+// 11. dialog-overflow-risk. See the header comment for the three patterns.
+// Files whose whitespace-nowrap cells are fixed-width numeric/tabular columns
+// living inside their OWN overflow-x-auto scroll container, so they cannot
+// widen the dialog itself:
+// - PaymentFileDialog: payment-line table wrapped in an overflow-x-auto div.
+// 11. direct-ai-client. Every model call goes through the job-shaped service
+// in lib/ai (getAiService): that is what lets hosted stay on Bedrock while a
+// sovereign self-host points at an OpenAI-compatible Swedish endpoint, and
+// what stops new AI surfaces from hard-wiring one SDK. Outside lib/ai/, a
+// file may not import createAiClient, call `.messages.create/stream(` on an
+// Anthropic client, or import the Vercel AI SDK (`ai`, `@ai-sdk/*`). The
+// allowlist is the pre-abstraction call sites that still speak the Anthropic
+// SDK directly (chat loop, composer, receipt hunt, WhatsApp interpreter, the
+// legacy smoke script); it may only shrink as they migrate or are deleted.
+const DIRECT_AI_CLIENT_ALLOWED = new Set([
+  'lib/agent/chat/run-turn.ts',
+  'lib/agent/composer/atom-selection.ts',
+  'lib/agent/composer/client.ts',
+  'lib/agent/composer/narrative.ts',
+  'lib/agent/composer/prewarm.ts',
+  'lib/receipt-hunt/adjudicate.ts',
+  'extensions/general/whatsapp-inbox/lib/interpret-answer.ts',
+  'scripts/smoke-ai.ts',
+  // Out-of-tree CI reviewer with its own pinned SDK install (see the
+  // compliance workflow); deliberately not part of the app's AI layer.
+  'scripts/swedish-compliance-review.mjs',
+])
+const DIRECT_AI_CLIENT_RES = [
+  { rule: 'createAiClient-import', re: /import[^;]*\bcreateAiClient\b[^;]*from\s+['"]@\/lib\/ai\/provider['"]/ },
+  { rule: 'anthropic-messages-call', re: /\.messages\.(create|stream)\(/ },
+  { rule: 'ai-sdk-import', re: /from\s+['"](ai|ai\/[\w-]+|@ai-sdk\/[\w-]+)['"]/ },
+]
+
+function findDirectAiClients() {
+  const out = []
+  for (const dir of ['lib', 'app', 'extensions', 'components', 'scripts']) {
+    for (const file of walk(path.join(dir === 'scripts' ? ROOT : SOURCE_ROOT, dir), ['.ts', '.tsx', '.mjs'])) {
+      const r = rel(file)
+      if (r.startsWith('lib/ai/')) continue
+      if (r.includes('/__tests__/') || r.endsWith('.test.ts') || r.endsWith('.test.tsx')) continue
+      const src = fs.readFileSync(file, 'utf8')
+      for (const { rule, re } of DIRECT_AI_CLIENT_RES) {
+        if (re.test(src)) out.push({ file: r, rule })
+      }
+    }
+  }
+  return out
+}
+
+const DIALOG_NOWRAP_ALLOWED = new Set([
+  'components/supplier-invoices/PaymentFileDialog.tsx',
+])
+
+const DIALOG_CONTENT_IMPORT_RE =
+  /import\s*\{[^}]*\b(?:DialogContent|SheetContent)\b[^}]*\}\s*from\s*['"]@\/components\/ui\/(?:dialog|sheet)['"]/
+const GRID_COLS_TEMPLATE_RE = /grid-cols-\[([^\]]+)\]/g
+const BARE_FR_TOKEN_RE = /^\d+(?:\.\d+)?fr$/
+const WIDE_MIN_W_RE = /min-w-\[(\d+(?:\.\d+)?)(rem|px)\]/g
+const PORTAL_HINT_RE = /createPortal|\bPortal\b/
+const OVERLAY_ABSOLUTE_RE = /\babsolute\b/
+const OVERLAY_Z_RE = /\bz-(?:40|50|\[\d+\])/
+
+/**
+ * Overflow-risky patterns in dialog/sheet hosts. Returns
+ * { file, where, rule } findings; the ratchet compares the file set.
+ */
+function findDialogOverflowRisks() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'components'), ['.tsx']),
+    ...walk(path.join(SOURCE_ROOT, 'extensions'), ['.tsx']),
+  ]
+  const findings = []
+  for (const f of files) {
+    const r = rel(f)
+    const src = fs.readFileSync(f, 'utf8')
+    const lines = src.split('\n')
+
+    if (DIALOG_CONTENT_IMPORT_RE.test(src)) {
+      // (a) bare fr grid tracks anywhere in a dialog-hosting file.
+      lines.forEach((line, i) => {
+        for (const m of line.matchAll(GRID_COLS_TEMPLATE_RE)) {
+          if (m[1].split('_').some((token) => BARE_FR_TOKEN_RE.test(token))) {
+            findings.push({ file: r, where: `${r}:${i + 1}`, rule: 'bare-fr-grid-track' })
+          }
+        }
+      })
+      // (b) whitespace-nowrap inside the <DialogContent>/<SheetContent>
+      // region. Line-based depth tracking is a heuristic, but dialog JSX in
+      // this repo keeps the tags on their own lines.
+      if (!DIALOG_NOWRAP_ALLOWED.has(r)) {
+        let depth = 0
+        lines.forEach((line, i) => {
+          if (/<(?:Dialog|Sheet)Content\b/.test(line)) depth++
+          if (depth > 0 && line.includes('whitespace-nowrap')) {
+            findings.push({ file: r, where: `${r}:${i + 1}`, rule: 'nowrap-in-dialog' })
+          }
+          const closes = (line.match(/<\/(?:Dialog|Sheet)Content>/g) || []).length
+          depth = Math.max(0, depth - closes)
+        })
+      }
+    }
+
+    // (c) a hand-rolled absolute overlay forcing a >=20rem minimum width in a
+    // file that never portals anything: inside a scrollable DialogContent
+    // that minimum becomes a horizontal scrollbar on the dialog.
+    if (!PORTAL_HINT_RE.test(src) && OVERLAY_ABSOLUTE_RE.test(src) && OVERLAY_Z_RE.test(src)) {
+      lines.forEach((line, i) => {
+        for (const m of line.matchAll(WIDE_MIN_W_RE)) {
+          const value = parseFloat(m[1])
+          if ((m[2] === 'rem' && value >= 20) || (m[2] === 'px' && value >= 320)) {
+            findings.push({ file: r, where: `${r}:${i + 1}`, rule: 'unportaled-wide-overlay' })
+          }
+        }
+      })
+    }
+  }
+  return findings.sort((a, b) => a.where.localeCompare(b.where))
+}
+
+// Dependencies pinned to an EXACT version on purpose, because a bump broke prod
+// and must not silently return via `npm update`, a dependabot bump, or a manual
+// install. Any drift (in package.json OR the lockfile) fails CI. See DECISIONS.md.
+const PINNED_DEPS = [
+  {
+    name: '@anthropic-ai/bedrock-sdk',
+    version: '0.29.1',
+    reason:
+      '0.32.0 (grouped dependabot bump #884) broke Bedrock streaming in prod: empty stream, ' +
+      '"request ended without sending any chunks", taking down the AI assistant + invoice OCR. ' +
+      'Keep 0.29.1 until 0.32.x streaming is verified against Bedrock.',
+  },
+  {
+    name: '@anthropic-ai/sdk',
+    version: '0.95.0',
+    reason:
+      'Declared explicitly at the version bedrock-sdk 0.29.1 pulls in transitively (#1406 Tier 1), so ' +
+      'the lockfile dedupes to one copy; a drift here is a second SDK copy and an untested wire surface.',
+  },
+  {
+    name: 'ai',
+    version: '6.0.259',
+    reason:
+      'Vercel AI SDK backs lib/ai/services/openai-compatible.ts (Tier 2 BYO endpoints). Major versions ' +
+      'rename core APIs; upgrades are deliberate PRs with the provider test suite, never a silent bump.',
+  },
+  {
+    name: '@ai-sdk/openai-compatible',
+    version: '2.0.69',
+    reason:
+      'Paired with ai 6.x; the provider package follows its own major cadence and must move together with ' +
+      'the core pin in one reviewed change.',
+  },
+  {
+    name: 'nodemailer',
+    version: '10.0.13',
+    reason:
+      'SMTP mailer for self-hosts (extensions/general/email/lib/smtp-service.ts), and the addressparser ' +
+      'mailparser uses on inbound mail. Zero-dependency MIT-0 package; 10.x requires Node >= 20. Bumps are ' +
+      'deliberate, reviewed PRs (audit surface), never silent (#3298).',
+  },
+  {
+    name: 'mailparser',
+    version: '3.9.32',
+    reason:
+      'Inbound-mail parser (extensions/general/invoice-inbox). Each mailparser release depends on an EXACT ' +
+      'nodemailer version; 3.9.32 depends on exactly nodemailer 10.0.13, so its nested copy dedupes with the ' +
+      'top-level pin. This guard checks the top-level nodemailer only, so a future mailparser bump must move ' +
+      'the nodemailer pin in the same PR, or a second nested copy appears. Bump both pins together, on ' +
+      'purpose (#2490, #3298).',
+  },
+]
+
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * Pinned deps whose package.json spec or locked version drifted from the pin.
+ *
+ * Also scans .github/workflows/*.yml for literal `<name>@<version>` installs:
+ * a workflow that installs the SDK by version (e.g. the compliance review's
+ * out-of-tree `npm install ...@0.29.1`) bypasses package.json AND the
+ * lockfile, so it is exactly where the 0.32.0 regression can drift back in
+ * without either file changing.
+ */
+function findPinnedDepViolations() {
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
+  const lock = JSON.parse(fs.readFileSync(path.join(ROOT, 'package-lock.json'), 'utf8'))
+  const declared = { ...pkg.dependencies, ...pkg.devDependencies }
+  const out = []
+  const workflowFiles = walk(path.join(ROOT, '.github', 'workflows'), ['.yml', '.yaml'])
+  for (const pin of PINNED_DEPS) {
+    const spec = declared[pin.name]
+    if (spec !== undefined && spec !== pin.version) {
+      out.push({ ...pin, where: 'package.json', actual: spec })
+    }
+    const locked = lock.packages?.[`node_modules/${pin.name}`]?.version
+    if (locked !== undefined && locked !== pin.version) {
+      out.push({ ...pin, where: 'package-lock.json', actual: locked })
+    }
+    const literalInstall = new RegExp(
+      `${escapeRegExp(pin.name)}@(\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?)`,
+      'g',
+    )
+    for (const wf of workflowFiles) {
+      const src = fs.readFileSync(wf, 'utf8')
+      for (const match of src.matchAll(literalInstall)) {
+        if (match[1] !== pin.version) {
+          out.push({ ...pin, where: rel(wf), actual: `${pin.name}@${match[1]}` })
+        }
+      }
+    }
+  }
+  return out
+}
+
+const USER_ERROR_FIELD_NAMES = new Set([
+  'description',
+  'detail',
+  'details',
+  'error',
+  'message',
+  'reason',
+  'title',
+])
+
+function propertyNameText(name) {
+  if (ts.isIdentifier(name) || ts.isStringLiteral(name) || ts.isNumericLiteral(name)) {
+    return name.text
+  }
+  return null
+}
+
+function propertyPath(node) {
+  const parts = []
+  let current = node
+  while (ts.isPropertyAccessExpression(current)) {
+    parts.unshift(current.name.text)
+    current = current.expression
+  }
+  if (ts.isIdentifier(current)) parts.unshift(current.text)
+  return parts
+}
+
+function isRawErrorMessage(node) {
+  if (!ts.isPropertyAccessExpression(node) || node.name.text !== 'message') return false
+  const parts = propertyPath(node)
+  if (parts.length < 2) return false
+  const root = parts[0]
+  return (
+    /^(?:e|err|error|cause)$/i.test(root) ||
+    /(?:Error|Err)$/.test(root) ||
+    parts.slice(0, -1).some((part) => /^(?:error|first_error)$/i.test(part))
+  )
+}
+
+function isErrorLikeIdentifier(node) {
+  return ts.isIdentifier(node) && (
+    /^(?:e|err|error|cause)$/i.test(node.text) || /(?:Error|Err)$/.test(node.text)
+  )
+}
+
+function isRawErrorString(node) {
+  return (
+    ts.isCallExpression(node) &&
+    ts.isIdentifier(node.expression) &&
+    node.expression.text === 'String' &&
+    node.arguments.length === 1 &&
+    isErrorLikeIdentifier(node.arguments[0])
+  )
+}
+
+function containsRawErrorMessage(node) {
+  let found = false
+  const visit = (child) => {
+    if (found) return
+    if (isRawErrorMessage(child) || isRawErrorString(child)) {
+      found = true
+      return
+    }
+    ts.forEachChild(child, visit)
+  }
+  visit(node)
+  return found
+}
+
+function enclosingCatch(node) {
+  let current = node.parent
+  while (current) {
+    if (ts.isCatchClause(current)) return current
+    if (ts.isFunctionLike(current)) return null
+    current = current.parent
+  }
+  return null
+}
+
+const taintedCatchNames = new WeakMap()
+
+function getTaintedNames(catchClause) {
+  const cached = taintedCatchNames.get(catchClause)
+  if (cached) return cached
+
+  const declarations = []
+  const collect = (node) => {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.initializer
+    ) {
+      declarations.push(node)
+    }
+    ts.forEachChild(node, collect)
+  }
+  collect(catchClause.block)
+
+  const names = new Set()
+
+  const isTaintedValue = (node) => {
+    if (isRawErrorMessage(node) || isRawErrorString(node)) return true
+    if (ts.isCallExpression(node) && callName(node) === 'getErrorMessage') return false
+    if (ts.isConditionalExpression(node)) {
+      return isTaintedValue(node.whenTrue) || isTaintedValue(node.whenFalse)
+    }
+    if (ts.isBinaryExpression(node) && node.operatorToken.kind !== ts.SyntaxKind.PlusToken) {
+      return false
+    }
+    let tainted = false
+    const visit = (child) => {
+      if (tainted) return
+      if (isRawErrorMessage(child) || isRawErrorString(child)) {
+        tainted = true
+        return
+      }
+      if (ts.isIdentifier(child) && names.has(child.text)) {
+        tainted = true
+        return
+      }
+      if (ts.isCallExpression(child) && callName(child) === 'getErrorMessage') return
+      ts.forEachChild(child, visit)
+    }
+    ts.forEachChild(node, visit)
+    return tainted
+  }
+
+  let changed = true
+  while (changed) {
+    changed = false
+    for (const declaration of declarations) {
+      if (names.has(declaration.name.text)) continue
+      const tainted = isTaintedValue(declaration.initializer)
+      if (tainted) {
+        names.add(declaration.name.text)
+        changed = true
+      }
+    }
+  }
+
+  taintedCatchNames.set(catchClause, names)
+  return names
+}
+
+function containsRawOrTaintedError(node) {
+  if (containsRawErrorMessage(node)) return true
+  const catchClause = enclosingCatch(node)
+  if (!catchClause) return false
+  const names = getTaintedNames(catchClause)
+  let found = false
+  const visit = (child) => {
+    if (found) return
+    if (ts.isIdentifier(child) && names.has(child.text)) {
+      found = true
+      return
+    }
+    if (ts.isPropertyAssignment(child)) {
+      visit(child.initializer)
+      return
+    }
+    ts.forEachChild(child, visit)
+  }
+  visit(node)
+  return found
+}
+
+function callName(call) {
+  const expression = call.expression
+  if (ts.isIdentifier(expression)) return expression.text
+  if (ts.isPropertyAccessExpression(expression)) return expression.name.text
+  return ''
+}
+
+function isLoggingCall(call) {
+  const expression = call.expression
+  if (!ts.isPropertyAccessExpression(expression)) return false
+  const owner = expression.expression.getText()
+  return (
+    owner === 'console' ||
+    /(?:^|\.)log$/.test(owner) ||
+    /Log$/.test(owner) ||
+    owner.endsWith('Logger')
+  )
+}
+
+function ancestorCall(node, predicate = () => true) {
+  let current = node.parent
+  while (current) {
+    if (ts.isCallExpression(current) && predicate(current)) return current
+    if (ts.isFunctionLike(current)) return null
+    current = current.parent
+  }
+  return null
+}
+
+function isApiResponseCall(call) {
+  const name = callName(call)
+  if (/^(?:errorResponse|errorResponseFromCode|getErrorMessage)$/.test(name)) return false
+  if (/^(?:json|v1ErrorResponse|v1ErrorResponseFromCode)$/.test(name)) return true
+  if (ts.isPropertyAccessExpression(call.expression)) {
+    return call.expression.name.text === 'json'
+  }
+  return false
+}
+
+function isClientErrorSetter(call) {
+  const name = callName(call)
+  return name === 'toast' || /^set[A-Z].*(?:Error|Message)$/.test(name) || name === 'setError'
+}
+
+/**
+ * Raw caught-error messages in user-visible sinks. This is deliberately an
+ * AST check: line regexes cannot distinguish a logger payload from a JSON
+ * response, nor a Zod issue message from err.message.
+ */
+function findRawUserErrors() {
+  const files = [
+    ...walk(path.join(SOURCE_ROOT, 'app', 'api'), ['route.ts']),
+    ...walk(path.join(SOURCE_ROOT, 'app'), ['.ts', '.tsx']).filter((f) => !rel(f).startsWith('app/api/')),
+    ...walk(path.join(SOURCE_ROOT, 'components'), ['.ts', '.tsx']),
+  ]
+  const findings = []
+
+  for (const file of files) {
+    const sourceText = fs.readFileSync(file, 'utf8')
+    const source = ts.createSourceFile(
+      file,
+      sourceText,
+      ts.ScriptTarget.Latest,
+      true,
+      file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    )
+    const isApi = rel(file).startsWith('app/api/')
+
+    const add = (node) => {
+      const pos = source.getLineAndCharacterOfPosition(node.getStart(source))
+      findings.push(`${rel(file)}:${pos.line + 1}`)
+    }
+
+    const visit = (node) => {
+      if (ts.isPropertyAssignment(node)) {
+        const field = propertyNameText(node.name)
+        if (
+          field &&
+          USER_ERROR_FIELD_NAMES.has(field) &&
+          !ts.isObjectLiteralExpression(node.initializer) &&
+          containsRawOrTaintedError(node.initializer)
+        ) {
+          const loggingCall = ancestorCall(node, isLoggingCall)
+          const clientSink = ancestorCall(node, isClientErrorSetter)
+          if (!loggingCall) {
+            if (isApi || clientSink) add(node)
+          }
+        }
+      }
+
+      if (ts.isCallExpression(node) && node.arguments.some(containsRawOrTaintedError)) {
+        if (!isLoggingCall(node)) {
+          if ((isApi && isApiResponseCall(node)) || (!isApi && isClientErrorSetter(node))) {
+            add(node)
+          }
+        }
+      }
+
+      ts.forEachChild(node, visit)
+    }
+    visit(source)
+  }
+
+  return [...new Set(findings)].sort()
+}
+
+const current = {
+  rawRouteAuth: findRawRouteAuth(),
+  naiveOreRound: countNaiveRound(),
+  handRolledInvariants: countHandRolledInvariants(),
+  providerHosts: findProviderHostFiles(),
+  ledgerScanningReports: findLedgerScanningReports(),
+  directJelInsert: findDirectJelInserts(),
+  directInvoicePaymentInsert: findDirectInvoicePaymentInserts(),
+  leakySupabaseClients: findLeakySupabaseClients(),
+  pinnedDepViolations: findPinnedDepViolations(),
+  rawUserErrors: findRawUserErrors(),
+  sekLabelledAmounts: findSekLabelledFxAmounts(SOURCE_ROOT),
+  extensionRoutes: findExtensionRouteFindings(SOURCE_ROOT),
+  eventRouteInit: findUninitializedEmittingRoutes(SOURCE_ROOT),
+  offLadderRadii: findOffLadderRadii(),
+  foldedPublicFlags: findFoldedPublicFlags(),
+  dialogOverflowRisk: findDialogOverflowRisks(),
+  directAiClients: findDirectAiClients(),
+  rawReferenceFetch: findRawReferenceFetches(SOURCE_ROOT),
+  clientNodeBuiltins: findClientNodeBuiltins(SOURCE_ROOT),
+  ambiguousEmbeds: findAmbiguousEmbeds(ROOT, SOURCE_ROOT),
+  literalLegalForm: findLiteralLegalForms(SOURCE_ROOT),
+  uiUniformity: findUiUniformityFindings(SOURCE_ROOT),
+  tableWithoutGrant: findTablesWithoutGrant(ROOT),
+}
+
+const dialogOverflowFiles = [...new Set(current.dialogOverflowRisk.map((f) => f.file))].sort()
+const tableWithoutGrantFiles = [...new Set(current.tableWithoutGrant.map((f) => f.file))].sort()
+
+const isUpdate = process.argv.includes('--update')
+
+if (isUpdate) {
+  // table-without-grant is a frozen set, not a ratchet: --update is run to lock
+  // in some other count going down, and must never grandfather a migration
+  // added since (see grandfatheredFiles).
+  const frozenGrantFiles = fs.existsSync(BASELINE_PATH)
+    ? JSON.parse(fs.readFileSync(BASELINE_PATH, 'utf8')).tableWithoutGrant?.files
+    : undefined
+  const grandfatheredGrantFiles = grandfatheredFiles(frozenGrantFiles, tableWithoutGrantFiles)
+  const baseline = {
+    _comment:
+      'Ratchet baseline for scripts/checks/no-new-antipatterns.mjs. These counts may only decrease. Re-run with --update after a migration lowers them. Goal: both reach 0 (A1 route-auth campaign, D1 rounding codemod).',
+    rawRouteAuth: { count: current.rawRouteAuth.length, files: current.rawRouteAuth },
+    naiveOreRound: { count: current.naiveOreRound },
+    handRolledInvariants: { count: current.handRolledInvariants },
+    literalLegalForm: { count: current.literalLegalForm.length },
+    ledgerScanningReports: {
+      count: current.ledgerScanningReports.length,
+      files: current.ledgerScanningReports,
+    },
+    dialogOverflowRisk: {
+      count: dialogOverflowFiles.length,
+      files: dialogOverflowFiles,
+    },
+    rawReferenceFetch: {
+      count: current.rawReferenceFetch.length,
+      files: current.rawReferenceFetch,
+    },
+    providerHosts: {
+      count: current.providerHosts.length,
+      files: current.providerHosts,
+    },
+    tableWithoutGrant: {
+      count: grandfatheredGrantFiles.length,
+      files: grandfatheredGrantFiles,
+    },
+  }
+  fs.writeFileSync(BASELINE_PATH, JSON.stringify(baseline, null, 2) + '\n')
+  console.log(
+    `Baseline written: ${current.rawRouteAuth.length} raw-route-auth files, ${current.naiveOreRound} naive-ore-round occurrences.`,
+  )
+  process.exit(0)
+}
+
+if (!fs.existsSync(BASELINE_PATH)) {
+  console.error('No baseline found. Run: node scripts/checks/no-new-antipatterns.mjs --update')
+  process.exit(1)
+}
+
+const baseline = JSON.parse(fs.readFileSync(BASELINE_PATH, 'utf8'))
+let failed = false
+
+// 1. raw-route-auth: any file not in the baseline set is a NEW violation.
+const baselineSet = new Set(baseline.rawRouteAuth.files)
+const newAuthFiles = current.rawRouteAuth.filter((f) => !baselineSet.has(f))
+const fixedAuthFiles = baseline.rawRouteAuth.files.filter((f) => !current.rawRouteAuth.includes(f))
+if (newAuthFiles.length) {
+  failed = true
+  console.error(
+    `\n✗ raw-route-auth: ${newAuthFiles.length} new route(s) call supabase.auth.getUser() directly ` +
+      `instead of requireAuth()/withRouteContext() (skips MFA AAL2 enforcement):`,
+  )
+  newAuthFiles.forEach((f) => console.error(`    ${f}`))
+  console.error('  → wrap the route in withRouteContext (or call requireAuth) so MFA is enforced.')
+}
+
+// 1b. direct-jel-insert: allowlist lives in this file (JEL_INSERT_SANCTIONED),
+// no baseline: any unsanctioned insert site is a hard failure.
+if (current.directJelInsert.length) {
+  failed = true
+  console.error(
+    `\n✗ direct-jel-insert: ${current.directJelInsert.length} file(s) insert into journal_entry_lines ` +
+      `outside the sanctioned writers:`,
+  )
+  current.directJelInsert.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → route line writes through lib/bookkeeping/engine.ts, or derive cost_center/project via\n' +
+      '    lineDimensionColumns() (lib/bookkeeping/dimension-resolver.ts) and add the file to\n' +
+      '    JEL_INSERT_SANCTIONED in this script with a justification.',
+  )
+}
+
+// 1b1. direct-invoice-payment-insert: allowlist lives in this file
+// (INVOICE_PAYMENT_INSERT_SANCTIONED), no baseline: any unsanctioned insert
+// site is a hard failure.
+if (current.directInvoicePaymentInsert.length) {
+  failed = true
+  console.error(
+    `\n✗ direct-invoice-payment-insert: ${current.directInvoicePaymentInsert.length} file(s) insert into invoice_payments ` +
+      `outside lib/invoices/invoice-payment-row.ts:`,
+  )
+  current.directInvoicePaymentInsert.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → record the payment through recordInvoicePaymentRow() (lib/invoices/invoice-payment-row.ts):\n' +
+      '    it owns the row semantics (amount = applied to the invoice, never the cash received, #2250).',
+  )
+}
+
+// 1b3. client-node-builtin: a 'use client' module whose static import closure
+// reaches a Node builtin ships the browser polyfill chunk (~327 KB) with every
+// route that renders it. No baseline: 0 today, any reacher is a hard failure.
+if (current.clientNodeBuiltins.length) {
+  failed = true
+  console.error(
+    `\n✗ client-node-builtin: ${current.clientNodeBuiltins.length} client module(s) reach a Node builtin ` +
+      `through their static imports (this ships crypto-browserify/Buffer/vm polyfills to the browser):`,
+  )
+  current.clientNodeBuiltins.forEach((f) =>
+    console.error(`    ${f.file} -> ${f.builtin}\n        ${f.chain.join('\n        > ')}`),
+  )
+  console.error(
+    '  → move the pure part the client needs into a sibling module without the Node import\n' +
+      '    (see lib/auth/bankid-flags.ts, lib/import/bank-file/formats.ts, lib/salary/personnummer-format.ts,\n' +
+      '    lib/auth/api-key-scopes.ts) and import that from the client. scripts/perf/client-import-closure.mjs\n' +
+      '    prints the full chain for any module.',
+  )
+}
+
+// 1b4. ambiguous-embed: an embed between two tables joined by more than one
+// foreign key must name the relationship, or PostgREST answers PGRST201 at
+// runtime. No baseline: the count is 0 today, any new one is a hard failure.
+if (current.ambiguousEmbeds.length) {
+  failed = true
+  console.error(
+    `\n✗ ambiguous-embed: ${current.ambiguousEmbeds.length} PostgREST embed(s) between a table pair ` +
+      `that shares more than one foreign key, with no relationship named:`,
+  )
+  current.ambiguousEmbeds.forEach((f) =>
+    console.error(`    ${f.where}  ${f.from} -> ${f.target}`),
+  )
+  console.error(
+    '  → name the relationship in the embed, either by constraint\n' +
+      "    (.select('fiscal_period:fiscal_periods!journal_entries_fiscal_period_id_fkey(...)'))\n" +
+      "    or by foreign key column (.select('journal_entries!opening_balance_entry_id(...)')).\n" +
+      '    Without it PostgREST returns PGRST201 for every call, and no mocked-Supabase test\n' +
+      '    or pg-real test can see it: a mock never resolves a relationship and pg-real does\n' +
+      '    not go through PostgREST at all.',
+  )
+}
+
+// 1b2. leaky-supabase-client: server code must construct clients through
+// createServiceRoleClient(). No baseline: the count is 0 today.
+if (current.leakySupabaseClients.length) {
+  failed = true
+  console.error(
+    `\n✗ leaky-supabase-client: ${current.leakySupabaseClients.length} file(s) import supabase-js's ` +
+      `createClient as a value instead of createServiceRoleClient():`,
+  )
+  current.leakySupabaseClients.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → import { createServiceRoleClient } from "@/lib/supabase/service-client". Constructing a\n' +
+      '    client directly leaves autoRefreshToken on, which starts a 30 s setInterval that is never\n' +
+      '    cleared and retains the client plus the whole request scope (heap death after ~42 h).\n' +
+      '    Type-only imports are fine: use `import type { SupabaseClient } from "@supabase/supabase-js"`.',
+  )
+}
+
+// 1c. pinned-dep: a version-pinned dependency must match its pin EXACTLY, in
+// both package.json and the lockfile. No baseline: any drift is a hard failure.
+if (current.pinnedDepViolations.length) {
+  failed = true
+  console.error(`\n✗ pinned-dep: ${current.pinnedDepViolations.length} version-pinned dependency change(s):`)
+  current.pinnedDepViolations.forEach((v) =>
+    console.error(
+      `    ${v.name} in ${v.where}: found "${v.actual}", must be exactly "${v.version}".\n      ${v.reason}`,
+    ),
+  )
+  console.error(
+    '  → restore the pin (npm install <name>@<version> --save-exact). Only change PINNED_DEPS in\n' +
+      '    this script once the upstream regression is confirmed fixed.',
+  )
+}
+
+// 1d. raw-user-error: user-facing sinks must never receive err.message.
+if (current.rawUserErrors.length) {
+  failed = true
+  console.error(
+    `\n✗ raw-user-error: ${current.rawUserErrors.length} user-visible sink(s) expose a raw caught-error message:`,
+  )
+  current.rawUserErrors.forEach((finding) => console.error(`    ${finding}`))
+  console.error(
+    '  → map the error through getErrorMessage(), or throw it inside withRouteContext so\n' +
+      '    errorResponse() produces the canonical structured envelope.',
+  )
+}
+
+// 1e. sek-labelled-amount: a foreign amount must never be printed with the SEK
+// symbol. No baseline: every current single-argument call formats a SEK twin or
+// a ledger column, so the count is 0 and any new one is a hard failure.
+if (current.sekLabelledAmounts.length) {
+  failed = true
+  console.error(
+    `\n✗ sek-labelled-amount: ${current.sekLabelledAmounts.length} formatCurrency() call(s) print a possibly-foreign amount as SEK:`,
+  )
+  current.sekLabelledAmounts.forEach((f) =>
+    console.error(`    ${f.where}  formatCurrency(${f.expr})\n      ${f.reason}`),
+  )
+  console.error(
+    '  → pass the record\'s currency as the second argument, formatCurrency(amount, record.currency),\n' +
+      '    or format the SEK twin (record.amount_sek / record.total_sek) when one exists.',
+  )
+}
+
+// 1e1. off-ladder-radius: no baseline, the count is 0 after the 2026-08
+// migration and any new off-ladder radius class is a hard failure.
+if (current.offLadderRadii.length) {
+  failed = true
+  console.error(
+    `\n✗ off-ladder-radius: ${current.offLadderRadii.length} border-radius class(es) outside the locked ladder:`,
+  )
+  current.offLadderRadii.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → use the radius ladder (.claude/rules/design.md): rounded-full for toolbar controls/chips,\n' +
+      '    rounded-xl for overlays, rounded-lg for cards/fields/menu content, rounded-sm for nested\n' +
+      '    leaves. rounded-md, bare `rounded`, rounded-2xl and rounded-[Npx] are dead vocabulary.',
+  )
+}
+
+// 1e1a. ui-uniformity: no baseline, the 2026-09 sweep brought every rule to
+// 0 and any new finding is a hard failure.
+if (current.uiUniformity.length) {
+  failed = true
+  console.error(
+    `\n✗ ui-uniformity: ${current.uiUniformity.length} design-system violation(s) (.claude/rules/design.md):`,
+  )
+  const rules = [...new Set(current.uiUniformity.map((f) => f.rule))]
+  for (const rule of rules) {
+    console.error(`  ${rule}: ${UI_UNIFORMITY_HINTS[rule]}`)
+    current.uiUniformity
+      .filter((f) => f.rule === rule)
+      .forEach((f) => console.error(`    ${f.where}  ${f.detail}`))
+  }
+}
+
+// 1e1b. folded-public-flag: no baseline, the count is 0 and any new in-place
+// comparison is a hard failure. This one is invisible in dev and in the Vercel
+// build (both have real env values); it only misfires in the Docker image, and
+// then silently.
+if (current.foldedPublicFlags.length) {
+  failed = true
+  console.error(
+    `\n✗ folded-public-flag: ${current.foldedPublicFlags.length} NEXT_PUBLIC_* flag(s) compared in place:`,
+  )
+  current.foldedPublicFlags.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → read the value instead: flagEnabled(process.env.NEXT_PUBLIC_X) from @/lib/env/public-flags\n' +
+      '    (or isSelfHosted()). Comparing in place lets the minifier fold the Docker sentinel to\n' +
+      '    false and delete the branch, so the flag can never be switched on by an operator.',
+  )
+}
+
+// 1e1c. direct-ai-client: allowlist in this file, may only shrink. A file
+// outside the allowlist that talks to a model SDK directly is a NEW
+// violation; allowlisted files that no longer do are reported as progress.
+const newDirectAi = current.directAiClients.filter((f) => !DIRECT_AI_CLIENT_ALLOWED.has(f.file))
+const directAiFilesNow = new Set(current.directAiClients.map((f) => f.file))
+const migratedDirectAi = [...DIRECT_AI_CLIENT_ALLOWED].filter((f) => !directAiFilesNow.has(f))
+if (newDirectAi.length) {
+  failed = true
+  console.error(
+    `\n✗ direct-ai-client: ${newDirectAi.length} file(s) outside lib/ai talk to a model SDK directly:`,
+  )
+  newDirectAi.forEach((f) => console.error(`    ${f.file}  (${f.rule})`))
+  console.error(
+    '  → use getAiService() from @/lib/ai (generateText / generateStructured / extractFromDocument).\n' +
+      '    Hosted and self-host resolve the backend from the environment there; a direct SDK call\n' +
+      '    hard-wires one provider and breaks the sovereign self-host path.',
+  )
+}
+
+// 1e2. hand-rolled-invariant: counted, may only go down.
+if (current.handRolledInvariants > (baseline.handRolledInvariants?.count ?? Infinity)) {
+  failed = true
+  console.error(
+    `\n✗ hand-rolled-invariant: ${current.handRolledInvariants} inline copies of a shared format rule ` +
+      `(baseline ${baseline.handRolledInvariants?.count}):`,
+  )
+  console.error(
+    '  → import the rule instead: accountNumberSchema / isoDateSchema / saneIsoDateSchema /\n' +
+      '    fiscalYearSchema from @/lib/invariants/zod, or the ACCOUNT_NUMBER_RE / ISO_DATE_RE\n' +
+      '    constants from @/lib/invariants. See lib/invariants/README.md.',
+  )
+}
+
+// 1f. cross-extension-import: a physical extension route may only import its
+// own extension. No baseline: the count is 0 today, any hit is a hard failure.
+if (current.extensionRoutes.crossImports.length) {
+  failed = true
+  console.error(
+    `\n✗ cross-extension-import: ${current.extensionRoutes.crossImports.length} route(s) under ` +
+      `app/api/extensions/<id>/ import a DIFFERENT extension:`,
+  )
+  current.extensionRoutes.crossImports.forEach((c) =>
+    console.error(`    ${c.file} imports @/extensions/*/${c.imported}/`),
+  )
+  console.error(
+    '  → a physical extension route may only import its own extension; shared logic belongs in lib/\n' +
+      '    or behind the Extension.services registry bridge.',
+  )
+}
+
+// 1g. ungated-extension-route: allowlist lives in extension-route-guards.mjs
+// (UNGATED_EXTENSION_ROUTES) and may only shrink. A NEW physical extension
+// route must check extensionRegistry.get('<id>') before executing extension
+// code, so disabling the extension in extensions.config.json actually
+// disarms the deployed route.
+const newUngatedRoutes = current.extensionRoutes.ungated.filter(
+  (f) => !UNGATED_EXTENSION_ROUTES.has(f),
+)
+const gatedSinceBaseline = [...UNGATED_EXTENSION_ROUTES].filter(
+  (f) => !current.extensionRoutes.ungated.includes(f),
+)
+if (newUngatedRoutes.length) {
+  failed = true
+  console.error(
+    `\n✗ ungated-extension-route: ${newUngatedRoutes.length} new physical extension route(s) run ` +
+      `extension code without checking the registry:`,
+  )
+  newUngatedRoutes.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    "  → call loadExtensions() and refuse (503 EXTENSION_DISABLED) when extensionRegistry.get('<id>')\n" +
+      '    is undefined, like app/api/extensions/push-notifications/cron/route.ts.',
+  )
+}
+
+// 1h. uninitialized-event-route: allowlist lives in event-route-init.mjs
+// (UNINITIALIZED_EMITTING_ROUTES) and may only shrink. The bus drops an event
+// that has no handler, so a route that can emit must have run
+// ensureInitialized() at module scope; withRouteContext does not do it.
+const newUninitializedRoutes = current.eventRouteInit.uninitialized.filter(
+  (f) => !UNINITIALIZED_EMITTING_ROUTES.has(f),
+)
+const initializedSinceBaseline = [...UNINITIALIZED_EMITTING_ROUTES].filter(
+  (f) => !current.eventRouteInit.uninitialized.includes(f),
+)
+if (newUninitializedRoutes.length) {
+  failed = true
+  console.error(
+    `\n✗ uninitialized-event-route: ${newUninitializedRoutes.length} route(s) can emit events but never ` +
+      'wire the event bus, so those events are silently dropped:',
+  )
+  newUninitializedRoutes.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    "  → import { ensureInitialized } from '@/lib/init' and call ensureInitialized() at module\n" +
+      '    scope in the route file (withRouteContext does not wire the bus).',
+  )
+}
+
+// 1c. ledger-scanning-report: any statement generator not in the baseline set
+// is a NEW violation. Grandfathered files stay until they migrate.
+const ledgerScanBaseline = new Set(baseline.ledgerScanningReports?.files ?? [])
+const newLedgerScans = current.ledgerScanningReports.filter((f) => !ledgerScanBaseline.has(f))
+const fixedLedgerScans = (baseline.ledgerScanningReports?.files ?? []).filter(
+  (f) => !current.ledgerScanningReports.includes(f),
+)
+if (newLedgerScans.length) {
+  failed = true
+  console.error(
+    `\n✗ ledger-scanning-report: ${newLedgerScans.length} statement generator(s) aggregate ` +
+      `journal_entry_lines directly instead of going through generateTrialBalance:`,
+  )
+  newLedgerScans.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → call generateTrialBalance with an explicit closingEntry mode. Aggregating raw\n' +
+      '    lines means remembering the resultatavslut yourself, and three reports already\n' +
+      '    forgot (each read ZERO revenue for a closed year while the balance sheet still\n' +
+      '    tied out, so nothing warned). If the report genuinely lists vouchers rather\n' +
+      '    than balances, add it to LEDGER_SCAN_SANCTIONED in this file with a reason.',
+  )
+}
+
+// 1c2. provider-host: a file naming a provider API host outside the
+// grandfathered set is a NEW direct integration in the open repo.
+const providerHostBaseline = new Set(baseline.providerHosts?.files ?? [])
+const newProviderHosts = current.providerHosts.filter((f) => !providerHostBaseline.has(f))
+const fixedProviderHosts = (baseline.providerHosts?.files ?? []).filter((f) => !current.providerHosts.includes(f))
+if (baseline.providerHosts && newProviderHosts.length) {
+  failed = true
+  console.error(
+    `\n✗ provider-host: ${newProviderHosts.length} new file(s) call a provider API host directly:`,
+  )
+  newProviderHosts.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → provider integration logic lives behind the connector, not in the open ledger:\n' +
+      '    route the call through the hosted connector (app/api/connect/*) and the\n' +
+      '    instance-side connector-mode seam (lib/connect/instance/upstreams.ts), or\n' +
+      '    keep the manual file path. If this file IS the connector\'s own hosted adapter\n' +
+      '    side, re-baseline with --update and say so in the PR.',
+  )
+}
+
+// 1d. raw-reference-fetch: per-file ratchet. A file outside the baseline set
+// that fetches reference data raw (see raw-reference-fetch.mjs) is a NEW
+// violation; grandfathered files stay until they move to the hooks. Once the
+// baseline reaches 0, delete the entry so any new site is a hard failure.
+const rawRefBaseline = new Set(baseline.rawReferenceFetch?.files ?? [])
+const newRawRefs = current.rawReferenceFetch.filter((f) => !rawRefBaseline.has(f))
+const fixedRawRefs = (baseline.rawReferenceFetch?.files ?? []).filter(
+  (f) => !current.rawReferenceFetch.includes(f),
+)
+if (newRawRefs.length) {
+  failed = true
+  console.error(
+    `\n✗ raw-reference-fetch: ${newRawRefs.length} file(s) fetch reference data raw ` +
+      `(fiscal periods, settings, accounts, cash accounts, dimensions, templates, customers, suppliers, articles):`,
+  )
+  newRawRefs.forEach((f) => console.error(`    ${f}`))
+  console.error(
+    '  → read it through the hooks in lib/reference-data/hooks.ts (useFiscalPeriods, useAccounts,\n' +
+      '    useCashAccounts, useCompanySettings, useDimensions, useBookingTemplates, useCustomers,\n' +
+      '    useSuppliers, useArticles) and call invalidateReferenceData() after writes. Those hooks\n' +
+      '    share one session cache and are seeded by the dashboard layout, so the fields render\n' +
+      '    on first paint instead of after another round trip.',
+  )
+}
+
+// 1e3. dialog-overflow-risk: per-file ratchet, a finding in a file outside
+// the baseline set is a NEW violation. Grandfathered files stay until fixed.
+const dialogOverflowBaseline = new Set(baseline.dialogOverflowRisk?.files ?? [])
+const newDialogOverflow = current.dialogOverflowRisk.filter(
+  (finding) => !dialogOverflowBaseline.has(finding.file),
+)
+const fixedDialogOverflow = [...dialogOverflowBaseline].filter(
+  (file) => !dialogOverflowFiles.includes(file),
+)
+if (newDialogOverflow.length) {
+  failed = true
+  console.error(
+    `\n✗ dialog-overflow-risk: ${newDialogOverflow.length} overflow-risky pattern(s) in new dialog/sheet file(s):`,
+  )
+  newDialogOverflow.forEach((finding) => console.error(`    ${finding.where}  (${finding.rule})`))
+  console.error(
+    '  → bare-fr-grid-track: a bare 1fr track refuses to shrink below its content; use\n' +
+      '    minmax(0,1fr), plus min-w-0 on the cell when a combobox/long text lives in it.\n' +
+      '    nowrap-in-dialog: give the table/row its own overflow-x-auto wrapper, then allowlist\n' +
+      '    the file in DIALOG_NOWRAP_ALLOWED in this script with a reason.\n' +
+      '    unportaled-wide-overlay: portal the panel to document.body with viewport-clamped\n' +
+      '    geometry, like AccountCombobox\'s dropdown or info-tooltip.tsx.',
+  )
+}
+
+// 1e4. table-without-grant: the migrations written against Supabase's old
+// grant-everything default are grandfathered as a file set. Migration files
+// are immutable, so the set never shrinks; any other file with a finding is
+// NEW and fails, whatever its timestamp.
+const tableWithoutGrantBaseline = new Set(baseline.tableWithoutGrant?.files ?? [])
+const newTableWithoutGrant = current.tableWithoutGrant.filter(
+  (f) => !tableWithoutGrantBaseline.has(f.file),
+)
+if (newTableWithoutGrant.length) {
+  failed = true
+  console.error(
+    `\n✗ table-without-grant: ${newTableWithoutGrant.length} relation(s) or grant(s) in new migrations ` +
+      'leave the Data API roles without an explicit, named grant:',
+  )
+  for (const f of newTableWithoutGrant) {
+    const what =
+      f.kind === 'bulk-grant'
+        ? f.detail
+        : f.kind === 'serial-without-grant'
+          ? `public.${f.relation} has a serial column (${f.sequence}; no grant to ${f.roles.join(', ')})`
+          : `public.${f.relation} (${f.relationKind}; no grant to ${f.roles.join(', ')})`
+    console.error(`    ${f.file}:${f.line}  ${what}`)
+    grantHint(f).forEach((l) => console.error(`        ${l}`))
+  }
+  console.error(
+    '  → new public tables get NO grants by default (migration 20260929220000_own_default_privileges;\n' +
+      '    every Supabase project from 2026-10-30), so without the lines above the table answers 42501\n' +
+      '    to every supabase-js client, the service-role one included. Put them in the same migration,\n' +
+      '    after the CREATE. anon gets a grant only when the table is meant to be public. Template:\n' +
+      '    .claude/skills/supabase-migration/SKILL.md.',
+  )
+}
+
+// 1e. literal-legal-form: count may not increase. A legal form named as a
+// string at a call site (see literal-legal-form.mjs) sends every later form
+// down the branch it was not written for; docs/LEGAL-FORMS.md has the
+// profile reads that replace each shape.
+const literalLegalFormBaseline = baseline.literalLegalForm?.count ?? Infinity
+if (current.literalLegalForm.length > literalLegalFormBaseline) {
+  failed = true
+  console.error(
+    `\n✗ literal-legal-form: ${current.literalLegalForm.length} site(s) compare, default or tag a legal form ` +
+      `as a string literal (baseline ${literalLegalFormBaseline}, +${current.literalLegalForm.length - literalLegalFormBaseline}). ` +
+      'Sites in files changed most recently are the likely additions:',
+  )
+  const byFile = new Map()
+  for (const f of current.literalLegalForm) byFile.set(f.file, (byFile.get(f.file) ?? 0) + 1)
+  for (const [file, n] of [...byFile.entries()].sort((a, b) => a[0].localeCompare(b[0])))
+    console.error(`    ${file} (${n})`)
+  console.error(
+    '  → read a capability from lib/company/entity-type.ts instead (filesIncomeReturn, hasOwners,\n' +
+      '    resultClosingAccounts, preparesArsredovisning, ...), tag data with an array of forms, and\n' +
+      '    never default a missing form: resolveCompanyEntityType() throws instead. docs/LEGAL-FORMS.md.',
+  )
+}
+
+// 2. naive-ore-round: count may not increase.
+if (current.naiveOreRound > baseline.naiveOreRound.count) {
+  failed = true
+  console.error(
+    `\n✗ naive-ore-round: ${current.naiveOreRound} occurrences of Math.round(x*100)/100 ` +
+      `(baseline ${baseline.naiveOreRound.count}, +${current.naiveOreRound - baseline.naiveOreRound.count}).`,
+  )
+  console.error('  → import roundOre from @/lib/money instead.')
+}
+
+// Report ratchet-down progress (informational, never fails).
+if (
+  fixedAuthFiles.length ||
+  fixedLedgerScans.length ||
+  fixedDialogOverflow.length ||
+  fixedRawRefs.length ||
+  fixedProviderHosts.length ||
+  current.naiveOreRound < baseline.naiveOreRound.count ||
+  current.literalLegalForm.length < literalLegalFormBaseline
+) {
+  console.log('\n✓ Progress since baseline:')
+  if (current.literalLegalForm.length < literalLegalFormBaseline)
+    console.log(
+      `    literal-legal-form: -${literalLegalFormBaseline - current.literalLegalForm.length} site(s)`,
+    )
+  if (fixedAuthFiles.length) console.log(`    raw-route-auth: -${fixedAuthFiles.length} file(s)`)
+  if (fixedLedgerScans.length)
+    console.log(`    ledger-scanning-report: -${fixedLedgerScans.length} file(s)`)
+  if (fixedDialogOverflow.length)
+    console.log(`    dialog-overflow-risk: -${fixedDialogOverflow.length} file(s)`)
+  if (fixedRawRefs.length)
+    console.log(`    raw-reference-fetch: -${fixedRawRefs.length} file(s)`)
+  if (current.naiveOreRound < baseline.naiveOreRound.count)
+    console.log(`    naive-ore-round: -${baseline.naiveOreRound.count - current.naiveOreRound} occurrence(s)`)
+  if (fixedProviderHosts.length)
+    console.log(`    provider-host: -${fixedProviderHosts.length} file(s) no longer call a provider directly`)
+  console.log('    Run with --update to ratchet the baseline down and lock in the gains.')
+}
+if (migratedDirectAi.length) {
+  console.log(
+    `\n✓ direct-ai-client progress: ${migratedDirectAi.length} allowlisted file(s) no longer call a model SDK directly.` +
+      ' Remove them from DIRECT_AI_CLIENT_ALLOWED in this script to lock it in:',
+  )
+  migratedDirectAi.forEach((f) => console.log(`    ${f}`))
+}
+if (gatedSinceBaseline.length) {
+  console.log(
+    `\n✓ ungated-extension-route progress: ${gatedSinceBaseline.length} allowlisted route(s) now gated or gone.` +
+      ' Remove them from UNGATED_EXTENSION_ROUTES in scripts/checks/extension-route-guards.mjs to lock it in:',
+  )
+  gatedSinceBaseline.forEach((f) => console.log(`    ${f}`))
+}
+
+if (initializedSinceBaseline.length) {
+  console.log(
+    `\n✓ uninitialized-event-route progress: ${initializedSinceBaseline.length} allowlisted route(s) now wire the bus or no longer emit.` +
+      ' Remove them from UNINITIALIZED_EMITTING_ROUTES in scripts/checks/event-route-init.mjs to lock it in:',
+  )
+  initializedSinceBaseline.forEach((f) => console.log(`    ${f}`))
+}
+
+if (failed) {
+  console.error('\nAntipattern guard failed: see above.')
+  process.exit(1)
+}
+console.log(
+  `\n✓ Antipattern guard passed (raw-route-auth: ${current.rawRouteAuth.length}, naive-ore-round: ${current.naiveOreRound}, hand-rolled-invariant: ${current.handRolledInvariants}, literal-legal-form: ${current.literalLegalForm.length}, ledger-scanning-report: ${current.ledgerScanningReports.length}, direct-jel-insert: 0, direct-invoice-payment-insert: 0, leaky-supabase-client: 0, pinned-dep: 0, raw-user-error: 0, sek-labelled-amount: 0, off-ladder-radius: 0, ui-uniformity: 0, folded-public-flag: 0, cross-extension-import: 0, ungated-extension-route: ${current.extensionRoutes.ungated.length}/${UNGATED_EXTENSION_ROUTES.size} allowlisted, uninitialized-event-route: ${current.eventRouteInit.uninitialized.length}/${UNINITIALIZED_EMITTING_ROUTES.size} allowlisted, dialog-overflow-risk: ${dialogOverflowFiles.length} file(s), raw-reference-fetch: ${current.rawReferenceFetch.length} file(s), client-node-builtin: ${current.clientNodeBuiltins.length}, ambiguous-embed: ${current.ambiguousEmbeds.length}, provider-host: ${current.providerHosts.length} file(s), table-without-grant: ${tableWithoutGrantFiles.length}/${tableWithoutGrantBaseline.size} grandfathered file(s), direct-ai-client: ${current.directAiClients.length}/${DIRECT_AI_CLIENT_ALLOWED.size} allowlisted).`,
+)

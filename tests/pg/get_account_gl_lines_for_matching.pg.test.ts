@@ -1,0 +1,558 @@
+/**
+ * pg-real test for get_account_gl_lines_for_matching
+ * (20260610120000_gl_lines_for_matching.sql, link-count semantics reworked in
+ * 20260723160000_gl_lines_matching_account_scoped_count.sql).
+ *
+ * This RPC backs the N:1 "lägga på flera" feature: it mirrors get_unlinked_gl_lines
+ * but can ALSO surface already-matched vouchers (so a second/third bank
+ * transaction can be attached to one verifikat), each carrying how many
+ * transactions already point at it.
+ *
+ * Since 20260723090000 the link count is scoped to the requested settlement
+ * account: a transaction provably on ANOTHER cash account does not mark the
+ * voucher as matched for p_account_number. This surfaces the unsettled second
+ * leg of an own-account transfer by default (issue #1026) while transactions
+ * with no resolvable cash account keep counting for every account, EXCEPT
+ * (20260828220000) on a non-primary account when the voucher is an own-account
+ * transfer and the NULL row's sign contradicts that account's leg.
+ * (The companion mark_entry_as_opening_balance guard from the same migration
+ * is covered in mark-entry-as-opening-balance.pg.test.ts.)
+ */
+import { describe, it, expect } from 'vitest'
+import type { PoolClient } from 'pg'
+import { randomUUID } from 'node:crypto'
+import { getPool } from './setup'
+import {
+  insertAuthUser,
+  insertPostedBankJournalEntry,
+  insertCashAccount,
+  insertCompany,
+  insertFiscalPeriod,
+  insertPostedJournalEntry as insertAtomicPostedJournalEntry,
+  insertTransaction,
+} from './fixtures'
+
+async function insertPostedJournalEntry(params: {
+  userId: string
+  companyId: string
+  fiscalPeriodId: string
+  entryDate: string
+  sourceType: 'opening_balance' | 'manual' | 'bank_transaction' | 'import' | 'storno' | 'correction'
+  voucherNumber: number
+  amount?: number
+  /** Line rows to book; defaults to the classic 1930 debit / 2091 credit pair. */
+  lines?: Array<{ account: string; debit: number; credit: number }>
+}): Promise<string> {
+  const amount = params.amount ?? 1000
+  const lines = params.lines ?? [
+    { account: '1930', debit: amount, credit: 0 },
+    { account: '2091', debit: 0, credit: amount },
+  ]
+  const entry = {
+    userId: params.userId,
+    companyId: params.companyId,
+    fiscalPeriodId: params.fiscalPeriodId,
+    voucherNumber: params.voucherNumber,
+    entryDate: params.entryDate,
+    description: `Test ${params.sourceType}`,
+    sourceType: params.sourceType,
+    lines: lines.map((line) => ({
+      accountNumber: line.account,
+      debitAmount: line.debit,
+      creditAmount: line.credit,
+    })),
+  }
+  if (params.sourceType === 'bank_transaction') {
+    const transactionId = await insertTransaction({ ...params, date: params.entryDate, amount })
+    return insertPostedBankJournalEntry({ ...entry, transactionId })
+  }
+  return insertAtomicPostedJournalEntry(entry)
+}
+
+// Historical NULL/sign contradictions must remain readable, but the current
+// writer correctly refuses creating them. Clone only the current read RPC and
+// its transaction input into this connection's temporary namespace. Journal,
+// cash and tenant checks continue reading the ordinary valid fixture rows.
+async function withHistoricalBankLink(
+  params: { companyId: string; userId: string; journalEntryId: string; amount: number; date: string; cashAccountId: null },
+  read: (client: PoolClient) => Promise<void>,
+) {
+  await expect(insertTransaction(params)).rejects.toMatchObject({ code: 'PT409', message: 'BANK_ANCHOR_SETTLEMENT_CHANGED' })
+  const client = await getPool().connect()
+  try {
+    await client.query('BEGIN')
+    await client.query(`CREATE TEMP TABLE historical_transactions ON COMMIT DROP AS
+      SELECT id, company_id, journal_entry_id, cash_account_id, amount FROM public.transactions WHERE false`)
+    const { rows } = await client.query<{ definition: string }>(
+      "SELECT pg_get_functiondef('public.get_account_gl_lines_for_matching(uuid,text,date,date,boolean)'::regprocedure) AS definition")
+    const definition = rows[0].definition
+    expect(definition.match(/FUNCTION public\.get_account_gl_lines_for_matching\(/g)).toHaveLength(1)
+    expect(definition.match(/public\.transactions\b/g)).toHaveLength(4)
+    await client.query(definition
+      .replace('FUNCTION public.get_account_gl_lines_for_matching(', 'FUNCTION pg_temp.get_account_gl_lines_for_matching(')
+      .replaceAll('public.transactions', 'pg_temp.historical_transactions'))
+    await client.query(`INSERT INTO pg_temp.historical_transactions(id, company_id, journal_entry_id, cash_account_id, amount)
+      VALUES ($1, $2, $3, NULL, $4)`, [randomUUID(), params.companyId, params.journalEntryId, params.amount])
+    await read(client)
+  } finally {
+    await client.query('ROLLBACK')
+    client.release()
+  }
+}
+
+describe('get_account_gl_lines_for_matching RPC: N:1 candidates', () => {
+  it('returns already-matched vouchers (with link count) only when p_include_matched is true', async () => {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+
+    // One unmatched voucher, one voucher already settled by TWO transactions
+    // (the salary-run-paid-in-two-transfers shape).
+    const unmatchedEntry = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-03-15', sourceType: 'bank_transaction', voucherNumber: 1, amount: 1500,
+    })
+    const matchedEntry = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-03-20', sourceType: 'manual', voucherNumber: 2, amount: 30000,
+      lines: [{ account: '1930', debit: 0, credit: 30000 }, { account: '2999', debit: 30000, credit: 0 }],
+    })
+    await insertTransaction({ companyId, userId, currency: 'SEK', journalEntryId: matchedEntry })
+    await insertTransaction({ companyId, userId, currency: 'SEK', journalEntryId: matchedEntry })
+
+    // Default (p_include_matched=false): parity with get_unlinked_gl_lines: only
+    // the unmatched voucher, count 0.
+    const { rows: unmatchedOnly } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1)`,
+      [companyId],
+    )
+    const unmatchedIds = new Set(unmatchedOnly.map((r) => r.journal_entry_id))
+    expect(unmatchedIds.has(unmatchedEntry)).toBe(true)
+    expect(unmatchedIds.has(matchedEntry)).toBe(false)
+    expect(unmatchedOnly.find((r) => r.journal_entry_id === unmatchedEntry).linked_transaction_count).toBe(0)
+
+    // p_include_matched=true: the matched voucher appears too, reporting both links.
+    const { rows: withMatched } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_include_matched => true)`,
+      [companyId],
+    )
+    const byId = new Map(withMatched.map((r) => [r.journal_entry_id, r.linked_transaction_count]))
+    expect(byId.get(unmatchedEntry)).toBe(0)
+    expect(byId.get(matchedEntry)).toBe(2)
+  })
+
+  it('still excludes opening_balance / storno even with p_include_matched', async () => {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+
+    // An IB and a storno have no bank-feed counterpart and can never be a match
+    // target: the include_matched opt-in must not resurrect them.
+    await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-01-01', sourceType: 'opening_balance', voucherNumber: 1, amount: 50000,
+    })
+    await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-05-02', sourceType: 'storno', voucherNumber: 2, amount: 25000,
+    })
+    const bankEntry = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-05-03', sourceType: 'bank_transaction', voucherNumber: 4, amount: 1500,
+    })
+
+    const { rows } = await getPool().query(
+      `SELECT journal_entry_id, source_type
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_include_matched => true)`,
+      [companyId],
+    )
+
+    const returnedIds = new Set(rows.map((r) => r.journal_entry_id))
+    expect(returnedIds.has(bankEntry)).toBe(true)
+    expect(rows.find((r) => r.source_type === 'opening_balance')).toBeUndefined()
+    expect(rows.find((r) => r.source_type === 'storno')).toBeUndefined()
+  })
+
+  it('offers an unmatched correction voucher, and hides one its bank row already settles (20260923150000)', async () => {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+
+    // The rebooking half of storno-and-rebook is the LIVE booking of the bank
+    // movement. Never matched: it is the candidate the user must be able to pick.
+    const unmatchedCorrection = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-05-02', sourceType: 'correction', voucherNumber: 1, amount: 25000,
+    })
+    // Already settled (correctEntry re-points the original's bank link onto it).
+    const matchedCorrection = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-05-04', sourceType: 'correction', voucherNumber: 2, amount: 4000,
+    })
+    await insertTransaction({ companyId, userId, currency: 'SEK', amount: 4000, date: '2026-05-04', journalEntryId: matchedCorrection })
+
+    const { rows: defaults } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1)`,
+      [companyId],
+    )
+    const defaultIds = new Set(defaults.map((r) => r.journal_entry_id))
+    expect(defaultIds.has(unmatchedCorrection)).toBe(true)
+    expect(defaultIds.has(matchedCorrection)).toBe(false)
+
+    const { rows: withMatched } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_include_matched => true)`,
+      [companyId],
+    )
+    const byId = new Map(withMatched.map((r) => [r.journal_entry_id, r.linked_transaction_count]))
+    expect(byId.get(unmatchedCorrection)).toBe(0)
+    expect(byId.get(matchedCorrection)).toBe(1)
+  })
+})
+
+describe('get_account_gl_lines_for_matching RPC: account-scoped link count (#1026)', () => {
+  it('surfaces the unsettled leg of an own-account transfer by default', async () => {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+    await insertCashAccount({ companyId, ledgerAccount: '1930' })
+    const acc1940 = await insertCashAccount({ companyId, ledgerAccount: '1940' })
+
+    // Own-account transfer: one voucher, debit 1930 / credit 1940. The outgoing
+    // leg (a transaction on the 1940 account) is already matched to it.
+    const transferEntry = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-06-26', sourceType: 'manual', voucherNumber: 1,
+      lines: [
+        { account: '1930', debit: 2344.16, credit: 0 },
+        { account: '1940', debit: 0, credit: 2344.16 },
+      ],
+    })
+    await insertTransaction({
+      companyId, userId, amount: -2344.16, date: '2026-06-26',
+      journalEntryId: transferEntry, cashAccountId: acc1940,
+    })
+
+    // From 1930's perspective the voucher is unmatched: it must appear in the
+    // DEFAULT list (no toggle) with a zero link count, so ranking/auto-select
+    // treat it as a normal candidate.
+    const { rows: on1930 } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1930')`,
+      [companyId],
+    )
+    const row1930 = on1930.find((r) => r.journal_entry_id === transferEntry)
+    expect(row1930).toBeDefined()
+    expect(row1930.linked_transaction_count).toBe(0)
+
+    // From 1940's perspective it IS settled: hidden by default, visible with
+    // the opt-in and carrying the link.
+    const { rows: on1940Default } = await getPool().query(
+      `SELECT journal_entry_id
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1940')`,
+      [companyId],
+    )
+    expect(on1940Default.find((r) => r.journal_entry_id === transferEntry)).toBeUndefined()
+
+    const { rows: on1940Matched } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(
+           p_company_id => $1, p_account_number => '1940', p_include_matched => true)`,
+      [companyId],
+    )
+    expect(on1940Matched.find((r) => r.journal_entry_id === transferEntry).linked_transaction_count).toBe(1)
+  })
+
+  it('keeps same-account N:1 vouchers behind the include_matched opt-in', async () => {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+    const acc1930 = await insertCashAccount({ companyId, ledgerAccount: '1930' })
+
+    // A salary-run shape: one voucher on 1930, partially settled by a first
+    // transfer FROM THE SAME account. The second instalment must still require
+    // the deliberate opt-in; account scoping must not open the N:1 floodgate.
+    const salaryEntry = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-06-25', sourceType: 'manual', voucherNumber: 1, amount: 30000,
+      lines: [{ account: '1930', debit: 0, credit: 30000 }, { account: '2999', debit: 30000, credit: 0 }],
+    })
+    await insertTransaction({
+      companyId, userId, amount: -10000, date: '2026-06-25',
+      journalEntryId: salaryEntry, cashAccountId: acc1930,
+    })
+
+    const { rows: byDefault } = await getPool().query(
+      `SELECT journal_entry_id
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1930')`,
+      [companyId],
+    )
+    expect(byDefault.find((r) => r.journal_entry_id === salaryEntry)).toBeUndefined()
+
+    const { rows: withMatched } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(
+           p_company_id => $1, p_account_number => '1930', p_include_matched => true)`,
+      [companyId],
+    )
+    expect(withMatched.find((r) => r.journal_entry_id === salaryEntry).linked_transaction_count).toBe(1)
+  })
+
+  it('treats transactions without a resolvable cash account as settling every account (no primary elsewhere)', async () => {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+
+    // Legacy shape: the linked transaction carries no cash_account_id, so it
+    // could belong to any account. The voucher must stay hidden by default
+    // (conservative: pre-account-scoping behavior).
+    const legacyEntry = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-06-20', sourceType: 'bank_transaction', voucherNumber: 1, amount: 500,
+    })
+    await insertTransaction({
+      companyId, userId, amount: 500, date: '2026-06-20',
+      journalEntryId: legacyEntry, cashAccountId: null,
+    })
+
+    const { rows: byDefault } = await getPool().query(
+      `SELECT journal_entry_id
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1930')`,
+      [companyId],
+    )
+    expect(byDefault.find((r) => r.journal_entry_id === legacyEntry)).toBeUndefined()
+
+    const { rows: withMatched } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(
+           p_company_id => $1, p_account_number => '1930', p_include_matched => true)`,
+      [companyId],
+    )
+    expect(withMatched.find((r) => r.journal_entry_id === legacyEntry).linked_transaction_count).toBe(1)
+  })
+})
+
+describe('get_account_gl_lines_for_matching RPC: direction-aware NULL links (20260828220000)', () => {
+  /** 1930 primary + 1931 + 1940, the three-account shape from the field report. */
+  async function seedThreeAccounts(withPrimary = true) {
+    const userId = await insertAuthUser()
+    const companyId = await insertCompany({ createdBy: userId })
+    const fiscalPeriodId = await insertFiscalPeriod({
+      userId, companyId, periodStart: '2026-01-01', periodEnd: '2026-12-31',
+    })
+    await insertCashAccount({ companyId, ledgerAccount: '1930', isPrimary: withPrimary })
+    await insertCashAccount({ companyId, ledgerAccount: '1931' })
+    await insertCashAccount({ companyId, ledgerAccount: '1940' })
+    return { userId, companyId, fiscalPeriodId }
+  }
+
+  /** Transfer voucher moving amount from 1930 into 1931 (debit 1931 / credit 1930). */
+  async function insertTransferInto1931(params: {
+    userId: string
+    companyId: string
+    fiscalPeriodId: string
+    amount: number
+  }): Promise<string> {
+    return insertPostedJournalEntry({
+      userId: params.userId,
+      companyId: params.companyId,
+      fiscalPeriodId: params.fiscalPeriodId,
+      entryDate: '2026-01-27',
+      sourceType: 'import',
+      voucherNumber: 1,
+      lines: [
+        { account: '1931', debit: params.amount, credit: 0 },
+        { account: '1930', debit: 0, credit: params.amount },
+      ],
+    })
+  }
+
+  it('flags the transfer leg a sign-contradicting NULL row cannot settle (non-primary account)', async () => {
+    const { userId, companyId, fiscalPeriodId } = await seedThreeAccounts()
+
+    // The field-report shape: money moved 1930 -> 1931; the voucher's only link
+    // is the 1930-side CSV row (cash_account_id NULL, amount negative). That
+    // outflow row cannot be the settlement of the +2593.75 leg on 1931.
+    const transfer = await insertTransferInto1931({ userId, companyId, fiscalPeriodId, amount: 2593.75 })
+    await insertTransaction({
+      companyId, userId, amount: -2593.75, date: '2026-01-27',
+      journalEntryId: transfer, cashAccountId: null,
+    })
+
+    // On 1931 (non-primary) the voucher must surface as unmatched, so the
+    // status card lists BOTH transfer legs and unexplained_difference nets to 0.
+    const { rows: on1931 } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1931')`,
+      [companyId],
+    )
+    const row1931 = on1931.find((r) => r.journal_entry_id === transfer)
+    expect(row1931).toBeDefined()
+    expect(row1931.linked_transaction_count).toBe(0)
+
+    // On 1930 (the primary card) the NULL row keeps counting: not listed.
+    const { rows: on1930 } = await getPool().query(
+      `SELECT journal_entry_id
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1930')`,
+      [companyId],
+    )
+    expect(on1930.find((r) => r.journal_entry_id === transfer)).toBeUndefined()
+  })
+
+  it('keeps a sign-contradicting NULL row settling the PRIMARY card (legacy_null_ok)', async () => {
+    const { userId, companyId, fiscalPeriodId } = await seedThreeAccounts()
+
+    // Reverse transfer: money moves 1931 -> 1930 (debit 1930 / credit 1931),
+    // linked only to the 1931-side outflow row (NULL, negative). The sign
+    // contradicts 1930's +net, so ONLY the primary-account exemption
+    // (condition 1) keeps the voucher settled on 1930. Without this case the
+    // primary assertion above also passes via sign match, leaving the
+    // exemption untested.
+    const reverse = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-01-28', sourceType: 'import', voucherNumber: 3,
+      lines: [
+        { account: '1930', debit: 2593.75, credit: 0 },
+        { account: '1931', debit: 0, credit: 2593.75 },
+      ],
+    })
+    await withHistoricalBankLink({
+      companyId, userId, amount: -2593.75, date: '2026-01-28',
+      journalEntryId: reverse, cashAccountId: null,
+    }, async client => {
+      const { rows: on1930 } = await client.query(
+        `SELECT journal_entry_id
+           FROM pg_temp.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1930')`,
+        [companyId],
+      )
+      expect(on1930.find((r) => r.journal_entry_id === reverse)).toBeUndefined()
+
+      // On 1931 (non-primary) the same row's sign MATCHES the -net leg: settled.
+      const { rows: on1931 } = await client.query(
+        `SELECT journal_entry_id
+           FROM pg_temp.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1931')`,
+        [companyId],
+      )
+      expect(on1931.find((r) => r.journal_entry_id === reverse)).toBeUndefined()
+    })
+  })
+
+  it('keeps a sign-compatible NULL row settling the transfer leg', async () => {
+    const { userId, companyId, fiscalPeriodId } = await seedThreeAccounts()
+
+    // Same transfer, but the NULL row is an inflow: it plausibly IS the 1931
+    // leg, so the voucher stays settled there (conservative).
+    const transfer = await insertTransferInto1931({ userId, companyId, fiscalPeriodId, amount: 2593.75 })
+    await withHistoricalBankLink({
+      companyId, userId, amount: 2593.75, date: '2026-01-27',
+      journalEntryId: transfer, cashAccountId: null,
+    }, async client => {
+      const { rows: on1931 } = await client.query(
+        `SELECT journal_entry_id
+           FROM pg_temp.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1931')`,
+        [companyId],
+      )
+      expect(on1931.find((r) => r.journal_entry_id === transfer)).toBeUndefined()
+    })
+  })
+
+  it('never flags a single-bank-leg voucher over a NULL link, whatever the sign', async () => {
+    const { userId, companyId, fiscalPeriodId } = await seedThreeAccounts()
+
+    // Unbackfilled legacy shape: an income voucher on non-primary 1931 whose
+    // NULL row genuinely belongs to 1931 but points the "wrong" way relative
+    // to nothing: only one bank leg exists, so the sign test must not run.
+    // Flagging these was the measured -37 000 kr false-alarm regression.
+    const income = await insertPostedJournalEntry({
+      userId, companyId, fiscalPeriodId,
+      entryDate: '2026-02-10', sourceType: 'import', voucherNumber: 2,
+      lines: [
+        { account: '1931', debit: 0, credit: 1200 },
+        { account: '5810', debit: 1200, credit: 0 },
+      ],
+    })
+    await withHistoricalBankLink({
+      companyId, userId, amount: 1200, date: '2026-02-10',
+      journalEntryId: income, cashAccountId: null,
+    }, async client => {
+      const { rows: on1931 } = await client.query(
+        `SELECT journal_entry_id
+           FROM pg_temp.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1931')`,
+        [companyId],
+      )
+      expect(on1931.find((r) => r.journal_entry_id === income)).toBeUndefined()
+    })
+  })
+
+  it('keeps full legacy behavior when the company has no primary cash account', async () => {
+    const { userId, companyId, fiscalPeriodId } = await seedThreeAccounts(false)
+
+    const transfer = await insertTransferInto1931({ userId, companyId, fiscalPeriodId, amount: 2593.75 })
+    await insertTransaction({
+      companyId, userId, amount: -2593.75, date: '2026-01-27',
+      journalEntryId: transfer, cashAccountId: null,
+    })
+
+    // No primary anywhere: NULL rows count for every account, exactly as before.
+    const { rows: on1931 } = await getPool().query(
+      `SELECT journal_entry_id
+         FROM public.get_account_gl_lines_for_matching(p_company_id => $1, p_account_number => '1931')`,
+      [companyId],
+    )
+    expect(on1931.find((r) => r.journal_entry_id === transfer)).toBeUndefined()
+  })
+
+  it('applies the same sign test to junction links and to the matched link count', async () => {
+    const { userId, companyId, fiscalPeriodId } = await seedThreeAccounts()
+
+    // Junction-anchored variant of the field-report shape: the NULL outflow row
+    // is linked through transaction_voucher_links instead of the pointer.
+    const transfer = await insertTransferInto1931({ userId, companyId, fiscalPeriodId, amount: 2593.75 })
+    const txId = await insertTransaction({
+      companyId, userId, amount: -2593.75, date: '2026-01-27',
+      journalEntryId: null, cashAccountId: null,
+    })
+    await getPool().query(
+      `INSERT INTO public.transaction_voucher_links
+         (id, user_id, company_id, transaction_id, journal_entry_id, allocated_amount, role)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'other')`,
+      [userId, companyId, txId, transfer, 2593.75],
+    )
+
+    const { rows: on1931 } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(
+           p_company_id => $1, p_account_number => '1931', p_include_matched => true)`,
+      [companyId],
+    )
+    const row = on1931.find((r) => r.journal_entry_id === transfer)
+    // Listed (include_matched or not) and the sign-contradicting junction link
+    // is excluded from the account's link count.
+    expect(row).toBeDefined()
+    expect(row.linked_transaction_count).toBe(0)
+
+    // On the primary 1930 card the same junction link still counts.
+    const { rows: on1930 } = await getPool().query(
+      `SELECT journal_entry_id, linked_transaction_count
+         FROM public.get_account_gl_lines_for_matching(
+           p_company_id => $1, p_account_number => '1930', p_include_matched => true)`,
+      [companyId],
+    )
+    expect(on1930.find((r) => r.journal_entry_id === transfer).linked_transaction_count).toBe(1)
+  })
+})

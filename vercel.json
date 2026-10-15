@@ -1,0 +1,178 @@
+{
+  "buildCommand": "NODE_OPTIONS=--max-old-space-size=6144 npm run build",
+  "regions": ["arn1"],
+  "crons": [
+    {
+      "path": "/api/import/sie/invariants/cron",
+      "schedule": "15 4 * * 1"
+    },
+    {
+      "path": "/api/import/sie/worker/cron",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/deadlines/status/cron",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/invoices/recurring/cron",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/settings/booking-templates/sync/cron",
+      "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/tax-deadlines/cron",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/extensions/enable-banking/sync/cron",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/extensions/enable-banking/health-probe/cron",
+      "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/extensions/stripe/transactions/cron",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/extensions/woocommerce/orders/cron",
+      "schedule": "45 3 * * *"
+    },
+    {
+      "path": "/api/extensions/shopify/orders/cron",
+      "schedule": "15 3 * * *"
+    },
+    {
+      "path": "/api/extensions/zettle/orders/cron",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/documents/verify/cron",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/documents/reanchor/cron",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/sandbox/cleanup/cron",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/events/cleanup/cron",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/extensions/cloud-backup/auto-sync/cron",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/idempotency/cleanup/cron",
+      "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/pending-operations/expire/cron",
+      "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/extensions/skatteverket/ombud/sync/cron",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/extensions/skatteverket/skattekonto/sync/cron",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/extensions/skatteverket/agi/kvittenser/cron",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/extensions/skatteverket/vat/kvittenser/cron",
+      "schedule": "30 */2 * * *"
+    },
+    {
+      "path": "/api/webhooks/dispatch/cron",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/extensions/whatsapp-inbox/sweep/cron",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/extensions/whatsapp-inbox/retention/cron",
+      "schedule": "15 4 * * *"
+    },
+    {
+      "path": "/api/extensions/invoice-inbox/sweep/cron",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/extensions/invoice-inbox/underlag-reconcile/cron",
+      "schedule": "45 5 * * *"
+    },
+    {
+      "path": "/api/extensions/arcim-migration/worker/cron",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/extensions/arcim-migration/complete-invoice-lines/cron",
+      "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/extensions/arcim-migration/cleanup/cron",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/bookkeeping/accruals/post-due/cron",
+      "schedule": "15 5 * * *"
+    },
+    {
+      "path": "/api/receipt-hunt/cron",
+      "schedule": "30 5 * * *"
+    },
+    {
+      "path": "/api/peppol/inbound/cron",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/agent/categorize/cron",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/peppol/outbound/status/cron",
+      "schedule": "5,20,35,50 * * * *"
+    },
+    {
+      "path": "/api/parties/resolver/cron",
+      "schedule": "45 5 * * *"
+    },
+    {
+      "path": "/api/documents/read/cron",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/documents/classify/cron",
+      "schedule": "2-59/5 * * * *"
+    },
+    {
+      "path": "/api/documents/jobs/cron",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/arkiv/derive/cron",
+      "schedule": "40 4 * * *"
+    },
+    {
+      "path": "/api/arkiv/lint/cron",
+      "schedule": "10 5 * * *"
+    },
+    {
+      "path": "/api/community/sync/cron",
+      "schedule": "23 * * * *"
+    }
+  ]
+}
