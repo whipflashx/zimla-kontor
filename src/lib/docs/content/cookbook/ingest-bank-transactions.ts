@@ -15,7 +15,7 @@ This is the operational companion to the [Transactions reference](/docs/api/refe
 \`POST /imports/bank\` accepts multipart upload. Format detection is automatic; the detected format is reported in the polled operation result (\`result.format\`), not in the upload response. The endpoint kicks off an async operation: you'll poll for the result.
 
 \`\`\`bash
-curl "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/imports/bank" \\
+curl "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/imports/bank" \\
   -H "Authorization: Bearer gnubok_sk_test_..." \\
   -H "Idempotency-Key: $(uuidgen)" \\
   -F "file=@statement-2026-04.csv"
@@ -41,7 +41,7 @@ Response is a 202 with the operation handle:
 Polling is currently the way to detect import completion. \`operation.completed\` is named in the response as the intended push signal but is not yet a deliverable webhook event, so poll for now; the categorisation events (\`transaction.categorized\` / \`transaction.reconciled\`) that fire later in this flow are subscribable today ([cookbook](/docs/api/cookbook/webhooks)). The operation lifecycle is \`queued → running → succeeded | failed | cancelled\`.
 
 \`\`\`bash
-curl "https://app.gnubok.se/api/v1/operations/$OPERATION_ID" \\
+curl "https://kontor.zimla.io/api/v1/operations/$OPERATION_ID" \\
   -H "Authorization: Bearer gnubok_sk_test_..."
 \`\`\`
 
@@ -78,7 +78,7 @@ Note the dedup: each row gets a stable \`external_id\` (composed from date + amo
 After ingest the rows are in \`transactions\` but unbooked (\`journal_entry_id: null\`, \`category: null\`). The list \`status\` filter takes \`booked\` | \`unbooked\` (\`unbooked\` filters on \`journal_entry_id IS NULL\`), and date filtering uses \`date_from\` / \`date_to\` (there is no \`period\` param). List them:
 
 \`\`\`bash
-curl "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/transactions?status=unbooked&date_from=2026-04-01&date_to=2026-04-30&limit=50" \\
+curl "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/transactions?status=unbooked&date_from=2026-04-01&date_to=2026-04-30&limit=50" \\
   -H "Authorization: Bearer gnubok_sk_test_..."
 \`\`\`
 
@@ -120,7 +120,7 @@ In a REST integration you supply the category yourself: choose a \`category\`, o
 \`POST /transactions/{id}/categorize\` books the transaction (creates the verifikation directly — it is not staged for approval). \`is_business\` is required. Then supply a mapping: a \`template_id\` or \`counterparty_template_id\` (these take precedence), or a \`category\` for the default mapping. \`account_override\` is an optional posting-account override that **combines with \`category\`** — it applies only when neither \`template_id\` nor \`counterparty_template_id\` is present (as in the example below). Dry-run first to preview the resolved mapping:
 
 \`\`\`bash
-curl "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/transactions/$TX_ID/categorize?dry_run=true" \\
+curl "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/transactions/$TX_ID/categorize?dry_run=true" \\
   -H "Authorization: Bearer gnubok_sk_test_..." \\
   -H "Idempotency-Key: $(uuidgen)" \\
   -H "Content-Type: application/json" \\
@@ -163,7 +163,7 @@ Drop \`?dry_run=true\` and reuse the same \`Idempotency-Key\` to commit. The com
 For a backlog, use \`POST /transactions/batch-categorize\` (up to 100 transactions per call, dry-runnable, partial-success on commit):
 
 \`\`\`bash
-curl "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/transactions/batch-categorize" \\
+curl "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/transactions/batch-categorize" \\
   -H "Authorization: Bearer gnubok_sk_test_..." \\
   -H "Idempotency-Key: $(uuidgen)" \\
   -H "Content-Type: application/json" \\
@@ -195,7 +195,7 @@ Response shape: every item carries its own \`ok\` flag and \`transaction_id\`:
 When a transaction is a customer payment, match it to the open invoice via \`POST /transactions/{id}/match-invoice\` instead of \`categorize\`. The engine posts the payment voucher (debit 1930, credit 1510) AND marks the invoice paid in a single transaction.
 
 \`\`\`bash
-curl -X POST "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/transactions/$TX_ID/match-invoice" \\
+curl -X POST "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/transactions/$TX_ID/match-invoice" \\
   -H "Authorization: Bearer gnubok_sk_test_..." \\
   -H "Idempotency-Key: $(uuidgen)" \\
   -H "Content-Type: application/json" \\

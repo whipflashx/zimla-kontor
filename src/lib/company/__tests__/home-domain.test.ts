@@ -258,7 +258,7 @@ describe('resolveCockpitHref', () => {
         hostBrandTeamId: 'byra-2',
         canonicalDomain,
       }),
-    ).toBe('https://app.gnubok.se/clients')
+    ).toBe('https://kontor.zimla.io/clients')
   })
 
   it('byrå with zero client companies still resolves via its own brand entry', () => {

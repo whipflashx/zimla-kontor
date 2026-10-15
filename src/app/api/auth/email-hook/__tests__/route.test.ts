@@ -20,12 +20,12 @@ vi.mock('@/lib/branding/resolve', () => ({
   resolveBrandForCompany: vi.fn(),
 }))
 
-const CANONICAL = 'https://app.gnubok.se'
+const CANONICAL = 'https://kontor.zimla.io'
 /** The one registered brand host in these tests; everything else is unknown. */
 const BRAND_HOST = 'app.siffra.se'
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io' }),
 }))
 
 const sendEmailMock = vi.hoisted(() => vi.fn())
@@ -86,9 +86,9 @@ function hookPayload(overrides?: {
     email_data: {
       token: '123456',
       token_hash: 'hash-1',
-      redirect_to: 'https://app.gnubok.se/auth/callback?next=/reset-password',
+      redirect_to: 'https://kontor.zimla.io/auth/callback?next=/reset-password',
       email_action_type: 'recovery',
-      site_url: 'https://app.gnubok.se',
+      site_url: 'https://kontor.zimla.io',
       ...overrides?.email_data,
     },
   })
@@ -147,7 +147,7 @@ describe('POST /api/auth/email-hook', () => {
     expect(options.replyTo).toBeUndefined()
     // token_hash + verifyOtp pattern on the originating host, preserving the
     // existing next=/reset-password query.
-    expect(options.text).toContain('https://app.gnubok.se/auth/callback?next=%2Freset-password')
+    expect(options.text).toContain('https://kontor.zimla.io/auth/callback?next=%2Freset-password')
     expect(options.text).toContain('token_hash=hash-1')
     expect(options.text).toContain('type=recovery')
   })
@@ -205,7 +205,7 @@ describe('POST /api/auth/email-hook', () => {
             email_action_type: 'email_change',
             token_hash: 'hash-new-address',
             token_hash_new: 'hash-current-address',
-            redirect_to: 'https://app.gnubok.se/auth/callback',
+            redirect_to: 'https://kontor.zimla.io/auth/callback',
           },
         }),
       ),
@@ -240,13 +240,13 @@ describe('POST /api/auth/email-hook', () => {
         hookPayload({
           email_data: {
             email_action_type: 'magiclink',
-            redirect_to: 'https://app.gnubok.se/settings/account',
+            redirect_to: 'https://kontor.zimla.io/settings/account',
           },
         }),
       ),
     )
     const options = sendEmailMock.mock.calls[0][0]
-    expect(options.text).toContain('https://app.gnubok.se/auth/callback?next=%2Fsettings%2Faccount')
+    expect(options.text).toContain('https://kontor.zimla.io/auth/callback?next=%2Fsettings%2Faccount')
     expect(options.text).toContain('type=magiclink')
   })
 
@@ -274,7 +274,7 @@ describe('POST /api/auth/email-hook', () => {
 
       const options = sendEmailMock.mock.calls[0][0]
       expect(options.text).toContain(
-        'https://app.gnubok.se/auth/callback?token_hash=hash-1&type=recovery',
+        'https://kontor.zimla.io/auth/callback?token_hash=hash-1&type=recovery',
       )
       expect(options.text).not.toContain('evil.example')
       expect(options.text).not.toContain(':8443')
@@ -319,7 +319,7 @@ describe('POST /api/auth/email-hook', () => {
     it('falls back to the canonical callback when redirect_to is missing', async () => {
       await POST(signedRequest(hookPayload({ email_data: { redirect_to: undefined } })))
       const options = sendEmailMock.mock.calls[0][0]
-      expect(options.text).toContain('https://app.gnubok.se/auth/callback?token_hash=hash-1')
+      expect(options.text).toContain('https://kontor.zimla.io/auth/callback?token_hash=hash-1')
     })
 
     it('returns 500 without sending when the brand read fails after the origin resolved', async () => {
@@ -342,7 +342,7 @@ describe('POST /api/auth/email-hook', () => {
       const res = await POST(signedRequest(hookPayload()))
       expect(res.status).toBe(200)
       const options = sendEmailMock.mock.calls[0][0]
-      expect(options.text).toContain('https://app.gnubok.se/auth/callback?next=%2Freset-password')
+      expect(options.text).toContain('https://kontor.zimla.io/auth/callback?next=%2Freset-password')
       expect(options.fromName).toBeUndefined()
     })
 

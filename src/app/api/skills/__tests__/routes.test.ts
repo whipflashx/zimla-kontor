@@ -15,7 +15,7 @@ const later = vi.hoisted(() => ({ tasks: [] as Array<() => unknown> }))
 vi.mock('next/server', async (original) => ({ ...(await original<typeof import('next/server')>()), after: (task: () => unknown) => { later.tasks.push(task) } }))
 vi.mock('@/lib/agent-skills/community-notify', () => ({ notifyReviewersOfSubmission: vi.fn() }))
 vi.mock('@/lib/auth/api-keys', () => ({ createServiceClientNoCookies: vi.fn(() => ({ service: true })) }))
-vi.mock('@/lib/domains/trusted-app-origin', () => ({ getCanonicalAppOrigin: () => 'https://app.accounted.se' }))
+vi.mock('@/lib/domains/trusted-app-origin', () => ({ getCanonicalAppOrigin: () => 'https://kontor.zimla.io' }))
 // Sharing is held back from release by COMMUNITY_OPEN; the submit tests below run with it open.
 const community = vi.hoisted(() => ({ open: true }))
 vi.mock('@/lib/agent-skills/agents', async (original) => ({ ...(await original<object>()), get COMMUNITY_OPEN() { return community.open } }))
@@ -124,7 +124,7 @@ describe('skills HTTP routes', () => {
     expect((await PATCH(spoofed, params)).status).toBe(200)
     expect(notifyReviewersOfSubmission).not.toHaveBeenCalled()
     await Promise.all(later.tasks.map((task) => task()))
-    expect(notifyReviewersOfSubmission).toHaveBeenCalledWith({ service: true }, { title: 'Own', handle: 'author', kind: 'rules' }, 'https://app.accounted.se/skills/granskning')
+    expect(notifyReviewersOfSubmission).toHaveBeenCalledWith({ service: true }, { title: 'Own', handle: 'author', kind: 'rules' }, 'https://kontor.zimla.io/skills/granskning')
   })
   it('does not tell reviewers about a share that was not saved', async () => {
     enqueue({ data: null })

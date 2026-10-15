@@ -20,23 +20,23 @@ describe('resolveCallbackOrigin', () => {
   })
 
   it('prefers the canonical app origin over the request origin', () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se'
-    expect(resolveCallbackOrigin('https://app.gnubok.se')).toBe(
-      'https://app.accounted.se'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
+    expect(resolveCallbackOrigin('https://kontor.zimla.io')).toBe(
+      'https://kontor.zimla.io'
     )
   })
 
   it('normalizes a trailing slash so the redirect URI stays byte-identical', () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se/'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io/'
     expect(resolveCallbackOrigin('https://other.example')).toBe(
-      'https://app.accounted.se'
+      'https://kontor.zimla.io'
     )
   })
 
   it('strips any path from the configured URL', () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se/dashboard'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io/dashboard'
     expect(resolveCallbackOrigin('https://other.example')).toBe(
-      'https://app.accounted.se'
+      'https://kontor.zimla.io'
     )
   })
 

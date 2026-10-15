@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest'
 import { isForbiddenOrigin, forbiddenOriginResponse } from '../origin-guard'
 import type { mcpServerExtension as McpServerExtension } from '../index'
 
-const ENDPOINT = 'https://app.gnubok.se/api/extensions/ext/mcp-server/mcp'
+const ENDPOINT = 'https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp'
 
 function makeRequest(headers: Record<string, string> = {}, url = ENDPOINT): Request {
   return new Request(url, { method: 'POST', headers })
@@ -32,7 +32,7 @@ describe('isForbiddenOrigin', () => {
   it('allows a same-origin browser request (Origin host matches Host header)', () => {
     expect(
       isForbiddenOrigin(
-        makeRequest({ origin: 'https://app.gnubok.se', host: 'app.gnubok.se' }),
+        makeRequest({ origin: 'https://kontor.zimla.io', host: 'app.gnubok.se' }),
       ),
     ).toBe(false)
   })
@@ -49,11 +49,11 @@ describe('isForbiddenOrigin', () => {
   })
 
   it('allows an Origin matching NEXT_PUBLIC_APP_URL even when Host was rewritten by a proxy', () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.gnubok.se'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
     expect(
       isForbiddenOrigin(
         makeRequest(
-          { origin: 'https://app.gnubok.se', host: 'internal-proxy.local' },
+          { origin: 'https://kontor.zimla.io', host: 'internal-proxy.local' },
           'https://internal-proxy.local/api/extensions/ext/mcp-server/mcp',
         ),
       ),
@@ -71,7 +71,7 @@ describe('isForbiddenOrigin', () => {
   it('rejects a foreign Origin that only differs by port', () => {
     expect(
       isForbiddenOrigin(
-        makeRequest({ origin: 'https://app.gnubok.se:8443', host: 'app.gnubok.se' }),
+        makeRequest({ origin: 'https://kontor.zimla.io:8443', host: 'app.gnubok.se' }),
       ),
     ).toBe(true)
   })

@@ -72,7 +72,7 @@ Skrivningar fungerar precis som via MCP. Ett verktyg som ändrar i bokföringen 
 \`\`\`text
 Staged for approval: operation 9a44..., risk medium. Nothing is booked yet.
 When the user approves it, run: accounted call approve_pending_operation '{"operation_id":"9a44...","company_id":"..."}'
-Or approve it in the browser: https://app.accounted.se/pending
+Or approve it in the browser: https://kontor.zimla.io/pending
 \`\`\`
 
 Läs förhandsvisningen och godkänn sedan med kommandot eller under **/pending** i appen. En agent ska visa dig förhandsvisningen och fråga dig innan den kör godkännandet.

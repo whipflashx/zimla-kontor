@@ -31,7 +31,7 @@ describe('getBjornLundenActivationKey', () => {
 
 describe('buildLundifyActivationUrl', () => {
   const KEY = '36b2bf61-0514-4825-a8a5-08cf151176f2';
-  const CALLBACK = 'https://app.accounted.se/api/extensions/ext/arcim-migration/callback';
+  const CALLBACK = 'https://kontor.zimla.io/api/extensions/ext/arcim-migration/callback';
 
   it('follows BL: /activate-integration/{key}/{encodedRedirectUrl}?extra={state}', () => {
     const url = buildLundifyActivationUrl(KEY, CALLBACK, 'state-abc_123');

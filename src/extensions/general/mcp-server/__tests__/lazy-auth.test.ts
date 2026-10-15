@@ -208,7 +208,7 @@ describe('MCP lazy authentication', () => {
     // app.accounted.se, and clients refused the mismatch against the document
     // app.gnubok.se serves about itself, so OAuth could never start there.
     const response = await handleMcpRequest(
-      new Request('https://app.gnubok.se/api/extensions/ext/mcp-server/mcp', {
+      new Request('https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', host: 'app.gnubok.se' },
         body: JSON.stringify({
@@ -221,7 +221,7 @@ describe('MCP lazy authentication', () => {
     )
     expect(response.status).toBe(401)
     expect(response.headers.get('WWW-Authenticate')).toBe(
-      'Bearer resource_metadata="https://app.gnubok.se/.well-known/oauth-protected-resource"'
+      'Bearer resource_metadata="https://kontor.zimla.io/.well-known/oauth-protected-resource"'
     )
   })
 

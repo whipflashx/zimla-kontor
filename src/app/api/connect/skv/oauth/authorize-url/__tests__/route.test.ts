@@ -26,7 +26,7 @@ const body = (o: Record<string, unknown> = {}) => ({
 
 beforeEach(() => {
   vi.clearAllMocks()
-  process.env.NEXT_PUBLIC_SKV_OAUTH_BASE_URL = 'https://app.gnubok.se'
+  process.env.NEXT_PUBLIC_SKV_OAUTH_BASE_URL = 'https://kontor.zimla.io'
   key = { ...key, scopes: ['skatteverket'], limits: { bank_connections_per_company: 1, skv_connections_per_company: 1, sync_min_interval_s: 0 } }
   hh.budget.mockResolvedValue({ ok: true })
   hh.count.mockResolvedValue(0)
@@ -55,7 +55,7 @@ describe('POST /api/connect/skv/oauth/authorize-url', () => {
     const { status, body: b } = await parseJsonResponse<{ data: { authorize_url: string; redirect_uri: string; connector_state: string } }>(res)
     expect(status).toBe(200)
     expect(hh.pending).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ service: 'skatteverket', companyRef: 'company-1', pendingState: 'ck1.signed' }))
-    expect(b.data.redirect_uri).toBe('https://app.gnubok.se/api/extensions/ext/skatteverket/callback')
+    expect(b.data.redirect_uri).toBe('https://kontor.zimla.io/api/extensions/ext/skatteverket/callback')
     expect(b.data.connector_state).toBe('ck1.signed')
     expect(b.data.authorize_url).toContain('state=ck1.signed')
   })

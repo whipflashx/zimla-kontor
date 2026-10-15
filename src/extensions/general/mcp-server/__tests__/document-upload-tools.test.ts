@@ -88,7 +88,7 @@ describe('MCP model-free document upload tools', () => {
   // out the same-origin /api/storage proxy URL instead.
   it('serves the upload URL from the app origin when the signed URL points at our Storage host', async () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://pwxtzglxptnnvjrpixpg.supabase.co')
-    vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.accounted.se')
+    vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://kontor.zimla.io')
     mocks.createPendingDocumentUpload.mockResolvedValue({
       uploadId,
       signedUrl:
@@ -105,7 +105,7 @@ describe('MCP model-free document upload tools', () => {
 
     expect(result).toMatchObject({
       upload_url:
-        'https://app.accounted.se/api/storage/upload/sign/documents/co/user/pending/up/invoice.pdf?token=signed',
+        'https://kontor.zimla.io/api/storage/upload/sign/documents/co/user/pending/up/invoice.pdf?token=signed',
     })
   })
 

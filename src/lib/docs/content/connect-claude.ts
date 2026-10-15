@@ -7,7 +7,7 @@ _Den här sidan på svenska: [Anslut Claude](/docs/api/anslut-claude)._
 Zimla Kontor ships an [MCP](https://modelcontextprotocol.io) server that exposes the full bookkeeping engine (150+ tools) to any MCP client. The endpoint is:
 
 \`\`\`
-https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted
+https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted
 \`\`\`
 
 There are three ways to connect, depending on your client. All three reach the same tools and the same approval model: read tools answer immediately, write tools (categorise, mark paid, create voucher, year-end) **stage a pending operation** that you confirm in chat or in the **/pending** web UI before anything is booked.
@@ -37,7 +37,7 @@ Signed in, but Claude still says it cannot reach the server? Ask again in the sa
 In **claude.ai** (Settings → Connectors) or **Claude Desktop** (Settings → Connectors → Add custom connector), choose **Add custom connector** and paste:
 
 \`\`\`
-https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted&client=claude-connector&auth=required
+https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted&client=claude-connector&auth=required
 \`\`\`
 
 Keep all three parameters. \`tool_namespace=accounted\` selects the tool names this guide uses. \`auth=required\` makes the dialog detect the sign-in (**Always required**): without it the server accepts an anonymous handshake, the dialog suggests **None**, and a connector added with that default never opens the sign-in. If you do add the bare URL, choose **Required when the server asks** by hand. \`client=claude-connector\` is telemetry-only.
@@ -69,7 +69,7 @@ Prefer plain MCP without the workflow commands? \`claude mcp add\` wires the sam
 
 \`\`\`bash
 claude mcp add --transport http accounted \\
-  "https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted&client=claude-code"
+  "https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted&client=claude-code"
 \`\`\`
 
 **Cursor** has no plugin format and does not read \`claude mcp add\`. Add the server to \`~/.cursor/mcp.json\` (global) or \`.cursor/mcp.json\` (per project) instead:
@@ -78,7 +78,7 @@ claude mcp add --transport http accounted \\
 {
   "mcpServers": {
     "accounted": {
-      "url": "https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted&client=cursor"
+      "url": "https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted&client=cursor"
     }
   }
 }

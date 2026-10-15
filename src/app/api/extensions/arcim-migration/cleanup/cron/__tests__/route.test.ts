@@ -30,7 +30,7 @@ describe('provider OAuth expiry cleanup', () => {
   })
 
   function request(authorization = 'Bearer test-cron-secret') {
-    return new Request('https://app.accounted.se/api/extensions/arcim-migration/cleanup/cron', {
+    return new Request('https://kontor.zimla.io/api/extensions/arcim-migration/cleanup/cron', {
       headers: authorization ? { authorization } : {},
     })
   }

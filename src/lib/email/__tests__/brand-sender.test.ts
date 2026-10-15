@@ -7,7 +7,7 @@ vi.mock('@/lib/branding/resolve', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io' }),
 }))
 
 import {
@@ -101,13 +101,13 @@ describe('base URLs', () => {
   })
 
   it('uses the canonical app URL without a brand', () => {
-    expect(getBaseUrlForBrand(null)).toBe('https://app.gnubok.se')
+    expect(getBaseUrlForBrand(null)).toBe('https://kontor.zimla.io')
   })
 
   it('getBaseUrlForCompany resolves the brand by company', async () => {
     resolveBrandForCompanyMock.mockResolvedValue(makeBrand())
     await expect(getBaseUrlForCompany('company-1')).resolves.toBe('https://app.siffra.se')
     resolveBrandForCompanyMock.mockResolvedValue(null)
-    await expect(getBaseUrlForCompany('company-2')).resolves.toBe('https://app.gnubok.se')
+    await expect(getBaseUrlForCompany('company-2')).resolves.toBe('https://kontor.zimla.io')
   })
 })

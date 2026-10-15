@@ -48,7 +48,7 @@ vi.stubGlobal('fetch', fetchMock)
 import { GET, POST, DELETE } from '../route'
 
 function req(method: string, path: string, body?: unknown, headers: Record<string, string> = {}): Request {
-  return new Request(`https://app.gnubok.se/api/connect/bank${path}`, {
+  return new Request(`https://kontor.zimla.io/api/connect/bank${path}`, {
     method,
     headers: { 'x-connector-company': 'company-1', ...headers },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
@@ -61,7 +61,7 @@ function ebOk(body: unknown, status = 200) {
 beforeEach(() => {
   vi.clearAllMocks()
   process.env.ENABLE_BANKING_API_URL = 'https://api.enablebanking.com'
-  process.env.NEXT_PUBLIC_APP_URL = 'https://app.gnubok.se'
+  process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
   currentKey = { ...currentKey, scopes: ['bank_sync'], limits: { bank_connections_per_company: 1, skv_connections_per_company: 1, sync_min_interval_s: 0 } }
   budget.mockResolvedValue({ ok: true })
 })
@@ -102,7 +102,7 @@ describe('bank proxy', () => {
     expect(res.status).toBe(200)
     expect(ledger.createPendingConnection).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ keyId: 'key-1', service: 'bank', companyRef: 'company-1', provider: 'SEB', pendingState: 'ck1.signed.state' }))
     const body = JSON.parse(fetchMock.mock.calls[0][1].body)
-    expect(body.redirect_url).toBe('https://app.gnubok.se/api/extensions/enable-banking/callback')
+    expect(body.redirect_url).toBe('https://kontor.zimla.io/api/extensions/enable-banking/callback')
     expect(body.state).toBe('ck1.signed.state')
   })
 
@@ -133,7 +133,7 @@ describe('bank proxy', () => {
   })
 
   it('POST /auth 400s without the company header', async () => {
-    const res = await POST(new Request('https://app.gnubok.se/api/connect/bank/auth', { method: 'POST', body: '{}' }))
+    const res = await POST(new Request('https://kontor.zimla.io/api/connect/bank/auth', { method: 'POST', body: '{}' }))
     expect(res.status).toBe(400)
     expect((await res.json()).code).toBe('CONNECTOR_COMPANY_MISSING')
   })

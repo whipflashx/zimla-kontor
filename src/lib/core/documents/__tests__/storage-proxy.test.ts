@@ -6,7 +6,7 @@ import {
 } from '../storage-proxy'
 
 const SUPABASE = 'https://pwxtzglxptnnvjrpixpg.supabase.co'
-const APP = 'https://app.accounted.se'
+const APP = 'https://kontor.zimla.io'
 const UPLOAD_URL = `${SUPABASE}/storage/v1/object/upload/sign/documents/co-1/user-1/pending/up-1/faktura%20maj.pdf?token=eyJ.sig`
 const DOWNLOAD_URL = `${SUPABASE}/storage/v1/object/sign/documents/co-1/user-1/kvitto.pdf?token=eyJ.sig&download=`
 

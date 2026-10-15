@@ -46,7 +46,7 @@ beforeEach(() => {
   reset()
   requireAuthMock.mockResolvedValue({ user: mockUser, supabase: serviceSupabase, error: null })
   sendTeamInviteMailMock.mockResolvedValue({
-    inviteUrl: 'https://app.gnubok.se/invite/gnubok_inv_fresh-token',
+    inviteUrl: 'https://kontor.zimla.io/invite/gnubok_inv_fresh-token',
     emailSent: true,
   })
 })
@@ -206,7 +206,7 @@ describe('POST /api/team/invite/[id]', () => {
     expect(body.data.role).toBe('admin')
     expect(body.data.status).toBe('pending')
     expect(body.data.email_sent).toBe(true)
-    expect(body.data.inviteUrl).toBe('https://app.gnubok.se/invite/gnubok_inv_fresh-token')
+    expect(body.data.inviteUrl).toBe('https://kontor.zimla.io/invite/gnubok_inv_fresh-token')
 
     // A fresh token hash replaces the old one (invalidating any mailed link),
     // and the raw token never touches the DB write.
@@ -228,7 +228,7 @@ describe('POST /api/team/invite/[id]', () => {
 
   it('keeps the invitation valid and returns the link when the mail send fails', async () => {
     sendTeamInviteMailMock.mockResolvedValue({
-      inviteUrl: 'https://app.gnubok.se/invite/gnubok_inv_fresh-token',
+      inviteUrl: 'https://kontor.zimla.io/invite/gnubok_inv_fresh-token',
       emailSent: false,
     })
     enqueue({ data: pendingInvite })

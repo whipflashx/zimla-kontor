@@ -35,7 +35,7 @@ import { GET } from '../route'
 const ORIGINAL_ALLOWLIST = process.env.RECEIPT_HUNT_COMPANY_IDS
 
 function request(): Request {
-  return new Request('https://app.accounted.se/api/receipt-hunt/cron')
+  return new Request('https://kontor.zimla.io/api/receipt-hunt/cron')
 }
 
 beforeEach(() => {

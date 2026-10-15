@@ -2,7 +2,7 @@ import { afterEach, describe, it, expect, vi } from 'vitest'
 import { createConnectorPeppolTransport, CONNECTOR_PROVIDER } from '../connector'
 import { isPeppolTransportError, type PeppolTransport, type PeppolTransportError } from '@/lib/invoices/peppol-transport'
 
-const upstream = { baseUrl: 'https://app.gnubok.se/api/connect/peppol', key: 'gnubok_ck_test' }
+const upstream = { baseUrl: 'https://kontor.zimla.io/api/connect/peppol', key: 'gnubok_ck_test' }
 const participant = { scheme: '0007', identifier: '5561234567' }
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -26,7 +26,7 @@ describe('connector Peppol transport', () => {
     })
     expect(receipt.provider).toBe('connector')
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
-    expect(url).toBe('https://app.gnubok.se/api/connect/peppol/submit')
+    expect(url).toBe('https://kontor.zimla.io/api/connect/peppol/submit')
     expect(init.method).toBe('POST')
     expect(init.redirect).toBe('error')
     const headers = init.headers as Record<string, string>
@@ -65,7 +65,7 @@ describe('connector Peppol transport', () => {
     const result = await transport.registerRecipient!({ ...input, tenantReference: 'company-1' })
     expect(result.participant).toEqual(participant)
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
-    expect(url).toBe('https://app.gnubok.se/api/connect/peppol/recipient')
+    expect(url).toBe('https://kontor.zimla.io/api/connect/peppol/recipient')
     expect(init.method).toBe('PUT')
     expect((init.headers as Record<string, string>)['X-Connector-Company']).toBe('company-1')
   })
@@ -78,7 +78,7 @@ describe('connector Peppol transport', () => {
       .mockResolvedValueOnce(jsonResponse({ xml: null }))
     const transport = build(fetchMock as unknown as typeof fetch)
     await transport.unregisterRecipient!(participant)
-    expect((fetchMock.mock.calls[0] as [string])[0]).toBe('https://app.gnubok.se/api/connect/peppol/recipient?scheme=0007&identifier=5561234567')
+    expect((fetchMock.mock.calls[0] as [string])[0]).toBe('https://kontor.zimla.io/api/connect/peppol/recipient?scheme=0007&identifier=5561234567')
     expect((fetchMock.mock.calls[0] as [string, RequestInit])[1].method).toBe('DELETE')
     const inbound = await transport.listInboundDocuments!({ documentType: 'Invoice', limit: 5 })
     expect(inbound).toEqual([{ provider: 'connector', providerDocumentId: 'doc-1', documentType: 'Invoice', payload: {}, receivedAt: null }])
@@ -93,7 +93,7 @@ describe('connector Peppol transport', () => {
     await transport.listInboundDocuments!({ documentType: 'CreditNote' })
     const first = JSON.parse((fetchMock.mock.calls[0] as [string, RequestInit])[1].body as string)
     const second = JSON.parse((fetchMock.mock.calls[1] as [string, RequestInit])[1].body as string)
-    expect((fetchMock.mock.calls[0] as [string])[0]).toBe('https://app.gnubok.se/api/connect/peppol/inbound/list')
+    expect((fetchMock.mock.calls[0] as [string])[0]).toBe('https://kontor.zimla.io/api/connect/peppol/inbound/list')
     expect(first).toEqual({ documentType: 'Invoice', limit: 5, receivedAfter: '2026-09-01T00:00:00.000Z' })
     expect(second).toEqual({ documentType: 'CreditNote' })
   })

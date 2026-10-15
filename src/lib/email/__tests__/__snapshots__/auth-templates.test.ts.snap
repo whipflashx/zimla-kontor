@@ -72,7 +72,7 @@ exports[`buildAuthEmail > renders the platform default without a brand 1`] = `
       </div>
 
       <div style="margin: 28px 0;">
-        <a href="https://app.gnubok.se/auth/callback?token_hash=abc&amp;type=recovery" style="display: inline-block; background: #111; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 500;">
+        <a href="https://kontor.zimla.io/auth/callback?token_hash=abc&amp;type=recovery" style="display: inline-block; background: #111; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 500;">
           Återställ lösenord
         </a>
       </div>
@@ -91,7 +91,7 @@ exports[`buildAuthEmail > renders the platform default without a brand 2`] = `
 
 Vi har tagit emot en begäran om att återställa lösenordet för ditt konto hos Accounted. Klicka på knappen nedan för att välja ett nytt lösenord.
 
-Återställ lösenord: https://app.gnubok.se/auth/callback?token_hash=abc&type=recovery
+Återställ lösenord: https://kontor.zimla.io/auth/callback?token_hash=abc&type=recovery
 
 Om du inte begärde detta kan du bortse från det här meddelandet."
 `;

@@ -19,7 +19,7 @@ vi.mock('@/lib/branding/resolve', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io' }),
 }))
 
 import { getSenderForCompany, getBaseUrlForBrand } from '../brand-sender'
@@ -100,11 +100,11 @@ describe('invite mail (template class: invite)', () => {
   it('unbranded: byte-identical to the un-overridden template on the canonical URL', async () => {
     const mail = await composeInvite()
     expect(mail.sender).toEqual({ fromName: null, fromAddress: null, replyTo: null, brand: null })
-    expect(mail.html).toContain('https://app.gnubok.se/invite/tok-1')
+    expect(mail.html).toContain('https://kontor.zimla.io/invite/tok-1')
     const todays = generateInviteEmailHtml({
       companyName: 'Kund AB',
       inviterEmail: 'sara@siffra.se',
-      inviteUrl: 'https://app.gnubok.se/invite/tok-1',
+      inviteUrl: 'https://kontor.zimla.io/invite/tok-1',
     })
     expect(mail.html).toBe(todays)
     expect(mail.html).toMatchSnapshot()
@@ -154,7 +154,7 @@ describe('payslip mail (template class: payslip)', () => {
     const mail = await composePayslip()
     expect(mail.sender.fromName).toBeNull()
     expect(mail.sender.fromAddress).toBeNull()
-    expect(mail.html).toContain('https://app.gnubok.se/payslip/tok-1')
+    expect(mail.html).toContain('https://kontor.zimla.io/payslip/tok-1')
     expect(mail.html).toMatchSnapshot()
   })
 
@@ -251,7 +251,7 @@ describe('reminder mail (template class: reminder)', () => {
     const data = makeReminderData(`${baseUrl}/invoice-action/tok-1`)
     const html = generateReminderEmailHtml(data)
     expect(sender.fromAddress).toBeNull()
-    expect(html).toContain('https://app.gnubok.se/invoice-action/tok-1')
+    expect(html).toContain('https://kontor.zimla.io/invoice-action/tok-1')
     expect(html).not.toMatch(/accounted/i)
     expect(html).toMatchSnapshot()
   })

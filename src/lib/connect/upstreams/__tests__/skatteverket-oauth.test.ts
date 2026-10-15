@@ -32,9 +32,9 @@ function tokenResponse(body: Record<string, unknown>, ok = true, status = 200) {
 
 describe('buildSkvAuthorizeUrl', () => {
   it('carries the registered client id, the connector state, PKCE and the default scopes', () => {
-    const u = new URL(buildSkvAuthorizeUrl('https://app.gnubok.se/cb', 'ck1.signed', { codeChallenge: 'chal' }))
+    const u = new URL(buildSkvAuthorizeUrl('https://kontor.zimla.io/cb', 'ck1.signed', { codeChallenge: 'chal' }))
     expect(u.searchParams.get('client_id')).toBe('oauth-client')
-    expect(u.searchParams.get('redirect_uri')).toBe('https://app.gnubok.se/cb')
+    expect(u.searchParams.get('redirect_uri')).toBe('https://kontor.zimla.io/cb')
     expect(u.searchParams.get('state')).toBe('ck1.signed')
     expect(u.searchParams.get('code_challenge')).toBe('chal')
     expect(u.searchParams.get('code_challenge_method')).toBe('S256')
@@ -46,7 +46,7 @@ describe('buildSkvAuthorizeUrl', () => {
 describe('token exchanges send the client secret and return tokens verbatim', () => {
   it('authorization_code', async () => {
     fetchWithTimeout.mockResolvedValue(tokenResponse({ access_token: 'at', refresh_token: 'rt', expires_in: 3600, scope: 's' }))
-    const t = await exchangeSkvCode('the-code', 'https://app.gnubok.se/cb', 'verifier')
+    const t = await exchangeSkvCode('the-code', 'https://kontor.zimla.io/cb', 'verifier')
     expect(t).toEqual({ access_token: 'at', refresh_token: 'rt', expires_in: 3600, scope: 's' })
     const body = fetchWithTimeout.mock.calls[0][1].body as string
     expect(body).toContain('grant_type=authorization_code')

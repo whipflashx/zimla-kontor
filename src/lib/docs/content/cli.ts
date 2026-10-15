@@ -72,7 +72,7 @@ Writes work exactly as over MCP. A tool that changes the books (categorise, crea
 \`\`\`text
 Staged for approval: operation 9a44..., risk medium. Nothing is booked yet.
 When the user approves it, run: accounted call approve_pending_operation '{"operation_id":"9a44...","company_id":"..."}'
-Or approve it in the browser: https://app.accounted.se/pending
+Or approve it in the browser: https://kontor.zimla.io/pending
 \`\`\`
 
 Read the preview, then approve with that command or under **/pending** in the app. An agent must show you the preview and ask you before it runs the approve command.

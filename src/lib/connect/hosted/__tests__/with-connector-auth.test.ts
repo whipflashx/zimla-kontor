@@ -27,7 +27,7 @@ const VALID = {
 }
 
 function req(headers: Record<string, string> = {}): Request {
-  return new Request('https://app.gnubok.se/api/connect/entitlements', { headers })
+  return new Request('https://kontor.zimla.io/api/connect/entitlements', { headers })
 }
 
 beforeEach(() => {

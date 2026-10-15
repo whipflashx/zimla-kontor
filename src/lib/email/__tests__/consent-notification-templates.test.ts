@@ -9,7 +9,7 @@ import { getBranding } from '@/lib/branding/service'
 const expired = {
   bankName: 'SEB',
   daysUntilExpiry: 0,
-  renewalUrl: 'https://app.gnubok.se/settings/banking',
+  renewalUrl: 'https://kontor.zimla.io/settings/banking',
   companyName: 'Glimworks AB',
   isExpired: true,
 }

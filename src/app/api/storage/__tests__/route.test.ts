@@ -24,7 +24,7 @@ import { GET, HEAD, OPTIONS, PUT } from '../[...path]/route'
 
 beforeEach(() => {
   vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', SUPABASE)
-  vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.accounted.se')
+  vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://kontor.zimla.io')
   vi.stubGlobal('fetch', fetchMock)
   fetchMock.mockReset()
   documentLookup.mockReset()
@@ -53,7 +53,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ Key: 'documents/x' }), { status: 200, headers: { 'content-type': 'application/json' } }))
     const bytes = new TextEncoder().encode('%PDF-1.4 hello')
     const request = new Request(
-      'https://app.accounted.se/api/storage/upload/sign/documents/co-1/user-1/pending/up-1/faktura%20maj.pdf?token=eyJ.sig',
+      'https://kontor.zimla.io/api/storage/upload/sign/documents/co-1/user-1/pending/up-1/faktura%20maj.pdf?token=eyJ.sig',
       { method: 'PUT', headers: { 'content-type': 'application/pdf', 'x-upsert': 'false' }, body: bytes },
     )
 
@@ -90,7 +90,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     )
     documentLookup.mockResolvedValue(pdfRow('kvitto.pdf'))
     const request = new Request(
-      'https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=eyJ.sig',
+      'https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=eyJ.sig',
     )
 
     const response = await GET(request)
@@ -123,7 +123,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     documentLookup.mockResolvedValue(pdfRow('kvitto maj.pdf', 'Application/PDF; charset=binary'))
 
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto%20maj.pdf?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto%20maj.pdf?token=t'),
     )
 
     expect(response.headers.get('content-type')).toBe('application/pdf')
@@ -140,14 +140,14 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     documentLookup.mockResolvedValue(pdfRow('kvitto.pdf'))
 
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t&download='),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t&download='),
     )
 
     expect(response.headers.get('content-type')).toBe('application/pdf')
     expect(response.headers.get('content-disposition')).toContain('attachment; filename="kvitto.pdf"')
 
     const named = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t&download=mars.pdf'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t&download=mars.pdf'),
     )
     expect(named.headers.get('content-disposition')).toContain('attachment; filename="mars.pdf"')
   })
@@ -161,7 +161,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     documentLookup.mockResolvedValue(pdfRow('mail.html', 'text/html'))
 
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/mail.html?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/mail.html?token=t'),
     )
 
     expect(response.status).toBe(200)
@@ -181,7 +181,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
       documentLookup.mockResolvedValue(pdfRow('underlag', mimeType))
 
       const response = await GET(
-        new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/underlag?token=t'),
+        new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/underlag?token=t'),
       )
 
       expect(response.headers.get('content-type')).toBe('application/octet-stream')
@@ -199,7 +199,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     documentLookup.mockResolvedValue({ data: [], error: null })
 
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/user-1/audit-packages/1700_audit%202026.zip?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/user-1/audit-packages/1700_audit%202026.zip?token=t'),
     )
 
     expect(response.status).toBe(200)
@@ -215,7 +215,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
 
     documentLookup.mockResolvedValue({ data: null, error: { message: 'db down' } })
     const errored = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t'),
     )
     expect(errored.status).toBe(200)
     expect(errored.headers.get('content-type')).toBe('application/octet-stream')
@@ -224,7 +224,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     fetchMock.mockResolvedValue(upstreamResponse('%PDF-1.4 bytes'))
     documentLookup.mockRejectedValue(new Error('network'))
     const thrown = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t'),
     )
     expect(thrown.status).toBe(200)
     expect(thrown.headers.get('content-type')).toBe('application/octet-stream')
@@ -240,7 +240,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     )
 
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=bad'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=bad'),
     )
 
     expect(response.status).toBe(400)
@@ -254,7 +254,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     documentLookup.mockResolvedValue(pdfRow('kvitto.pdf'))
 
     const response = await HEAD(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t', { method: 'HEAD' }),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/user-1/kvitto.pdf?token=t', { method: 'HEAD' }),
     )
 
     expect(response.status).toBe(200)
@@ -270,7 +270,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 404, headers: { 'content-type': 'application/json' } }))
 
     const response = await HEAD(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/missing.pdf?token=t', { method: 'HEAD' }),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/missing.pdf?token=t', { method: 'HEAD' }),
     )
 
     expect(response.status).toBe(404)
@@ -280,7 +280,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
 
   it('refuses paths outside the signed documents-bucket allowlist without touching Storage', async () => {
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/public/documents/a.pdf?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/public/documents/a.pdf?token=t'),
     )
 
     expect(response.status).toBe(404)
@@ -291,7 +291,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
 
   it('refuses a link without its signed token', async () => {
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/a.pdf'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/a.pdf'),
     )
 
     expect(response.status).toBe(400)
@@ -302,7 +302,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
 
   it('rejects an oversized upload before forwarding it', async () => {
     const request = new Request(
-      'https://app.accounted.se/api/storage/upload/sign/documents/co-1/big.pdf?token=t',
+      'https://kontor.zimla.io/api/storage/upload/sign/documents/co-1/big.pdf?token=t',
       { method: 'PUT', headers: { 'content-length': String(51 * 1024 * 1024) }, body: 'x' },
     )
 
@@ -321,7 +321,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
       },
     })
     const request = new Request(
-      'https://app.accounted.se/api/storage/upload/sign/documents/co-1/big.pdf?token=t',
+      'https://kontor.zimla.io/api/storage/upload/sign/documents/co-1/big.pdf?token=t',
       { method: 'PUT', body: endless, duplex: 'half' } as RequestInit,
     )
 
@@ -336,7 +336,7 @@ describe('/api/storage/[...path] same-origin Storage proxy', () => {
     fetchMock.mockRejectedValue(new Error('ECONNRESET'))
 
     const response = await GET(
-      new Request('https://app.accounted.se/api/storage/sign/documents/co-1/a.pdf?token=t'),
+      new Request('https://kontor.zimla.io/api/storage/sign/documents/co-1/a.pdf?token=t'),
     )
 
     expect(response.status).toBe(502)

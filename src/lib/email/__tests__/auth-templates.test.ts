@@ -31,10 +31,10 @@ describe('buildAuthEmail', () => {
     const mail = buildAuthEmail({
       actionType: 'recovery',
       appName: 'Zimla Kontor',
-      actionUrl: 'https://app.gnubok.se/auth/callback?token_hash=abc&type=recovery',
+      actionUrl: 'https://kontor.zimla.io/auth/callback?token_hash=abc&type=recovery',
     })
     expect(mail.html).toContain('ACCOUNTED')
-    expect(mail.html).toContain('https://app.gnubok.se/auth/callback')
+    expect(mail.html).toContain('https://kontor.zimla.io/auth/callback')
     expect(mail.html).toMatchSnapshot()
     expect(mail.text).toMatchSnapshot()
   })

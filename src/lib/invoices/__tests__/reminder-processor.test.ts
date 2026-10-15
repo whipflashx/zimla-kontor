@@ -62,7 +62,7 @@ brandSenderMock.getSenderForCompany.mockResolvedValue({
   replyTo: null,
   brand: null,
 })
-brandSenderMock.getBaseUrlForBrand.mockReturnValue('https://app.gnubok.se')
+brandSenderMock.getBaseUrlForBrand.mockReturnValue('https://kontor.zimla.io')
 
 describe('determineReminderLevel', () => {
   it('returns null below the level-1 threshold', () => {
@@ -237,14 +237,14 @@ describe('sendReminder: brand mail (WL-13)', () => {
       replyTo: null,
       brand: null,
     })
-    brandSenderMock.getBaseUrlForBrand.mockReturnValue('https://app.gnubok.se')
+    brandSenderMock.getBaseUrlForBrand.mockReturnValue('https://kontor.zimla.io')
   })
 
   it('unbranded: canonical action link and today\'s From fields', async () => {
     await sendReminder(invoice, company, 1, 'tok-1', surcharges)
 
     const options = sendEmailSpy.mock.calls[0][0]
-    expect(options.text).toContain('https://app.gnubok.se/invoice-action/tok-1')
+    expect(options.text).toContain('https://kontor.zimla.io/invoice-action/tok-1')
     expect(options.fromName).toBe('Kund AB')
     expect(options.replyTo).toBe('faktura@kund.se')
     expect(options.fromAddress).toBeUndefined()

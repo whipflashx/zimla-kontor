@@ -983,7 +983,7 @@ async function resolveHomeDomainOutcome(
     // nothing of the user's is homed there. Cost: one extra query, only for
     // byrå members on the canonical host without a fresh home-ok cookie.
     const canonicalHost = normalizeHost(
-      new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://app.gnubok.se').hostname,
+      new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://kontor.zimla.io').hostname,
     )
     if (host === canonicalHost) {
       const { data: companyRows, error: companyError } = await supabase
@@ -1039,7 +1039,7 @@ async function resolveHomeDomainOutcome(
     return { redirectTo: null, cacheOk: true }
   }
 
-  const platformUrl = new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://app.gnubok.se')
+  const platformUrl = new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://kontor.zimla.io')
   if (normalizeHost(platformUrl.hostname) === host) return { redirectTo: null, cacheOk: true }
   // Preserve path + query for the same deep-link reason as the byrå hop.
   return {

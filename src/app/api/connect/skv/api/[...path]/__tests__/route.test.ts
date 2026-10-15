@@ -27,7 +27,7 @@ import { GET, POST } from '../route'
 
 function req(method: string, path: string, token = 'user-token', body?: string): Request {
   const headers: Record<string, string> = { 'x-connector-upstream-authorization': `Bearer ${token}` }
-  return new Request(`https://app.gnubok.se/api/connect/skv/api${path}`, { method, headers, ...(body !== undefined ? { body } : {}) })
+  return new Request(`https://kontor.zimla.io/api/connect/skv/api${path}`, { method, headers, ...(body !== undefined ? { body } : {}) })
 }
 function skvOk(body: unknown, status = 200) {
   fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }))
@@ -64,7 +64,7 @@ describe('skv data proxy', () => {
     expect((await res.json()).code).toBe('CONNECTOR_PATH_NOT_ALLOWED')
   })
   it('400 without a user token', async () => {
-    const res = await GET(new Request('https://app.gnubok.se/api/connect/skv/api/moms/x', { method: 'GET' }))
+    const res = await GET(new Request('https://kontor.zimla.io/api/connect/skv/api/moms/x', { method: 'GET' }))
     expect(res.status).toBe(400)
     expect((await res.json()).code).toBe('CONNECTOR_UPSTREAM_TOKEN_MISSING')
   })

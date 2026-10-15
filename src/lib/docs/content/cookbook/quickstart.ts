@@ -12,7 +12,7 @@ export const QUICKSTART_MD = `# Quickstart: send your first invoice
 This call confirms your key works and returns the \`companyId\` you'll use throughout. Both live and test keys resolve to the companies the key's user can access.
 
 \`\`\`bash
-curl https://app.gnubok.se/api/v1/companies \\
+curl https://kontor.zimla.io/api/v1/companies \\
   -H "Authorization: Bearer gnubok_sk_..."
 \`\`\`
 
@@ -32,7 +32,7 @@ Save the \`id\` as \`COMPANY_ID\` for the next steps.
 Most writes support \`?dry_run=true\`: the response shows the would-be record without committing. (Bank/SIE imports are the exception: they run for real or not at all.) Use it in agent test loops to validate inputs before paying the side-effect cost.
 
 \`\`\`bash
-curl "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/customers?dry_run=true" \\
+curl "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/customers?dry_run=true" \\
   -H "Authorization: Bearer gnubok_sk_..." \\
   -H "Idempotency-Key: $(uuidgen)" \\
   -H "Content-Type: application/json" \\
@@ -73,7 +73,7 @@ Invoices are typed (B2B, EU-business, individual) and support mixed-rate VAT (pe
 
 \`\`\`bash
 INVOICE_IDEMP=$(uuidgen)
-curl "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/invoices" \\
+curl "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/invoices" \\
   -H "Authorization: Bearer gnubok_sk_..." \\
   -H "Idempotency-Key: $INVOICE_IDEMP" \\
   -H "Content-Type: application/json" \\
@@ -116,7 +116,7 @@ A fresh draft has \`invoice_number: null\`: the F-series löpnummer is allocated
 # Generate the key ONCE and reuse it on every retry of this same send, so a
 # timeout-then-retry replays the original result instead of sending twice.
 SEND_IDEMP=$(uuidgen)
-curl -X POST "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/invoices/$INVOICE_ID/send" \\
+curl -X POST "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/invoices/$INVOICE_ID/send" \\
   -H "Authorization: Bearer gnubok_sk_..." \\
   -H "Idempotency-Key: $SEND_IDEMP"
 \`\`\`
@@ -148,7 +148,7 @@ When the customer pays, mark the invoice paid. The engine generates the payment 
 \`\`\`bash
 # One key per logical payment; reuse it across retries of this mark-paid.
 PAY_IDEMP=$(uuidgen)
-curl -X POST "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/invoices/$INVOICE_ID/mark-paid" \\
+curl -X POST "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/invoices/$INVOICE_ID/mark-paid" \\
   -H "Authorization: Bearer gnubok_sk_..." \\
   -H "Idempotency-Key: $PAY_IDEMP" \\
   -H "Content-Type: application/json" \\

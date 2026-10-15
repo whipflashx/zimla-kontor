@@ -75,19 +75,19 @@ describe('notifyReviewersOfSubmission', () => {
 
   it('emails every named reviewer, with the review page and the title escaped', async () => {
     process.env.COMMUNITY_REVIEWER_USER_IDS = 'rev-1, rev-2'
-    await notifyReviewersOfSubmission(service as never, submission, 'https://app.accounted.se/skills/granskning')
+    await notifyReviewersOfSubmission(service as never, submission, 'https://kontor.zimla.io/skills/granskning')
     const mail = sendEmail.mock.calls[0][0]
     expect(mail.to).toEqual(['rev-1@example.se', 'rev-2@example.se'])
     expect(mail.subject).toBe('Att granska: Bokför SaaS <b>')
     expect(mail.html).toContain('Bokför SaaS &lt;b&gt;')
-    expect(mail.html).toContain('https://app.accounted.se/skills/granskning')
+    expect(mail.html).toContain('https://kontor.zimla.io/skills/granskning')
   })
 
   it('sends nothing when nobody reviews, and never throws', async () => {
-    await notifyReviewersOfSubmission(service as never, submission, 'https://app.accounted.se/skills/granskning')
+    await notifyReviewersOfSubmission(service as never, submission, 'https://kontor.zimla.io/skills/granskning')
     expect(sendEmail).not.toHaveBeenCalled()
     process.env.COMMUNITY_REVIEWER_USER_IDS = 'rev-1'
     getUserById.mockRejectedValue(new Error('auth down'))
-    await expect(notifyReviewersOfSubmission(service as never, submission, 'https://app.accounted.se/skills/granskning')).resolves.toBeUndefined()
+    await expect(notifyReviewersOfSubmission(service as never, submission, 'https://kontor.zimla.io/skills/granskning')).resolves.toBeUndefined()
   })
 })

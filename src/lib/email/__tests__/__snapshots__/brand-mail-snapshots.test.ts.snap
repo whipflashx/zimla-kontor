@@ -65,7 +65,7 @@ exports[`invite mail (template class: invite) > unbranded: byte-identical to the
 
       <!-- CTA -->
       <div style="margin: 28px 0;">
-        <a href="https://app.gnubok.se/invite/tok-1" style="display: inline-block; background: #111; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 500;">
+        <a href="https://kontor.zimla.io/invite/tok-1" style="display: inline-block; background: #111; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 500;">
           Acceptera inbjudan
         </a>
       </div>
@@ -195,7 +195,7 @@ Länken är personlig och giltig i 90 dagar.</p>
 exports[`payslip mail (template class: payslip) > unbranded: canonical link, platform sender, unchanged body 1`] = `
 "<p>Hej Anna,</p>
 <p>Din lönespecifikation för juni 2026 finns att hämta via länken nedan.</p>
-<p><a href="https://app.gnubok.se/payslip/tok-1">Visa lönespecifikation</a></p>
+<p><a href="https://kontor.zimla.io/payslip/tok-1">Visa lönespecifikation</a></p>
 <p>Utbetalningsdag: 2026-06-25<br>
 Länken är personlig och giltig i 90 dagar.</p>
 <p>Med vänliga hälsningar,<br>Kund AB</p>"
@@ -291,7 +291,7 @@ exports[`reminder mail (template class: reminder) > unbranded: canonical action 
         <p style="margin: 0 0 20px 0; color: #666; font-size: 14px;">
           Har du redan betalat eller har frågor om fakturan?
         </p>
-        <a href="https://app.gnubok.se/invoice-action/tok-1" style="display: inline-block; background: #2563eb; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px;">
+        <a href="https://kontor.zimla.io/invoice-action/tok-1" style="display: inline-block; background: #2563eb; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px;">
           Hantera faktura
         </a>
       </div>

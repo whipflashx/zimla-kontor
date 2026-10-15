@@ -25,7 +25,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { GET } from '../route'
 
 const ORIGINAL_MODE = process.env.ASSISTANT_READS_MODE
-const request = () => new Request('https://app.accounted.se/api/agent/categorize/cron')
+const request = () => new Request('https://kontor.zimla.io/api/agent/categorize/cron')
 
 beforeEach(() => {
   vi.clearAllMocks()

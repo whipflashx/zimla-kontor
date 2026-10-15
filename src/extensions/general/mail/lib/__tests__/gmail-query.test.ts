@@ -88,7 +88,7 @@ describe('buildAuthorizationUrl', () => {
   it('carries the CSRF state, which the callback refuses to proceed without', async () => {
     const { buildAuthorizationUrl } = await import('../google-oauth')
     const url = buildAuthorizationUrl(
-      { clientId: 'cid', clientSecret: 'sec', redirectUri: 'https://app.accounted.se/cb' },
+      { clientId: 'cid', clientSecret: 'sec', redirectUri: 'https://kontor.zimla.io/cb' },
       'signed-state',
     )
     const params = new URL(url).searchParams

@@ -162,7 +162,7 @@ describe('provider routing', () => {
 
 describe('canonical redirect URI', () => {
   it('builds the Google callback from NEXT_PUBLIC_APP_URL, not the request host', async () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
     const route = findRoute('POST', '/connect')
     const { ctx } = makeContext()
 
@@ -171,12 +171,12 @@ describe('canonical redirect URI', () => {
     expect(res.status).toBe(200)
     const { url } = (await res.json()) as { url: string }
     expect(new URL(url).searchParams.get('redirect_uri')).toBe(
-      'https://app.accounted.se/api/extensions/ext/cloud-backup/oauth/callback'
+      'https://kontor.zimla.io/api/extensions/ext/cloud-backup/oauth/callback'
     )
   })
 
   it('builds the Dropbox callback from NEXT_PUBLIC_APP_URL, not the request host', async () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
     const route = findRoute('POST', '/connect')
     const { ctx } = makeContext()
 
@@ -185,12 +185,12 @@ describe('canonical redirect URI', () => {
     expect(res.status).toBe(200)
     const { url } = (await res.json()) as { url: string }
     expect(new URL(url).searchParams.get('redirect_uri')).toBe(
-      'https://app.accounted.se/api/extensions/ext/cloud-backup/oauth/dropbox/callback'
+      'https://kontor.zimla.io/api/extensions/ext/cloud-backup/oauth/dropbox/callback'
     )
   })
 
   it('uses the same canonical origin for the callback token exchange', async () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se'
+    process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
     const route = findRoute('GET', '/oauth/callback')
     const { ctx } = makeContext()
     const exchange = vi.spyOn(googleDriveProvider, 'exchangeCode').mockResolvedValue({
@@ -203,9 +203,9 @@ describe('canonical redirect URI', () => {
 
     const res = await route.handler(new Request(callbackUrl), ctx)
 
-    expect(exchange).toHaveBeenCalledWith('https://app.accounted.se', 'provider-code')
+    expect(exchange).toHaveBeenCalledWith('https://kontor.zimla.io', 'provider-code')
     const location = new URL(res.headers.get('location')!)
-    expect(location.origin).toBe('https://app.accounted.se')
+    expect(location.origin).toBe('https://kontor.zimla.io')
     expect(location.pathname).toBe('/settings/backup')
     expect(location.searchParams.get('cloud_backup')).toBe('connected_first')
   })

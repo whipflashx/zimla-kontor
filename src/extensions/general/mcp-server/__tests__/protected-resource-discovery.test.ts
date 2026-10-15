@@ -17,12 +17,12 @@ describe('GET /mcp/.well-known/oauth-protected-resource (dispatcher route)', () 
   })
 
   it('is declared unauthenticated and answers the same document as the root location', async () => {
-    vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.accounted.se')
+    vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://kontor.zimla.io')
     const route = findRoute('GET', '/mcp/.well-known/oauth-protected-resource')
     expect(route.skipAuth).toBe(true)
     const response = await route.handler(
       new Request(
-        'https://app.accounted.se/api/extensions/ext/mcp-server/mcp/.well-known/oauth-protected-resource?tool_namespace=accounted',
+        'https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp/.well-known/oauth-protected-resource?tool_namespace=accounted',
         { headers: { host: 'app.accounted.se' } }
       ),
       undefined as never
@@ -30,17 +30,17 @@ describe('GET /mcp/.well-known/oauth-protected-resource (dispatcher route)', () 
     expect(response.status).toBe(200)
     const body = await response.json()
     expect(body.resource).toBe(
-      'https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted'
+      'https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted'
     )
-    expect(body.authorization_servers).toEqual(['https://app.accounted.se'])
+    expect(body.authorization_servers).toEqual(['https://kontor.zimla.io'])
   })
 
   it('still refuses a foreign browser origin (DNS-rebinding defense)', async () => {
-    vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.accounted.se')
+    vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://kontor.zimla.io')
     const route = findRoute('GET', '/mcp/.well-known/oauth-protected-resource')
     const response = await route.handler(
       new Request(
-        'https://app.accounted.se/api/extensions/ext/mcp-server/mcp/.well-known/oauth-protected-resource',
+        'https://kontor.zimla.io/api/extensions/ext/mcp-server/mcp/.well-known/oauth-protected-resource',
         { headers: { host: 'app.accounted.se', origin: 'https://evil.example' } }
       ),
       undefined as never

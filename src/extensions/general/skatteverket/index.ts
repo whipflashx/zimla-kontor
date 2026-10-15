@@ -351,7 +351,7 @@ async function requireAgiWriteRole(ctx: ExtensionContext): Promise<NextResponse 
  * Utvecklarportalen. Registration changes there are slow, so after the
  * user-facing app moved to app.accounted.se the redirect_uri stays pinned
  * to the legacy domain via NEXT_PUBLIC_SKV_OAUTH_BASE_URL (hosted value:
- * https://app.gnubok.se). Self-hosted deployments leave it unset and the
+ * https://kontor.zimla.io). Self-hosted deployments leave it unset and the
  * regular app URL is used.
  */
 function getSkvOauthBaseUrl(): string {

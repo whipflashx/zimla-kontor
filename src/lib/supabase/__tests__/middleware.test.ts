@@ -1007,7 +1007,7 @@ describe('updateSession redirect destinations', () => {
         { teams: { kind: 'byra', brands: { domain: 'brand-b.accounted.se' } } },
       ]
 
-      const response = await runAt('https://app.gnubok.se', '/')
+      const response = await runAt('https://kontor.zimla.io', '/')
 
       expect(locationOf(response)).toBe(`${BRAND_B}/`)
     })
@@ -1017,7 +1017,7 @@ describe('updateSession redirect destinations', () => {
         { teams: { kind: 'byra', brands: { domain: 'brand-b.accounted.se' } } },
       ]
 
-      const response = await runAt('https://app.gnubok.se', '/invoices/abc?tab=payments')
+      const response = await runAt('https://kontor.zimla.io', '/invoices/abc?tab=payments')
 
       expect(locationOf(response)).toBe(`${BRAND_B}/invoices/abc?tab=payments`)
     })
@@ -1042,7 +1042,7 @@ describe('updateSession redirect destinations', () => {
       // A personal company with no team at all: homed on canonical.
       state.clientMemberships = [{ companies: { team_id: null, teams: null } }]
 
-      const response = await runAt('https://app.gnubok.se', '/')
+      const response = await runAt('https://kontor.zimla.io', '/')
 
       expect(response.status).toBe(200)
       expect(locationOf(response)).toBeNull()
@@ -1059,7 +1059,7 @@ describe('updateSession redirect destinations', () => {
         { companies: { team_id: 'team-personal', teams: { brands: null } } },
       ]
 
-      const response = await runAt('https://app.gnubok.se', '/')
+      const response = await runAt('https://kontor.zimla.io', '/')
 
       expect(response.status).toBe(200)
       expect(response.headers.get('set-cookie')).toContain(
@@ -1075,7 +1075,7 @@ describe('updateSession redirect destinations', () => {
         { companies: { team_id: 'team-brand-b', teams: { brands: { id: 'brand-1' } } } },
       ]
 
-      const response = await runAt('https://app.gnubok.se', '/')
+      const response = await runAt('https://kontor.zimla.io', '/')
 
       expect(locationOf(response)).toBe(`${BRAND_B}/`)
     })
@@ -1098,7 +1098,7 @@ describe('updateSession redirect destinations', () => {
       ]
       state.clientMembershipsError = { message: 'connection reset' }
 
-      const response = await runAt('https://app.gnubok.se', '/')
+      const response = await runAt('https://kontor.zimla.io', '/')
 
       // Fail open: no redirect, and no home-ok cookie so the next request
       // re-runs the check instead of freezing the error verdict for the TTL.
@@ -1123,7 +1123,7 @@ describe('updateSession redirect destinations', () => {
 
       const response = await runAt(BRAND_B, '/')
 
-      expect(locationOf(response)).toBe('https://app.gnubok.se/')
+      expect(locationOf(response)).toBe('https://kontor.zimla.io/')
     })
 
     it('keeps an allowlisted email on the brand domain before any membership exists', async () => {
@@ -1154,7 +1154,7 @@ describe('updateSession redirect destinations', () => {
 
       const response = await runAt(BRAND_B, '/')
 
-      expect(locationOf(response)).toBe('https://app.gnubok.se/')
+      expect(locationOf(response)).toBe('https://kontor.zimla.io/')
     })
 
     it('skips the allowlist lookup for a user without an email', async () => {
@@ -1164,7 +1164,7 @@ describe('updateSession redirect destinations', () => {
 
       const response = await runAt(BRAND_B, '/')
 
-      expect(locationOf(response)).toBe('https://app.gnubok.se/')
+      expect(locationOf(response)).toBe('https://kontor.zimla.io/')
       expect(isEmailOnBrandAllowlist).not.toHaveBeenCalled()
     })
 
@@ -1178,7 +1178,7 @@ describe('updateSession redirect destinations', () => {
     })
 
     it('does nothing on the platform domain for regular users', async () => {
-      const response = await runAt('https://app.gnubok.se', '/')
+      const response = await runAt('https://kontor.zimla.io', '/')
 
       expect(response.status).toBe(200)
     })
@@ -1217,7 +1217,7 @@ describe('updateSession redirect destinations', () => {
         cookie: 'gnubok-home-ok=user-OTHER~brand-b.accounted.se',
       })
 
-      expect(locationOf(response)).toBe('https://app.gnubok.se/')
+      expect(locationOf(response)).toBe('https://kontor.zimla.io/')
     })
 
     it('ignores a stale host-only cookie from the pre-user-scoped format', async () => {
@@ -1227,7 +1227,7 @@ describe('updateSession redirect destinations', () => {
         cookie: 'gnubok-home-ok=brand-b.accounted.se',
       })
 
-      expect(locationOf(response)).toBe('https://app.gnubok.se/')
+      expect(locationOf(response)).toBe('https://kontor.zimla.io/')
     })
   })
 

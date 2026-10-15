@@ -10,7 +10,7 @@ import { buildSystemdokumentation, loadSystemdokumentationFacts, type Systemdoku
 import { SUPPLIER_INVOICE_ROUNDING_RULES, VOUCHER_SERIES_RULES } from '../system-rules'
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.accounted.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io' }),
 }))
 
 function facts(overrides: Partial<SystemdokumentationFacts> = {}): SystemdokumentationFacts {
@@ -62,7 +62,7 @@ function facts(overrides: Partial<SystemdokumentationFacts> = {}): Systemdokumen
       ['u-owner', 'anna@example.se'],
       ['u-member', 'Bo Bokförare'],
     ]),
-    env: { appName: 'Zimla Kontor', appUrl: 'https://app.accounted.se', hosted: true, mfaRequired: true, appVersion: 'abc1234', generatedAt: '2026-09-25T10:00:00.000Z' },
+    env: { appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io', hosted: true, mfaRequired: true, appVersion: 'abc1234', generatedAt: '2026-09-25T10:00:00.000Z' },
     ...overrides,
   }
 }
@@ -79,7 +79,7 @@ describe('buildSystemdokumentation', () => {
       { account_class: 3, count: 1 },
     ])
     expect(r.app_version).toBe('abc1234')
-    expect(r.system).toEqual({ name: 'Zimla Kontor', url: 'https://app.accounted.se', hosted: true })
+    expect(r.system).toEqual({ name: 'Zimla Kontor', url: 'https://kontor.zimla.io', hosted: true })
   })
 
   it('resolves the series per source type through the company map and names custom letters with the company label', () => {

@@ -15,8 +15,8 @@ import { describe, it, expect, afterEach, vi } from 'vitest'
  * which in production surfaces as MCP clients re-authenticating against a
  * mismatched issuer and AGI/moms staging failing silently.
  */
-const CANONICAL = 'https://app.accounted.se'
-const SKV_OAUTH_PIN = 'https://app.gnubok.se'
+const CANONICAL = 'https://kontor.zimla.io'
+const SKV_OAUTH_PIN = 'https://kontor.zimla.io'
 
 /**
  * CI does not set these env vars, so every test stubs them explicitly and

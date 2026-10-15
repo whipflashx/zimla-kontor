@@ -1,8 +1,8 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { isAllowedSkvPopupOrigin } from '../popup-origin'
 
-const APP = 'https://app.accounted.se'
-const OAUTH = 'https://app.gnubok.se'
+const APP = 'https://kontor.zimla.io'
+const OAUTH = 'https://kontor.zimla.io'
 
 describe('isAllowedSkvPopupOrigin', () => {
   afterEach(() => {

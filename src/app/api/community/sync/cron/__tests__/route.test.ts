@@ -12,7 +12,7 @@ import { syncCommunityFromRepo } from '@/lib/agent-skills/community-sync'
 import { notifyPublishedAuthors } from '@/lib/agent-skills/community-notify'
 import { GET } from '../route'
 
-const request = () => new Request('https://app.accounted.se/api/community/sync/cron')
+const request = () => new Request('https://kontor.zimla.io/api/community/sync/cron')
 const synced = { published: [], updated: [], deactivated: [], linked: ['sub-1'], pending: [], withdrawn: [], skipped: [] }
 
 beforeEach(() => {

@@ -50,7 +50,7 @@ function facts(): SystemdokumentationFacts {
       ['u1', 'anna@example.se'],
       ['u2', 'Revisorn'],
     ]),
-    env: { appName: 'Zimla Kontor', appUrl: 'https://app.accounted.se', hosted: true, mfaRequired: true, appVersion: 'abc123def456', generatedAt: '2026-09-25T12:00:00.000Z' },
+    env: { appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io', hosted: true, mfaRequired: true, appVersion: 'abc123def456', generatedAt: '2026-09-25T12:00:00.000Z' },
   }
 }
 

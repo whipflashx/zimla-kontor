@@ -38,7 +38,7 @@ vi.mock('@/lib/branding/resolve', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io' }),
 }))
 
 import { POST } from '../route'
@@ -184,7 +184,7 @@ describe('POST /api/team/invite', () => {
     expect(body.data.status).toBe('pending')
     // Brandless team: mail goes out with platform defaults on the canonical URL.
     expect(body.data.email_sent).toBe(true)
-    expect(body.data.inviteUrl).toBe('https://app.gnubok.se/invite/gnubok_inv_test-token')
+    expect(body.data.inviteUrl).toBe('https://kontor.zimla.io/invite/gnubok_inv_test-token')
     expect(sendEmailMock).toHaveBeenCalledTimes(1)
     const mail = sendEmailMock.mock.calls[0]![0] as {
       to: string
@@ -197,7 +197,7 @@ describe('POST /api/team/invite', () => {
     expect(mail.to).toBe('konsult@byra.se')
     expect(mail.fromName).toBeUndefined()
     expect(mail.fromAddress).toBeUndefined()
-    expect(mail.html).toContain('https://app.gnubok.se/invite/gnubok_inv_test-token')
+    expect(mail.html).toContain('https://kontor.zimla.io/invite/gnubok_inv_test-token')
 
     // The insert went to team_invitations with the hashed token, never the raw.
     const inserts = findCalls('team_invitations', 'insert')

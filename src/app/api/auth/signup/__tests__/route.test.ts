@@ -38,7 +38,7 @@ const validBody = { email: 'kund@example.com', password: 'Str0ng!Pass' }
 
 beforeEach(() => {
   vi.clearAllMocks()
-  process.env.NEXT_PUBLIC_APP_URL = 'https://app.accounted.se'
+  process.env.NEXT_PUBLIC_APP_URL = 'https://kontor.zimla.io'
   // app.testbrand.example is a registered brand host; app.accounted.se is
   // the canonical host and never consults the registry.
   resolveBrandResultByHostMock.mockImplementation(async (host: string) => ({
@@ -135,7 +135,7 @@ describe('POST /api/auth/signup', () => {
     const call = signUpMock.mock.calls[0][0]
     expect(call.options.captchaToken).toBe('tok')
     expect(call.options.emailRedirectTo).toBe(
-      'https://app.accounted.se/auth/callback?next=%2Fapi%2Fmcp-oauth%2Fauthorize%3Fx%3D1',
+      'https://kontor.zimla.io/auth/callback?next=%2Fapi%2Fmcp-oauth%2Fauthorize%3Fx%3D1',
     )
   })
 
@@ -148,7 +148,7 @@ describe('POST /api/auth/signup', () => {
     )
     const call = signUpMock.mock.calls[0][0]
     expect(call.options.emailRedirectTo).toBe(
-      'https://app.accounted.se/auth/callback',
+      'https://kontor.zimla.io/auth/callback',
     )
   })
 

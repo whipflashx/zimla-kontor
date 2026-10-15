@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { resolveDiscoveryBaseUrl } from '../base-url'
 
-const CANONICAL = 'https://app.accounted.se'
+const CANONICAL = 'https://kontor.zimla.io'
 
 function requestWithHost(host?: string) {
   return new Request('https://ignored.example/.well-known/oauth-authorization-server', {
@@ -22,7 +22,7 @@ describe('resolveDiscoveryBaseUrl', () => {
   it('reflects the legacy host so existing MCP connectors stay self-consistent', () => {
     vi.stubEnv('NEXT_PUBLIC_APP_URL', CANONICAL)
     expect(resolveDiscoveryBaseUrl(requestWithHost('app.gnubok.se'))).toBe(
-      'https://app.gnubok.se',
+      'https://kontor.zimla.io',
     )
   })
 
@@ -52,7 +52,7 @@ describe('resolveDiscoveryBaseUrl', () => {
   it('is case-insensitive on the host comparison', () => {
     vi.stubEnv('NEXT_PUBLIC_APP_URL', CANONICAL)
     expect(resolveDiscoveryBaseUrl(requestWithHost('App.Gnubok.SE'))).toBe(
-      'https://app.gnubok.se',
+      'https://kontor.zimla.io',
     )
   })
 })

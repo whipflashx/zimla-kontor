@@ -58,7 +58,7 @@ beforeEach(() => {
 describe('POST /api/connect/skv/oauth/token', () => {
   it('exchanges an authorization code, activates the ledger row, returns tokens', async () => {
     hh.exchange.mockResolvedValue({ access_token: 'at', refresh_token: 'rt', expires_in: 3600, scope: 's' })
-    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', code_verifier: 'v'.repeat(20), connector_state: 'ck1.signed' } }))
+    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', code_verifier: 'v'.repeat(20), connector_state: 'ck1.signed' } }))
     const { status, body } = await parseJsonResponse<{ data: { access_token: string; refresh_token: string } }>(res)
     expect(status).toBe(200)
     expect(body.data).toEqual({ access_token: 'at', refresh_token: 'rt', expires_in: 3600, scope: 's' })
@@ -66,13 +66,13 @@ describe('POST /api/connect/skv/oauth/token', () => {
   })
 
   it('refuses an invalid or foreign connector state before spending the client secret', async () => {
-    let res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', connector_state: 'garbage' } }))
+    let res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', connector_state: 'garbage' } }))
     expect(res.status).toBe(400)
     expect((await res.json()).code).toBe('CONNECTOR_STATE_INVALID')
-    res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', connector_state: 'ck1.foreign' } }))
+    res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', connector_state: 'ck1.foreign' } }))
     expect(res.status).toBe(403)
     hh.findPending.mockResolvedValue(null)
-    res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', connector_state: 'ck1.signed' } }))
+    res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', connector_state: 'ck1.signed' } }))
     expect(res.status).toBe(404)
     expect(hh.exchange).not.toHaveBeenCalled()
   })
@@ -80,7 +80,7 @@ describe('POST /api/connect/skv/oauth/token', () => {
   it('withholds tokens with 409 when the state was consumed concurrently', async () => {
     hh.exchange.mockResolvedValue({ access_token: 'at', refresh_token: 'rt', expires_in: 3600, scope: 's' })
     hh.activate.mockResolvedValue(null)
-    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', connector_state: 'ck1.signed' } }))
+    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', connector_state: 'ck1.signed' } }))
     expect(res.status).toBe(409)
     expect((await res.json()).code).toBe('CONNECTOR_STATE_CONSUMED')
   })
@@ -108,7 +108,7 @@ describe('POST /api/connect/skv/oauth/token', () => {
 
   it('502 when the upstream exchange fails', async () => {
     hh.exchange.mockRejectedValue(new Error('boom'))
-    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', connector_state: 'ck1.signed' } }))
+    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', connector_state: 'ck1.signed' } }))
     expect(res.status).toBe(502)
   })
 
@@ -148,7 +148,7 @@ describe('POST /api/connect/skv/oauth/token', () => {
     hh.exchange.mockRejectedValue(new Error(
       'Skatteverket token exchange failed (400): {"error": "invalid_grant"}',
     ))
-    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://app.gnubok.se/cb', connector_state: 'ck1.signed' } }))
+    const res = await POST(createMockRequest('/x', { method: 'POST', body: { grant_type: 'authorization_code', code: 'c', redirect_uri: 'https://kontor.zimla.io/cb', connector_state: 'ck1.signed' } }))
     expect(res.status).toBe(502)
     expect((await res.json()).code).toBe('CONNECTOR_SKV_TOKEN_FAILED')
   })

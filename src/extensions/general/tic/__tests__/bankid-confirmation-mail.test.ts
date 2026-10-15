@@ -17,7 +17,7 @@ vi.mock('@/lib/branding/resolve', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://kontor.zimla.io' }),
 }))
 
 import {
@@ -25,7 +25,7 @@ import {
   sendBankIdSignupConfirmation,
 } from '../lib/bankid-confirmation-mail'
 
-const CANONICAL = 'https://app.gnubok.se'
+const CANONICAL = 'https://kontor.zimla.io'
 const BRAND_HOST = 'app.testbrand.example'
 const TESTBRAND = {
   appName: 'Testbrand',
@@ -89,7 +89,7 @@ describe('sendBankIdSignupConfirmation', () => {
     expect(mail.to).toBe('fresh@example.com')
     expect(mail.subject).toBe('Bekräfta din e-postadress')
     expect(mail.text).toContain(
-      'https://app.gnubok.se/auth/callback?token_hash=hashed-123&type=magiclink',
+      'https://kontor.zimla.io/auth/callback?token_hash=hashed-123&type=magiclink',
     )
     expect(mail.text).toContain('BankID')
     // Platform sender: no brand on the canonical host.
@@ -135,7 +135,7 @@ describe('sendBankIdSignupConfirmation', () => {
     expect(result).toEqual({ ok: true })
     const mail = sendEmailMock.mock.calls[0][0]
     expect(mail.text).toContain(
-      'https://app.gnubok.se/auth/callback?token_hash=hashed-123&type=magiclink',
+      'https://kontor.zimla.io/auth/callback?token_hash=hashed-123&type=magiclink',
     )
     expect(mail.text).not.toContain('evil.example')
     expect(mail.text).not.toContain(':8443')
@@ -190,7 +190,7 @@ describe('sendBankIdSignupConfirmation', () => {
 
     expect(result).toEqual({ ok: true })
     const mail = sendEmailMock.mock.calls[0][0]
-    expect(mail.text).toContain('https://app.gnubok.se/auth/callback?token_hash=hashed-123')
+    expect(mail.text).toContain('https://kontor.zimla.io/auth/callback?token_hash=hashed-123')
     expect(mail.fromName).toBeUndefined()
   })
 

@@ -237,7 +237,7 @@ describe('resolveBrandDomainBounce', () => {
     teamIds: [] as string[],
     companyTeamIds: [] as Array<string | null>,
     hasPendingInviteCookie: false,
-    canonicalAppUrl: 'https://app.accounted.se',
+    canonicalAppUrl: 'https://kontor.zimla.io',
   }
 
   it('stays on open brands and brandless hosts', async () => {
@@ -274,7 +274,7 @@ describe('resolveBrandDomainBounce', () => {
   it('bounces a non-belonging session to the canonical URL', async () => {
     resolveBrandByHostMock.mockResolvedValue(makeBrand())
     mock.enqueue({ data: null })
-    expect(await resolveBrandDomainBounce(base)).toBe('https://app.accounted.se')
+    expect(await resolveBrandDomainBounce(base)).toBe('https://kontor.zimla.io')
   })
 
   it('never bounces onto the same host', async () => {
