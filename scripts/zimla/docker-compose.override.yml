@@ -1,0 +1,8 @@
+# Zimla Kontor på servern (/opt/kontor). Zimlas egen image, byggd av scripts/zimla/deploy-kontor.sh.
+services:
+  app:
+    image: zimla-kontor:${IMAGE_TAG:?IMAGE_TAG saknas i .env}
+    # Standarden (1 GB) gav "JavaScript heap out of memory" vid första sidan (~512 MB heap). Servern har 8 GB.
+    mem_limit: 3g
+    environment:
+      NODE_OPTIONS: --max-old-space-size=2048
