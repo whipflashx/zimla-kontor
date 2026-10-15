@@ -118,7 +118,7 @@ export function AccountingFrameworkForm({ current, onSaved }: AccountingFramewor
             som börjar efter 2025-12-31 är K2 dessutom stängt för bolag med utländsk
             filial, kryptotillgångar eller aktierelaterade ersättningar, och för bolag där
             byggnader ger minst 75 % av nettoomsättningen. Med K3
-            valt bygger Accounted årsredovisningen enligt K3-mallen: kassaflödesanalys,
+            valt bygger Zimla Kontor årsredovisningen enligt K3-mallen: kassaflödesanalys,
             förändring av eget kapital som egen räkning och utökade noter.
             Anläggningsregistret tar emot komponentuppdelning först med K3, som kräver
             komponentavskrivning när komponenterna har väsentligt olika nyttjandeperioder.

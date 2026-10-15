@@ -7,7 +7,7 @@ vi.mock('@/lib/branding/resolve', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
 }))
 
 import {

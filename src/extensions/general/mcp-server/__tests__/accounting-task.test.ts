@@ -96,7 +96,7 @@ describe('get_task', () => {
     expect(task).toMatchObject({ kind: 'agent:quarterly-vat-review', built_for_client: 'grok', skills: ['quarterly-vat-review', 'horizontal/swedish-vat'], workflow: { body: '# Moms' } })
     expect(task.goal).toBe('Run the Momsdeklaration agent for Arcim. Clarify the objective before making changes.')
     expect(task.instructions[0]).toContain('This task is for Arcim')
-    expect(task.instructions[1]).toContain('Accounted agent')
+    expect(task.instructions[1]).toContain('Zimla Kontor agent')
     expect(task.instructions).not.toContain(INDUSTRY_SECTIONS_INSTRUCTION)
     expect(loadSkillCatalog).not.toHaveBeenCalled()
   })
@@ -153,7 +153,7 @@ describe('get_task', () => {
 describe('get_task: analyses get a real brief', () => {
   beforeEach(() => { vi.clearAllMocks() })
 
-  it('builds an Accounted analysis now, read only, with its body inline and nothing else to load', async () => {
+  it('builds an Zimla Kontor analysis now, read only, with its body inline and nothing else to load', async () => {
     const kassa = analysisSkills.find((s) => s.slug === 'analys-kassaprognos')!
     vi.mocked(loadCatalogSkill).mockResolvedValue(kassa)
     const task = await getAccountingTask({ kind: 'skill:analys-kassaprognos' }, 'company-a', db({ companies: { name: 'Arcim Technology AB' } }) as never) as AnalysisTask
@@ -162,7 +162,7 @@ describe('get_task: analyses get a real brief', () => {
     expect(task.analysis).toEqual({ slug: 'analys-kassaprognos', name: 'Kassaprognos 30 dagar', tier: 'workflow', version: 1, body: kassa.body })
     expect(task.instructions.slice(1)).toEqual([...ANALYSIS_INSTRUCTIONS])
     const text = task.instructions.join('\n')
-    expect(text).toContain('Read only: change nothing in Accounted, stage no proposals and approve nothing.')
+    expect(text).toContain('Read only: change nothing in Zimla Kontor, stage no proposals and approve nothing.')
     expect(text).not.toMatch(/Prepare staged proposals|Load the listed workflow skills|Clarify the objective/)
     // The catalog is not needed: an analysis carries only itself.
     expect(loadSkillCatalog).not.toHaveBeenCalled()
@@ -173,7 +173,7 @@ describe('get_task: analyses get a real brief', () => {
     const task = await getAccountingTask({ kind: `skill:own/${OWN}` }, 'company-a', db() as never) as AnalysisTask
     expect(task.analysis.tier).toBe('own')
     expect(task.analysis.body).toBe(`# Kassalikviditet\n\nKlass 15-19 delat med klass 24-29.\n\n${DASHBOARD_RULES}\n`)
-    expect(task.analysis.body).toContain('Ändra ingenting i Accounted och lägg inga förslag. En analys läser bara.')
+    expect(task.analysis.body).toContain('Ändra ingenting i Zimla Kontor och lägg inga förslag. En analys läser bara.')
   })
 
   it('does not add the rules twice to an analysis that has them', async () => {
@@ -210,7 +210,7 @@ describe('get_task: unattended (a routine, no one present)', () => {
     expect(task.instructions[0]).toContain('name it at the top of your summary')
     expect(task.instructions[1]).toBe(UNATTENDED_INSTRUCTION)
     expect(UNATTENDED_INSTRUCTION).toContain('never call gnubok_approve_pending_operation')
-    expect(task.instructions.join('\n')).toContain('leave them for the user to approve in Accounted. Never approve or commit anything yourself.')
+    expect(task.instructions.join('\n')).toContain('leave them for the user to approve in Zimla Kontor. Never approve or commit anything yourself.')
     assertNoOneIsAsked(task, UNATTENDED_INSTRUCTION)
   })
 

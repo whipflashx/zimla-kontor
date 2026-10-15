@@ -872,7 +872,7 @@ describe('buildArsredovisningData: prior-period TB dedupe (multi-year)', () => {
 })
 
 describe('buildArsredovisningData: comparison year without bookkeeping', () => {
-  // A previous year that exists but holds no entries in Accounted (done in
+  // A previous year that exists but holds no entries in Zimla Kontor (done in
   // another system, klarmarkerad here) gives an all-zero comparison column.
   // ÅRL 3 kap. 5 § requires the prior year's amount per post, so the report
   // must say why the column reads 0 kr and where the fix lives.
@@ -895,7 +895,7 @@ describe('buildArsredovisningData: comparison year without bookkeeping', () => {
     const warning = data.warnings.find((w) => w.startsWith('Föregående räkenskapsår'))
     expect(warning).toBeDefined()
     expect(warning).toContain('Räkenskapsår 2024/2025')
-    expect(warning).toContain('saknar bokföring i Accounted')
+    expect(warning).toContain('saknar bokföring i Zimla Kontor')
     expect(warning).toContain('Inställningar > Bokföring > Räkenskapsår')
     // The comparison year is still there: the column reads 0 kr, not "none".
     expect(data.previous_period?.name).toBe('Räkenskapsår 2024/2025')

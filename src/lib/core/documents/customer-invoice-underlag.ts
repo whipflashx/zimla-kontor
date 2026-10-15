@@ -13,7 +13,7 @@ const log = createLogger('customer-invoice-underlag')
  * a sent invoice to the bank verifikat that booked its payment ("Koppla
  * befintlig verifikation"). The link advanced the invoice, but the verifikat
  * showed no underlag, so the user downloaded the invoice PDF and uploaded it
- * again although Accounted already held it. Under kontantmetoden there is no
+ * again although Zimla Kontor already held it. Under kontantmetoden there is no
  * registration verifikat for the send to hang the PDF on, so the archived copy
  * (invoice_deliveries.document_attachment_id: the exact file the customer
  * received) stays floating until something anchors it, and nothing did.

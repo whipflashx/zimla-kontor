@@ -19,7 +19,7 @@ const ENRICHMENT_TTL_DAYS = 7
  * Reached from "Lägg till företag" in the app (?choose=1) and as the landing
  * after a BankID login. It renders only when there is something to choose:
  * companies the user's BankID says they run (CompanyRoles) that are not in
- * Accounted yet. Everything else goes straight through (founder direction
+ * Zimla Kontor yet. Everything else goes straight through (founder direction
  * 2026-09-14): no new engagements means the onboarding journey, and a
  * BankID login that finds nothing new opens the company the user already
  * has. Companies the user already belongs to are never listed here; opening

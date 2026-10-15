@@ -75,7 +75,7 @@ const WISE_STATEMENT_CSV = [
 const WISE_TRANSACTION_HISTORY_WITH_UNSAFE_ROW = [
   'ID,Status,Direction,"Created on","Finished on","Source fee amount","Source fee currency","Target fee amount","Target fee currency","Source name","Source amount (after fees)","Source currency","Target name","Target amount (after fees)","Target currency","Exchange rate",Reference,Batch,"Created by",Category,Note',
   'PLAN_ORDER-9,COMPLETED,NEUTRAL,"2026-08-01 10:00:00","2026-08-01 10:00:00",,,,,Wise,100,USD,Wise,900,SEK,9,,,,General,',
-  'TRANSFER-2,COMPLETED,IN,"2026-08-02 10:00:00","2026-08-02 10:00:00",,,,,Example AB,100,SEK,Accounted AB,100,SEK,1,,,,General,',
+  'TRANSFER-2,COMPLETED,IN,"2026-08-02 10:00:00","2026-08-02 10:00:00",,,,,Example AB,100,SEK,Zimla Kontor AB,100,SEK,1,,,,General,',
 ].join('\n')
 
 type MockResult = { data?: unknown; error?: unknown }

@@ -460,7 +460,7 @@ export async function updateAsset(
     // The opening amount is the exception to the ledger scan: it describes
     // depreciation that IS on the ledger's 12x9 account from the previous
     // system (imported vouchers or opening balance), so a posted credit there
-    // is expected, not a reason to refuse. Only Accounted's own postings,
+    // is expected, not a reason to refuse. Only Zimla Kontor's own postings,
     // which the engine planned from the old opening amount, lock it.
     if (await hasPostedDepreciation(supabase, companyId, assetId)) {
       throw new AssetCorrectionBlockedError('depreciation_posted')
@@ -756,7 +756,7 @@ export function buildAssetDisposalPlan(args: {
 
   // The opening accumulated depreciation from a previous system sits in the
   // same 12x9 balance (it arrived with the imported ledger), so the disposal
-  // clears it together with what Accounted booked.
+  // clears it together with what Zimla Kontor booked.
   const openingAmount = openingDepreciationOf(asset)?.amount ?? 0
   const accumulatedDepreciation = round2(
     openingAmount +

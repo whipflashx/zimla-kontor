@@ -102,12 +102,12 @@ export async function sendKvittensNotification(
       '',
       `Kvittensnummer: ${input.kvittensnummer}`,
       '',
-      'Ingen åtgärd behövs. Kvittensen finns sparad i Accounted.',
+      'Ingen åtgärd behövs. Kvittensen finns sparad i Zimla Kontor.',
     ].join('\n')
     const html = [
       `<p>Din ${labelLower} för ${escapeHtml(input.period)} har signerats och lämnats in hos Skatteverket.</p>`,
       `<p>Kvittensnummer: <strong>${escapeHtml(input.kvittensnummer)}</strong></p>`,
-      '<p>Ingen åtgärd behövs. Kvittensen finns sparad i Accounted.</p>',
+      '<p>Ingen åtgärd behövs. Kvittensen finns sparad i Zimla Kontor.</p>',
     ].join('')
 
     let result: Awaited<ReturnType<typeof email.sendEmail>>

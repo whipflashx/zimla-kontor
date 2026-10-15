@@ -19,7 +19,7 @@ export const PENDING_OPERATIONS_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Att godkänna - Accounted</title>
+<title>Att godkänna - Zimla Kontor</title>
 <style>
   :root {
     --bg: #fafafa;
@@ -221,7 +221,7 @@ export const PENDING_OPERATIONS_HTML = `<!DOCTYPE html>
       return;
     }
 
-    let html = (canApprove ? '' : '<p class="readonly-note">Den h\\u00e4r anslutningen kan inte godk\\u00e4nna eller avvisa. G\\u00f6r det i Accounted under Att g\\u00f6ra \\u203a Agentf\\u00f6rslag.</p>') +
+    let html = (canApprove ? '' : '<p class="readonly-note">Den h\\u00e4r anslutningen kan inte godk\\u00e4nna eller avvisa. G\\u00f6r det i Zimla Kontor under Att g\\u00f6ra \\u203a Agentf\\u00f6rslag.</p>') +
       '<table><thead><tr>' +
       '<th>Skapad</th><th>\\u00c5tg\\u00e4rd</th><th>Risk</th><th></th>' +
       '</tr></thead><tbody>';
@@ -272,7 +272,7 @@ export const PENDING_OPERATIONS_HTML = `<!DOCTYPE html>
     if (op._done === 'committed') return '<span class="check">\\u2713 Godk\\u00e4nd</span>';
     if (op._done === 'rejected') return '<span class="status-note">Avvisad</span>';
     if (op._working) return '<span class="status-note">Arbetar\\u2026</span>';
-    if (!canApprove) return '<span class="status-note">I Accounted</span>';
+    if (!canApprove) return '<span class="status-note">I Zimla Kontor</span>';
     let html = '';
     if (op._armed) {
       // Second click IS the positive BFL 5 kap 5\\u00a7 acknowledgment: it

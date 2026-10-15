@@ -10,7 +10,7 @@ type Params = { params: Promise<{ id: string }> }
 const SendBackSchema = z.object({ reason: z.string().trim().min(3).max(500) }).strict()
 const notFound = () => NextResponse.json({ error: { code: 'NOT_FOUND', message: 'Hittades inte.', message_en: 'Not found.' } }, { status: 404 })
 
-/** Accounted sends a shared item back to its author with a reason; it is private again. Reviewers only. */
+/** Zimla Kontor sends a shared item back to its author with a reason; it is private again. Reviewers only. */
 export const POST = withRouteContext<Params>('community.submissions.send_back', async (request, { user }, { params }) => {
   if (!isCommunityReviewer(user.id)) return notFound()
   const { id } = await params

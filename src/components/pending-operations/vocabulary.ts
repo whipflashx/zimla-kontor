@@ -187,7 +187,7 @@ export const singleActionWarnings: Record<string, string> = {
   set_invoice_payee_default: 'Genom att klicka godkänn så betalar kunder nya fakturor i valutan till det valda bankkontot.',
   create_fiscal_period: 'Genom att klicka godkänn så skapas räkenskapsåret och kopplas in i kedjan av räkenskapsår. Det kan inte tas bort, bara ändras så länge inget är bokfört i det.',
   update_fiscal_period: 'Genom att klicka godkänn så ändras räkenskapsårets namn eller datum. Datumen går bara att ändra så länge inga verifikationer är bokförda i året.',
-  close_fiscal_period_external: 'Genom att klicka godkänn så stängs och låses räkenskapsåret som avslutat i tidigare program, utan bokslutsverifikat i Accounted. Använd bara för importerade år vars bokslut gjordes i det gamla programmet.',
+  close_fiscal_period_external: 'Genom att klicka godkänn så stängs och låses räkenskapsåret som avslutat i tidigare program, utan bokslutsverifikat i Zimla Kontor. Använd bara för importerade år vars bokslut gjordes i det gamla programmet.',
   reopen_fiscal_period_external: 'Genom att klicka godkänn så öppnas och låses räkenskapsåret upp igen, så att dess innehåll kan ändras. Klarmarkera eller lås det igen när rättelsen är klar.',
   delete_account: 'Genom att klicka godkänn så tas kontot bort ur kontoplanen. Det går bara för ett konto utan bokförda rader; ett standardkonto kan läggas till igen från BAS.',
   update_company_settings: 'Genom att klicka godkänn så ändras företagsinställningarna. Betalningsuppgifterna styr vart kunderna betalar kommande fakturor.',

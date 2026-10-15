@@ -5,7 +5,7 @@
  *
  *  - **workflow** skills are static Markdown documents the server ships
  *    alongside tools (month-end close, VAT review, year-end, invoicing,
- *    payroll). They document *how* to compose Accounted tools for a real-world
+ *    payroll). They document *how* to compose Zimla Kontor tools for a real-world
  *    workflow.
  *  - **horizontal / vertical / modifier** atoms are loaded dynamically from
  *    `agent_atom_registry`: the same atoms the in-app composer assembles for

@@ -92,7 +92,7 @@ export const PAID_CAPABILITIES: readonly CapabilityKey[] = [
 
 /**
  * Capabilities that a SELF-HOSTED instance cannot provide on its own because
- * they run on services Accounted operates (the PSD2/AISP bank connection,
+ * they run on services Zimla Kontor operates (the PSD2/AISP bank connection,
  * the Skatteverket API client, the TIC lookup contract, the migration
  * gateway). On hosted these follow the normal paywall (bank_sync and
  * skatteverket are in PAID_CAPABILITIES; org_lookup and migration are free).

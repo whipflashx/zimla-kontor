@@ -387,7 +387,7 @@ export class AspspUnavailableError extends Error {
 }
 
 /**
- * Thrown when the connector hop itself failed: the Accounted Connect service
+ * Thrown when the connector hop itself failed: the Zimla Kontor Connect service
  * answered with an error envelope other than a dead session, timed out, could
  * not be reached, or answered 200 with a body that fails the wire contract.
  * None of these say anything about the PSD2 session, so callers treat it like
@@ -421,7 +421,7 @@ export class ConnectorSyncError extends Error {
  * connection does NOT need renewing: the bank session is not the problem.
  */
 export const CONNECTOR_UNAVAILABLE_MESSAGE =
-  'Synkningen via Accounted Connect misslyckades tillfälligt. Försök igen om en stund. Anslutningen behöver inte förnyas.'
+  'Synkningen via Zimla Kontor Connect misslyckades tillfälligt. Försök igen om en stund. Anslutningen behöver inte förnyas.'
 
 // API Helper
 

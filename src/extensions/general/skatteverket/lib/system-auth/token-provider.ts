@@ -6,7 +6,7 @@ const log = createLogger('skatteverket-system-auth')
 
 /**
  * System token cache: ONE token per environment for the whole tenant, never
- * per company (the org certificate identifies Accounted; the company is
+ * per company (the org certificate identifies Zimla Kontor; the company is
  * addressed per request via its org number in the path). CCG has no refresh
  * token: an expired or invalidated token is simply minted again.
  *

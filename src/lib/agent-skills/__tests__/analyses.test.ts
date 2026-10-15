@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { analysisSkills } from '../analyses'
 import { workflowSkills } from '../workflows'
 
-describe("Accounted's own analyses", () => {
+describe("Zimla Kontor's own analyses", () => {
   it('ships three analyses, loadable like any built-in skill', () => {
     expect(analysisSkills.map((s) => s.slug)).toEqual(['analys-manadsoversikt', 'analys-kassaprognos', 'analys-kostnadskoll'])
     for (const s of analysisSkills) {
@@ -11,12 +11,12 @@ describe("Accounted's own analyses", () => {
     }
   })
 
-  it('asks for a dashboard drawn without external libraries, from Accounted figures only, and changes nothing', () => {
+  it('asks for a dashboard drawn without external libraries, from Zimla Kontor figures only, and changes nothing', () => {
     for (const s of analysisSkills) {
       expect(s.body).toContain('artifact')
       expect(s.body).toContain('enkel SVG')
-      expect(s.body).toContain('Använd bara belopp du hämtat från Accounted')
-      expect(s.body).toContain('Ändra ingenting i Accounted')
+      expect(s.body).toContain('Använd bara belopp du hämtat från Zimla Kontor')
+      expect(s.body).toContain('Ändra ingenting i Zimla Kontor')
     }
   })
 })

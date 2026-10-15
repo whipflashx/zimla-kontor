@@ -321,7 +321,7 @@ describe('mcp.tool_called telemetry', () => {
     expect(event.errorDetail).toBeNull()
   })
 
-  it('applies the canonical scope gate to an Accounted alias', async () => {
+  it('applies the canonical scope gate to an Zimla Kontor alias', async () => {
     const eventPromise = captureNextToolCalledEvent()
 
     const response = await handleMcpRequest(
@@ -484,7 +484,7 @@ describe('client marker telemetry', () => {
     expect(event.client).toBe('openclaw')
   })
 
-  it('records the Accounted client header on the same telemetry field', async () => {
+  it('records the Zimla Kontor client header on the same telemetry field', async () => {
     const eventPromise = captureNextToolCalledEvent()
 
     await handleMcpRequest(

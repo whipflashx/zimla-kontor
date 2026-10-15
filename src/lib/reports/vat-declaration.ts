@@ -40,7 +40,7 @@ import { fetchDynamicVatAccounts, type DynamicVatAccounts } from './vat-revenue-
  * Domestic taxable sales (3000-3003) → ruta 05 (credit)
  *   The company's OWN class 3 accounts marked with a moms-sats join ruta 05 on
  *   top of this fixed list: see fetchDynamicRuta05Accounts (#1261). This map
- *   only covers the accounts Accounted itself seeds.
+ *   only covers the accounts Zimla Kontor itself seeds.
  * Uttag (3401-3403) → ruta 06 (credit)
  * EU goods (3108) → ruta 35; EU services (3308) → ruta 39 (credit)
  * Export (3105/3305) → ruta 36/40; Exempt (3004/3100/3404/3994/3980) → ruta 42 (credit)
@@ -637,7 +637,7 @@ export function rcInputTotalsFromDeclaration(
 }
 
 /**
- * Class 3 accounts that are not omsättning at all and that Accounted's own
+ * Class 3 accounts that are not omsättning at all and that Zimla Kontor's own
  * flows book without moms on ordinary sales and payments: 3740 Öres- och
  * kronutjämning (invoice and payment rounding, the momsredovisning's own
  * rounding line) and 3960 Valutakursvinster (exchange differences on
@@ -720,7 +720,7 @@ export async function calculateVatDeclaration(
 
   // Which of the company's OWN class 3 accounts count as momspliktig
   // försäljning. Resolved from their "Standard moms" rather than a fixed BAS
-  // list, because Accounted seeds no varugrupp accounts: every 3011/3013-style
+  // list, because Zimla Kontor seeds no varugrupp accounts: every 3011/3013-style
   // konto is user-added and would otherwise never be fetched at all (#1261).
   const dynamicVatAccounts = await fetchDynamicVatAccounts(supabase, companyId)
 

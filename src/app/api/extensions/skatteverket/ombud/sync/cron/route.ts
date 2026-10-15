@@ -47,10 +47,10 @@ export const MASS_DOWNGRADE_MAX_SHARE = 0.5
  * picks a grant recorded here up on its next run; Verifiera in the settings
  * records one at once.
  *
- * Companies appoint Accounted as ombud in Skatteverket's e-service, and
+ * Companies appoint Zimla Kontor as ombud in Skatteverket's e-service, and
  * nothing calls us back. One call to Ombudshantering v2
  * (GET /ombud/autentisieratOmbud on the system identity) lists every huvudman
- * that granted Accounted anything, and this route reconciles that list
+ * that granted Zimla Kontor anything, and this route reconciles that list
  * against the company's OWN connection row:
  *
  *   - only rows that already exist are touched. A row exists because a
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
 
   let grants: Map<string, HuvudmanGrantSummary>
   try {
-    // The whole register: Accounted's own call as ombud, no company to audit
+    // The whole register: Zimla Kontor's own call as ombud, no company to audit
     // it against (logged by the transport instead).
     grants = summarizeGrants(await listOmbudGrants({}, 'ombud_register', { emptyOn404: true }), today)
   } catch (error) {

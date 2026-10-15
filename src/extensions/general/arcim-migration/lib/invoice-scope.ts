@@ -3,7 +3,7 @@
  *
  * The provider list endpoints return the company's whole invoice register,
  * every year since the account was opened. The ledger for those years only
- * exists in Accounted for the fiscal years the SIE import brought over, so a
+ * exists in Zimla Kontor for the fiscal years the SIE import brought over, so a
  * paid invoice outside them has no verifikat to link to and no balance to
  * carry: importing it adds rows the user never asked for and, on a large
  * register, the detail fetches behind it are what push /migrate past the

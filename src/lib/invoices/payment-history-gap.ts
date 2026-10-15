@@ -9,7 +9,7 @@ const log = createLogger('invoices/payment-history-gap')
  * header reads paid but the AR sub-ledger (`invoice_payments`) has no row.
  *
  * The header state (`status`, `paid_amount`, `paid_at`) and the payment rows
- * have different writers. Every settlement path inside Accounted writes the
+ * have different writers. Every settlement path inside Zimla Kontor writes the
  * row fail-closed (lib/invoices/invoice-payment-row.ts), so a settled invoice
  * with no row was settled somewhere this ledger never saw:
  *
@@ -40,7 +40,7 @@ export type PaymentHistoryGap =
   | { kind: 'none' }
   /** A lookup failed: say so rather than assert either provenance. */
   | { kind: 'unreadable' }
-  /** Settled in Accounted, row missing: show the vouchers that settled it. */
+  /** Settled in Zimla Kontor, row missing: show the vouchers that settled it. */
   | { kind: 'vouchers_without_rows'; vouchers: PaymentVoucherRef[] }
   /** Settled before the invoice existed here: paid in the previous system. */
   | { kind: 'settled_before_accounted'; paid_at: string | null; full: boolean }

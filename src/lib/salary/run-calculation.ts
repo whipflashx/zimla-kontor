@@ -306,7 +306,7 @@ export async function runSalaryCalculation(
   }
 
   // 6. Cutover opening balances (payroll gap-closure 2.2): a company that
-  //    switched to Accounted mid-year has YTD state from its previous
+  //    switched to Zimla Kontor mid-year has YTD state from its previous
   //    payroll system that no run in this system carries. Loaded here
   //    because the karensavdrag adjustment further down reads the same rows.
   const rosterEmployeeIds = runEmployees.map((sre) => sre.employee_id as string)

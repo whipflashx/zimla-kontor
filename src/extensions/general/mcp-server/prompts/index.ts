@@ -2,7 +2,7 @@ import type { McpPrompt } from './types'
 
 /**
  * Single-action prompts. Each one is a Swedish slash-shortcut that directs
- * the model to call exactly one Accounted tool and report a short answer.
+ * the model to call exactly one Zimla Kontor tool and report a short answer.
  * kvittojakten is the exception: its one call loads a skill, which then
  * carries the workflow.
  */
@@ -57,7 +57,7 @@ export const prompts: McpPrompt[] = [
     description: 'Kvittojakten: hitta underlag som saknas',
     text:
       'Kör Kvittojakten. Anropa gnubok_load_skill med slug "kvittojakten" och följ instruktionen: ' +
-      'hitta underlagen som saknas i min mejl, lägg in dem i Accounted och föreslå kopplingar som jag får godkänna.',
+      'hitta underlagen som saknas i min mejl, lägg in dem i Zimla Kontor och föreslå kopplingar som jag får godkänna.',
   },
 ]
 

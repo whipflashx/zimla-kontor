@@ -41,7 +41,7 @@ import {
  *   - Element order inside an ärende is fixed: base fields, then (rot only)
  *     property fields, then UtfortArbete.
  *   - Ovrigkostnad is mandatory as soon as UtfortArbete reports hours or
- *     material. Accounted doesn't itemize övrig kostnad (travel/machines):
+ *     material. Zimla Kontor doesn't itemize övrig kostnad (travel/machines):
  *     materials live on non-deduction rows: so 0 is emitted.
  *
  * Everything in this module is pure and deterministic: the caller passes the
@@ -629,7 +629,7 @@ export function buildRotRutFile(params: {
     if (ev.fakturaNr) {
       lines.push(`\t\t\t<ns2:FakturaNr>${escapeXml(ev.fakturaNr)}</ns2:FakturaNr>`)
     }
-    // Mandatory when UtfortArbete reports hours; Accounted books övriga
+    // Mandatory when UtfortArbete reports hours; Zimla Kontor books övriga
     // kostnader (resor, maskiner) outside the deduction rows → always 0.
     lines.push('\t\t\t<ns2:Ovrigkostnad>0</ns2:Ovrigkostnad>')
     if (ev.property?.fastighet) {
@@ -649,7 +649,7 @@ export function buildRotRutFile(params: {
         } else {
           lines.push(`\t\t\t\t<ns2:${w.element}>`)
           lines.push(`\t\t\t\t\t<ns2:AntalTimmar>${w.hours}</ns2:AntalTimmar>`)
-          // Materials are invoiced on non-deduction rows in Accounted's
+          // Materials are invoiced on non-deduction rows in Zimla Kontor's
           // fakturamodell: the file reports 0 (XSD requires the element).
           lines.push('\t\t\t\t\t<ns2:Materialkostnad>0</ns2:Materialkostnad>')
           lines.push(`\t\t\t\t</ns2:${w.element}>`)

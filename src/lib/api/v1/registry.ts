@@ -592,7 +592,7 @@ export function generateOpenApiSpec(serverUrl: string): OpenApiSpec {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Accounted API',
+      title: 'Zimla Kontor API',
       version: API_V1_VERSION,
       description:
         'Public REST API for Accounted: Swedish double-entry bookkeeping. ' +

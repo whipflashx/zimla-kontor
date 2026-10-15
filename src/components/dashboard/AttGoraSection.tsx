@@ -98,7 +98,7 @@ interface AttGoraSectionProps {
   missingUnderlag?: MissingUnderlagSample
   /** False when no Skatteverket token is stored: the kopplingar chip offers the connect. */
   hasSkatteverketConnection?: boolean
-  /** Accounted can be appointed as ombud at Skatteverket (system auth on). */
+  /** Zimla Kontor can be appointed as ombud at Skatteverket (system auth on). */
   skvOmbudEnabled?: boolean
   /**
    * Whether to render the kopplingar row under the list. Off while the

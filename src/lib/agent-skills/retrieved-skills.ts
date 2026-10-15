@@ -2,8 +2,8 @@ import { REGISTRY_SKILLS, type RegistrySkillId } from './registry'
 
 /**
  * One thing an agent retrieved before it staged an operation, named the way
- * the Instruktioner page names it: an Accounted flow, a knowledge pack, one
- * of Accounted's analyses, or the company's own item. Anything else (an older
+ * the Instruktioner page names it: an Zimla Kontor flow, a knowledge pack, one
+ * of Zimla Kontor's analyses, or the company's own item. Anything else (an older
  * workflow skill, a community item) keeps its slug.
  */
 export type RetrievedSkill =

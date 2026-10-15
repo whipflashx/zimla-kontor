@@ -36,7 +36,7 @@ import type { WooCommerceConnection } from '../types'
  * handshake completed under a session, it is not a trust boundary.
  */
 
-const APP_NAME = 'Accounted'
+const APP_NAME = 'Zimla Kontor'
 
 /**
  * @param appOrigin The trusted application origin the merchant started the

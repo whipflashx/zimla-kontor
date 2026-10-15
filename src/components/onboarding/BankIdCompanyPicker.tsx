@@ -13,7 +13,7 @@ import '@/components/onboarding/journey/journey.css'
 
 /**
  * BankID company picker: the companies the user's BankID says they run
- * (CompanyRoles) that are not in Accounted yet, as the journey's searchable
+ * (CompanyRoles) that are not in Zimla Kontor yet, as the journey's searchable
  * list (founder decision 2026-07-24: the list is the standard at ANY count).
  * Picking one routes to /onboarding?org_number=… (one Lens lookup happens
  * there, on pick); "Lägg till manuellt" is the journey without a prefill.
@@ -25,7 +25,7 @@ import '@/components/onboarding/journey/journey.css'
 
 interface BankIdCompanyPickerProps {
   firstName: string | null
-  /** Active engagements not yet in Accounted, in CompanyRoles order. */
+  /** Active engagements not yet in Zimla Kontor, in CompanyRoles order. */
   roles: EnrichmentCompanyRole[]
   enrichmentStale: boolean
   /** A pending invitation exists for this email but no invite token is at

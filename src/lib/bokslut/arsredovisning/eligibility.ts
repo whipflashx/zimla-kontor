@@ -106,7 +106,7 @@ export interface EvaluateAnnualReportEligibilityInput {
 }
 
 /**
- * Evaluate framework and current Accounted filing support. The function is
+ * Evaluate framework and current Zimla Kontor filing support. The function is
  * deliberately conservative: missing legal facts produce blockers instead
  * of being treated as false.
  */
@@ -124,7 +124,7 @@ export function evaluateAnnualReportEligibility(
     issues.push(
       issue(
         'AR-SCOPE-ENTITY',
-        'Accounteds årsredovisningsflöde stöder inte den här företagsformen ännu.',
+        'Zimla Kontors årsredovisningsflöde stöder inte den här företagsformen ännu.',
         'Använd rätt årsboksluts- eller deklarationsflöde för företagsformen.',
       ),
     )
@@ -140,7 +140,7 @@ export function evaluateAnnualReportEligibility(
       issues.push(
         issue(
           'AR-SCOPE-ENTITY-FRAMEWORK',
-          'Accounteds K3-dokument för ekonomisk förening är inte färdigt: förändringen i eget kapital följer aktiebolagets uppställning.',
+          'Zimla Kontors K3-dokument för ekonomisk förening är inte färdigt: förändringen i eget kapital följer aktiebolagets uppställning.',
           'Välj K2 (BFNAR 2016:10) om föreningen är ett mindre företag, annars upprätta K3-årsredovisningen med hjälp av redovisningskonsult eller revisor.',
         ),
       )
@@ -168,7 +168,7 @@ export function evaluateAnnualReportEligibility(
     issues.push(
       issue(
         'AR-SCOPE-LIQUIDATION',
-        'Årsredovisningar under likvidation kräver särskilda värderings- och uppställningsregler som Accounted ännu inte stöder.',
+        'Årsredovisningar under likvidation kräver särskilda värderings- och uppställningsregler som Zimla Kontor ännu inte stöder.',
         'Upprätta årsredovisningen med hjälp av redovisningskonsult eller revisor.',
       ),
     )
@@ -320,7 +320,7 @@ export function evaluateAnnualReportEligibility(
     issues.push(
       issue(
         'AR-SCOPE-CURRENCY',
-        'Accounteds årsredovisningsflöde stöder ännu endast SEK som redovisningsvaluta.',
+        'Zimla Kontors årsredovisningsflöde stöder ännu endast SEK som redovisningsvaluta.',
         'Upprätta årsredovisningen i ett system som stöder euro som redovisningsvaluta.',
       ),
     )
@@ -332,7 +332,7 @@ export function evaluateAnnualReportEligibility(
     digitalIssues.push(
       issue(
         'AR-DIGITAL-ENTITY',
-        'Accounteds digitala Bolagsverket-flöde och iXBRL-taxonomi (K2 aktiebolag) täcker inte ekonomiska föreningar.',
+        'Zimla Kontors digitala Bolagsverket-flöde och iXBRL-taxonomi (K2 aktiebolag) täcker inte ekonomiska föreningar.',
         'Skriv ut PDF-paketet och lämna in årsredovisning och revisionsberättelse till Bolagsverket enligt deras anvisningar för ekonomiska föreningar.',
       ),
     )
@@ -341,7 +341,7 @@ export function evaluateAnnualReportEligibility(
     digitalIssues.push(
       issue(
         'AR-DIGITAL-FRAMEWORK',
-        'Accounteds digitala Bolagsverket-flöde stöder ännu endast K2 för aktiebolag.',
+        'Zimla Kontors digitala Bolagsverket-flöde stöder ännu endast K2 för aktiebolag.',
         'Använd pappersflödet tills K3-taxonomin är implementerad och godkänd.',
       ),
     )
@@ -358,7 +358,7 @@ export function evaluateAnnualReportEligibility(
     digitalIssues.push(
       issue(
         'AR-DIGITAL-AUDIT',
-        'Det här bolaget kräver revisionsberättelse, vilket Accounteds digitala paket ännu inte skickar.',
+        'Det här bolaget kräver revisionsberättelse, vilket Zimla Kontors digitala paket ännu inte skickar.',
         'Använd pappersflödet eller vänta tills separat revisionsberättelse stöds.',
       ),
     )

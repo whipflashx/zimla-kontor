@@ -14,7 +14,7 @@ export interface SkvAuditActor {
 /**
  * Who an audit row names when no person asked for the call (crons,
  * background refreshes): the user whose personal token made it, or null for
- * a call on Accounted's own system credentials. Never a stand-in such as the
+ * a call on Zimla Kontor's own system credentials. Never a stand-in such as the
  * company's creator. A person who asked passes their own id instead.
  */
 export function auditUserIdFor(auth: SkvAuth): string | null {

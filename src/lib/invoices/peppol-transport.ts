@@ -1,5 +1,5 @@
 /**
- * Provider-neutral boundary between Accounted's Peppol lifecycle and a
+ * Provider-neutral boundary between Zimla Kontor's Peppol lifecycle and a
  * contracted Access Point. Core code must not infer network delivery from an
  * HTTP response: submissions, asynchronous events, and evidence are distinct.
  */
@@ -74,7 +74,7 @@ export interface PeppolVerifiedEvent {
   providerSubmissionId: string | null
   providerEventId: string | null
   /**
-   * Accounted's delivery idempotency key. A provider webhook only knows its
+   * Zimla Kontor's delivery idempotency key. A provider webhook only knows its
    * own submission id, so an adapter returns `null` here and the webhook route
    * resolves the key from `providerSubmissionId` before persisting.
    */
@@ -143,7 +143,7 @@ export interface PeppolRecipientRegistration {
 
 export type PeppolInboundDocumentType = 'Invoice' | 'CreditNote'
 
-/** One inbound document as the provider hands it over, before Accounted reads it. */
+/** One inbound document as the provider hands it over, before Zimla Kontor reads it. */
 export interface PeppolInboundMessage {
   provider: string
   providerDocumentId: string

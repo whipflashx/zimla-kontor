@@ -128,7 +128,7 @@ describe('exchangeAuthToken: provider company must match the consent company', (
     expect(db.findCall('provider_consents', 'update')?.[0]).toEqual({ status: 1, org_number: TARGET_ORG })
   })
 
-  it('records the org number even when the Accounted company has none to compare with', async () => {
+  it('records the org number even when the Zimla Kontor company has none to compare with', async () => {
     const db = useDb('company-1', null)
     ;(fetchCompanyInfoDirect as Mock).mockResolvedValue({ companyName: 'Bolag AB', organizationNumber: '556016-0680' })
 
@@ -150,7 +150,7 @@ describe('exchangeAuthToken: provider company must match the consent company', (
     expect(db.findCall('provider_consents', 'update')?.[0]).toMatchObject({ status: 1, org_number: undefined })
   })
 
-  it('does not block when the Accounted company has no org number', async () => {
+  it('does not block when the Zimla Kontor company has no org number', async () => {
     const db = useDb('company-1', null)
     ;(fetchCompanyInfoDirect as Mock).mockResolvedValue({
       companyName: 'Annat Bolag AB',

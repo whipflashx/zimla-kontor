@@ -3,10 +3,10 @@ import crypto from 'crypto'
 /**
  * Configuration for the system (organization certificate) auth flow.
  *
- * Unlike the personal BankID flow, the system flow authenticates Accounted
+ * Unlike the personal BankID flow, the system flow authenticates Zimla Kontor
  * itself with an organisationscertifikat via the OAuth2 Client Credentials
  * Grant: one token for the whole tenant, no per-user session, no 65-minute
- * refresh treadmill. Companies authorize it once by granting Accounted's org
+ * refresh treadmill. Companies authorize it once by granting Zimla Kontor's org
  * number a behorighet ("Juridiskt lasombud", "Momsdeklaration, ombud") in
  * Skatteverket's Ombud och behorigheter e-service.
  *
@@ -70,7 +70,7 @@ export function getSystemApiGwCredentials(): { clientId: string; clientSecret: s
   return clientId && clientSecret ? { clientId, clientSecret } : null
 }
 
-/** Accounted's own org number: what the end company grants behorighet to. */
+/** Zimla Kontor's own org number: what the end company grants behorighet to. */
 export function getOmbudOrgNumber(): string | null {
   return process.env.SKATTEVERKET_OMBUD_ORG_NUMBER ?? null
 }

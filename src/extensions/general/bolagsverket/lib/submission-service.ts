@@ -627,7 +627,7 @@ export async function submitArsredovisning(
         idnummer: svar.handlingsinfo.idnummer,
         url: svar.url,
         message:
-          'Bolagsverket tog emot dokumentet men Accounted kunde inte bekräfta lokal status. Skicka inte igen.',
+          'Bolagsverket tog emot dokumentet men Zimla Kontor kunde inte bekräfta lokal status. Skicka inte igen.',
       }
     }
     const { error: versionStatusError } = await supabase

@@ -373,7 +373,7 @@ export function validateAnnualReportCompleteness(
       'AR-K3-DRAFT-ONLY',
       'error',
       'scope',
-      'Accounteds K3-dokument är ännu ett granskningsutkast och kan inte låsas som en komplett K3-årsredovisning.',
+      'Zimla Kontors K3-dokument är ännu ett granskningsutkast och kan inte låsas som en komplett K3-årsredovisning.',
       'Slutför K3:s upplysningsmatris och oberoende regelverksgranskning innan versionen låses.',
     )
   }

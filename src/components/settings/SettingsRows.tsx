@@ -38,7 +38,7 @@ interface SettingsSectionHeaderProps {
   action?: React.ReactNode
   /**
    * Brand mark for a section that represents a third-party channel
-   * (WhatsApp today). Sections that are just Accounted settings leave this
+   * (WhatsApp today). Sections that are just Zimla Kontor settings leave this
    * unset: the serif title carries them, and a decorative icon per tab
    * would turn the settings rail into a sticker album.
    */

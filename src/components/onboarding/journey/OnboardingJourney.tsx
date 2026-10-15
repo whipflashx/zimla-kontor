@@ -831,7 +831,7 @@ export default function OnboardingJourney({
         )
 
       case 'planned': {
-        // The registry named a form Accounted has scoped but cannot create
+        // The registry named a form Zimla Kontor has scoped but cannot create
         // yet: say so before the picker, so the nearest supported form is
         // not picked by mistake. The picker stays one chip away.
         const label = plannedFormLabel(state.plannedForm) ?? t('journey_form_planned_group')

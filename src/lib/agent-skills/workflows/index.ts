@@ -19,6 +19,6 @@ export const workflowSkills: Skill[] = [
   invoicingRulesSkill, payrollMonthlySkill, bankReconciliationSkill,
   kreditfakturaProcessSkill, customerOnboardingSkill, reconcileMonthSkill, onboardingSkill,
   taxPlanningSkill, createSkillSkill,
-  // Accounted's own analyses (itemKind analysis): loadable like any skill, listed under Analyser.
+  // Zimla Kontor's own analyses (itemKind analysis): loadable like any skill, listed under Analyser.
   ...analysisSkills,
 ]

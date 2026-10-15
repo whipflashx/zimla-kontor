@@ -98,7 +98,7 @@ export function orgNumberKey(raw: string | null | undefined): string | null {
  *
  * TIC registers an enskild firma under 16 digits: the century-prefixed
  * personnummer plus a 4-digit serial (`2002011732750001` for personnummer
- * `0201173275`). Accounted stores that firm under the 10-digit personnummer,
+ * `0201173275`). Zimla Kontor stores that firm under the 10-digit personnummer,
  * so comparing the raw registration number with `companies.org_number` never
  * matches and a sole trader's own firm reads as a company not yet added.
  * Every other shape keys exactly as {@link orgNumberKey}.
@@ -111,7 +111,7 @@ export function registrationNumberKey(raw: string | null | undefined): string | 
 }
 
 /**
- * Normalize an org number to Accounted's canonical 10-digit storage form.
+ * Normalize an org number to Zimla Kontor's canonical 10-digit storage form.
  *
  * Accepts hyphen/space-formatted input in either of the two shapes Swedish
  * users commonly type:
@@ -121,7 +121,7 @@ export function registrationNumberKey(raw: string | null | undefined): string | 
  * Returns null for any other length, non-digit content, or invalid Luhn check
  * digit. Storing a structurally invalid org number would later be caught by
  * Skatteverket SRU and any receiving SIE4 system: refusing at the boundary
- * keeps Accounted's bookkeeping from accumulating under an unusable identifier.
+ * keeps Zimla Kontor's bookkeeping from accumulating under an unusable identifier.
  */
 export function normalizeOrgNumber(raw: string | null | undefined): string | null {
   if (!raw) return null

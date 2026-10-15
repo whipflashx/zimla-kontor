@@ -130,7 +130,7 @@ export const invoicesPeppolReadiness = defineOperation({
     doNotUseFor:
       'Downloading the UBL XML (the dashboard export) or reading past transmissions (GET /invoices/{id}/peppol/deliveries).',
     pitfalls: [
-      'ready=true means nothing on Accounted\'s side stops the send; the buyer can still be unregistered in Peppol, which the send answers as 422 PEPPOL_RECIPIENT_NOT_REACHABLE.',
+      'ready=true means nothing on Zimla Kontor\'s side stops the send; the buyer can still be unregistered in Peppol, which the send answers as 422 PEPPOL_RECIPIENT_NOT_REACHABLE.',
       'A draft without a number is validated with a placeholder number: the real F-series number is allocated only when the send commits.',
       'PEPPOL_ACCESS_REQUIRED means the company has not been granted Peppol: request it with POST /peppol/access-request.',
       SCOPE_PITFALL,

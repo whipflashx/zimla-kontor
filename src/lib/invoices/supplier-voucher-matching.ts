@@ -337,7 +337,7 @@ function scoreCandidate(
   // settles the invoice (the remainder, or the total) does it earn 0.99. An
   // invoice number with another amount stays a strong hint for a person
   // (0.90), below the unattended auto-link bar. The ankomstnummer is
-  // Accounted's own sequence (1, 2, 3, ...): no bank or source system writes
+  // Zimla Kontor's own sequence (1, 2, 3, ...): no bank or source system writes
   // it on a payment, so it counts only when the amount corroborates it. All
   // 31 arrival-number auto-links in prod on 2026-09-16 were of the kind "14"
   // inside "(1814)" with an unrelated amount (desk crm#64).

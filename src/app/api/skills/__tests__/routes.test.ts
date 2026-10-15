@@ -118,7 +118,7 @@ describe('skills HTTP routes', () => {
     expect(findCalls('company_skills', 'eq')).toContainEqual(['company_id', 'company-a'])
     expect(findCalls('company_skills', 'eq')).toContainEqual(['share_status', 'private'])
   })
-  it('tells Accounted\'s reviewers about a share once the response is sent, linking the canonical app whatever host it came through', async () => {
+  it('tells Zimla Kontor\'s reviewers about a share once the response is sent, linking the canonical app whatever host it came through', async () => {
     enqueue({ data: { id } })
     const spoofed = new Request('https://evil.example/api/skills', { method: 'PATCH', body: JSON.stringify({ action: 'submit', author_handle: 'author', confirmed_no_customer_data: true, kind: 'rules' }), headers: { 'Content-Type': 'application/json' } })
     expect((await PATCH(spoofed, params)).status).toBe(200)

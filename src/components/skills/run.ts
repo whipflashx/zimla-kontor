@@ -57,7 +57,7 @@ export function pinCompany(prompt: string, pin: string): StartPrompt {
 /**
  * How a start reaches the AI. Claude Desktop and Cowork always get the
  * prompt filled in: a claude:// link stays on the device, like a paste. On
- * the web only Accounted's own text (`fixedText`: its flows and analyses) is
+ * the web only Zimla Kontor's own text (`fixedText`: its flows and analyses) is
  * filled in through ?q=; anything a user wrote is copied for them to paste
  * into an empty chat.
  */

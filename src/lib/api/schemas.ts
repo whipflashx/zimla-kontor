@@ -4281,7 +4281,7 @@ const openingBalancesShape = {
   // cutover_date. Booked runs whose avvikelseperiod ends on or before this day
   // are already inside the balance and are not deducted again by the ledger,
   // so under salary_deviation_period = previous_month a balance the old system
-  // struck BEFORE the month the first Accounted run deducts must say so here.
+  // struck BEFORE the month the first Zimla Kontor run deducts must say so here.
   vacation_as_of_date: isoDate.nullable().optional(),
   // Obetalda: unpaid days left this vacation year (lapse at year close).
   vacation_unpaid_days_remaining: z.number().min(0).max(40).default(0),

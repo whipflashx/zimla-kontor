@@ -2,7 +2,7 @@
  * Kvittojakten for a connected agent: what is missing an underlag, shaped so
  * an agent with its own mail connector can go and find it.
  *
- * The built-in hunt (hunt.ts) searches the mailbox Accounted is connected to.
+ * The built-in hunt (hunt.ts) searches the mailbox Zimla Kontor is connected to.
  * This is the other engine for the same job: the user's own agent (Claude,
  * ChatGPT, Grok) searches through ITS mail connector, and this module only
  * tells it what to look for. Nothing here reads mail or writes anything.
@@ -163,7 +163,7 @@ function nextStep(descriptor: string | null, portal: AgentWorklistItem['portal']
     case 'portal':
       return `Logga in på ${portal?.vendor ?? 'leverantören'} och ladda ner fakturan: ${portal?.url ?? ''}`.trim()
     case 'kivra':
-      return 'Kvittot ligger troligen i Kivra: öppna det, tryck Dela och välj Accounted.'
+      return 'Kvittot ligger troligen i Kivra: öppna det, tryck Dela och välj Zimla Kontor.'
     case 'paper':
       return 'Papperskvitto: fota det med mobilen och skicka det till kvittoadressen.'
     case 'mail':

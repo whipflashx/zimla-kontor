@@ -37,7 +37,7 @@ export interface ConnectorUpstream {
 /**
  * Company ids that use the connector for an upstream even though this
  * installation has its own credentials for it: the canary switch for moving
- * an installation upstream by upstream (hosted Accounted moves its bank sync
+ * an installation upstream by upstream (hosted Zimla Kontor moves its bank sync
  * and its Skatteverket traffic to Connect a few companies at a time before
  * dropping its own keys). Comma-separated. Ignored without a connector key.
  */

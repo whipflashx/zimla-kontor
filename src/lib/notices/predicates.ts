@@ -39,7 +39,7 @@ export function expiringBankConnectionsFrom(
 /** The skatteverket extension's /status response shape (subset we decide on). */
 export interface SkvStatusLike {
   connected?: boolean
-  /** Reads run on Accounted's ombud grant (lib/skatteverket/ombud-access.ts). */
+  /** Reads run on Zimla Kontor's ombud grant (lib/skatteverket/ombud-access.ts). */
   ombud?: boolean
   disabled?: boolean
   needsReconsent?: boolean
@@ -52,7 +52,7 @@ export interface SkvStatusLike {
  * /status shape. A connection needs reconnecting when it exists, is not
  * env-disabled, and either was flagged needs_reconsent by a cron/API call or
  * has an expired access token with nothing left to refresh with. Never while
- * the company's reads run on Accounted's ombud grant: the personal session
+ * the company's reads run on Zimla Kontor's ombud grant: the personal session
  * then only matters for signing, which asks for BankID on its own.
  */
 export function skvStatusNeedsReconnect(s: SkvStatusLike): boolean {

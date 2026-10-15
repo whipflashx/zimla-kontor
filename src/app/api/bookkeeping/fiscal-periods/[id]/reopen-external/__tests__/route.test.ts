@@ -101,7 +101,7 @@ describe('POST /api/bookkeeping/fiscal-periods/[id]/reopen-external', () => {
   it('maps a period closed by a year-end run to a 409', async () => {
     mockAuth()
     mockReopen.mockRejectedValue(
-      new Error('Period was closed with a year-end run in Accounted and cannot be reopened here'),
+      new Error('Period was closed with a year-end run in Zimla Kontor and cannot be reopened here'),
     )
     const res = await POST(reopenRequest(), createMockRouteParams({ id: 'p1' }))
     expect(res.status).toBe(409)

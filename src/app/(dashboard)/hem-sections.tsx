@@ -150,7 +150,7 @@ export async function HemChecklistSection({
     ENABLED_EXTENSION_IDS.has('arcim-migration')
       ? findUnfinishedConnect(createServiceClient(), companyId, now)
       : Promise.resolve(null),
-    // Accounted as ombud also counts as connected: its reads need no
+    // Zimla Kontor as ombud also counts as connected: its reads need no
     // personal BankID session (lib/skatteverket/ombud-access.ts).
     hasSkatteverketOmbudReadAccess(companyId),
   ])

@@ -335,8 +335,8 @@ export function EmailBodyUnderlagPDF({ model, generatedAt }: { model: EmailBodyU
       title={model.subject}
       subject="E-postmeddelande sparat som underlag"
       keywords={model.messageId}
-      creator="Accounted"
-      producer="Accounted"
+      creator="Zimla Kontor"
+      producer="Zimla Kontor"
     >
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>E-postmeddelande sparat som underlag</Text>

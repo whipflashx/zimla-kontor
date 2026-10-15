@@ -2,7 +2,7 @@
  * LÄSMIG.txt for the full archive: a Swedish, human-readable map of the ZIP.
  * The archive outlives the product subscription; whoever opens it (the user
  * years later, a revisor, a Skatteverket auditor) must understand it without
- * Accounted running.
+ * Zimla Kontor running.
  */
 
 export interface ArchiveReadmeParams {
@@ -27,7 +27,7 @@ export interface DriveFolderReadmeParams {
  * LÄSMIG.txt in the Drive folder and inside Grunddata.zip.
  */
 export function buildDriveFolderReadme(params: DriveFolderReadmeParams): string {
-  const app = params.appName || 'Accounted'
+  const app = params.appName || 'Zimla Kontor'
   return [
     `SÄKERHETSKOPIA FRÅN ${app.toUpperCase()}`,
     '='.repeat(30),
@@ -62,7 +62,7 @@ export function buildDriveFolderReadme(params: DriveFolderReadmeParams): string 
 }
 
 export function buildArchiveReadme(params: ArchiveReadmeParams): string {
-  const app = params.appName || 'Accounted'
+  const app = params.appName || 'Zimla Kontor'
   const scopeLine =
     params.scope === 'all'
       ? 'Hela bokföringen (samtliga räkenskapsår)'

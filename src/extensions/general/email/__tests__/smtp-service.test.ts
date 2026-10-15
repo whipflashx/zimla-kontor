@@ -7,7 +7,7 @@ vi.mock('nodemailer', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted <evil>\r\nBcc: x' }),
+  getBranding: () => ({ appName: 'Zimla Kontor <evil>\r\nBcc: x' }),
 }))
 
 import {
@@ -170,7 +170,7 @@ describe('SmtpEmailService', () => {
   it('uses the app name alone as the platform sender when no fromName is given', async () => {
     configure()
     await new SmtpEmailService().sendEmail({ to: 'a@b.se', subject: 's', html: '<p/>' })
-    expect(sendMailMock.mock.calls[0][0].from).toBe('"Accounted evilBcc: x" <faktura@example.se>')
+    expect(sendMailMock.mock.calls[0][0].from).toBe('"Zimla Kontor evilBcc: x" <faktura@example.se>')
   })
 
   // Same shape as the Resend service for a VERIFIED brand sender domain

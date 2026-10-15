@@ -41,7 +41,7 @@ vi.mock('@/lib/payments/batch-service', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted' }),
+  getBranding: () => ({ appName: 'Zimla Kontor' }),
 }))
 
 vi.mock('@/lib/skatteverket/skattekonto-ocr', () => ({

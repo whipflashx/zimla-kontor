@@ -16,7 +16,7 @@ export const CONNECT_CARD_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Anslut - Accounted</title>
+<title>Anslut - Zimla Kontor</title>
 <style>
   :root {
     --bg: #fafafa;
@@ -176,7 +176,7 @@ export const CONNECT_CARD_HTML = `<!DOCTYPE html>
 
     if (isMigration) {
       el('lede').textContent = sc.api_connected
-        ? 'Guiden loggar in hos ' + sc.provider_name + ' och hämtar bokföring, fakturor, kunder och underlag. Du behöver vara inloggad i Accounted i webbläsaren.'
+        ? 'Guiden loggar in hos ' + sc.provider_name + ' och hämtar bokföring, fakturor, kunder och underlag. Du behöver vara inloggad i Zimla Kontor i webbläsaren.'
         : sc.provider_name + ' saknar API-export: importera SIE-filen här först; guiden kompletterar sedan med fakturor och kunder.';
       if (connectUrl) {
         el('url').textContent = connectUrl;
@@ -205,8 +205,8 @@ export const CONNECT_CARD_HTML = `<!DOCTYPE html>
       el('open').textContent = 'Lägg till bank';
     } else {
       el('lede').textContent = isSkv
-        ? 'Godkänn åtkomsten hos Skatteverket med BankID som firmatecknare. Du behöver vara inloggad i Accounted i webbläsaren.'
-        : 'Välj din bank och godkänn med BankID (PSD2-samtycke, upp till 180 dagar). Du behöver vara inloggad i Accounted i webbläsaren.';
+        ? 'Godkänn åtkomsten hos Skatteverket med BankID som firmatecknare. Du behöver vara inloggad i Zimla Kontor i webbläsaren.'
+        : 'Välj din bank och godkänn med BankID (PSD2-samtycke, upp till 180 dagar). Du behöver vara inloggad i Zimla Kontor i webbläsaren.';
     }
 
     if (connectUrl) {

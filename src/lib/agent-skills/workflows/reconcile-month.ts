@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Stäm av månaden: Accounted
+const body = `# Stäm av månaden: Zimla Kontor
 
 Sign off a month account by account: every bank account, the skattekonto (1630) and the other balance accounts that need an underlag. For each account you compare the outside truth (bank, Skatteverket, a reskontra or the user's own underlag) with the ledger, get every difference explained, and stage an "avstämt t.o.m." sign-off the user approves.
 
@@ -23,7 +23,7 @@ Answer these before touching an account. Do not ask the user what a tool can tel
 2. **Legal form and method.** \`gnubok_get_agent_briefing\` gives \`entity_type\` (aktiebolag or enskild_firma) and \`accounting_method\` (accrual = faktureringsmetoden, cash = kontantmetoden, null = accrual). Legal form matters for private rows on the bank (see Stop conditions); the method matters when you book bank rows (see \`bank-reconciliation\`).
 3. **Which month, and is it open.** \`gnubok_list_fiscal_periods\`: find the fiscal period that holds the month and its status (active, locked, closed). A locked or closed month can still be linked and signed off, but nothing new can be booked in it: see "When a tool call fails".
 4. **Which accounts.** Read the resource \`Accounted://reconciliation/summary?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD\`: every account with \`state\` (reconciled, open, stale, not_configured), \`unexplained_difference\`, open counts, \`synced_at\` and \`signed_off_through\`. The resource always reads the connection's default company: for another company, or a harness without resources, use \`gnubok_list_cash_accounts\` (each \`cash_account_id\` gives \`bank:<id>\`) and call \`gnubok_get_reconciliation_status\` per key. An unknown key is answered with an error that lists the keys that exist: pick from that list, never guess.
-5. **Is the outside side fresh.** \`stale\` means the outside data is older than 7 days. Bank: \`gnubok_connect_bank\` shows the connections and their last sync; \`gnubok_sync_bank({ connection_id })\` fetches now (\`synced: false\` with \`next_allowed_at\` means a sync ran in the last 15 minutes: wait, do not loop). Skattekonto: there is no fetch tool; ask the user to fetch it in Accounted (Skattekonto page) and tell you when it is done.
+5. **Is the outside side fresh.** \`stale\` means the outside data is older than 7 days. Bank: \`gnubok_connect_bank\` shows the connections and their last sync; \`gnubok_sync_bank({ connection_id })\` fetches now (\`synced: false\` with \`next_allowed_at\` means a sync ran in the last 15 minutes: wait, do not loop). Skattekonto: there is no fetch tool; ask the user to fetch it in Zimla Kontor (Skattekonto page) and tell you when it is done.
 
 Then tell the user in two lines what you found: the month, the accounts, which already are signed off, and which you will work. Ask one scoping question only if it is open: "Ska jag stämma av alla konton för juli, eller bara bank och skattekonto?" An account whose \`signed_off_through\` is already at or past the month end is done: skip it.
 
@@ -85,7 +85,7 @@ The bank bridge runs from the start of the fiscal period, so a wrong ingående b
 
 - SKATTEVERKET_NOT_CONNECTED: Skatteverket is not connected, or the connection expired before anything was fetched. \`gnubok_connect_skatteverket\` returns the link where the user authorises with BankID. Tell the user, skip the skattekonto for now and continue with the other accounts; do not ask again until they say they connected.
 - SKATTEKONTO_NOT_SYNCED: connected but the first fetch has not finished. Skip it, say so, and ask again later.
-- State \`stale\`, or NOT_FETCHED_THROUGH at sign-off: the snapshot is older than the month end. Ask the user to fetch in Accounted, then re-read. A skattekonto sign-off date can never pass the snapshot date.
+- State \`stale\`, or NOT_FETCHED_THROUGH at sign-off: the snapshot is older than the month end. Ask the user to fetch in Zimla Kontor, then re-read. A skattekonto sign-off date can never pass the snapshot date.
 
 ### Other balance accounts (manual:BAS)
 
@@ -98,7 +98,7 @@ When \`unexplained_difference\` is 0 through the month end: \`gnubok_reconcile_s
 - NOT_RECONCILED: something is still unexplained. Back to Step 3.
 - OUTSIDE_UNKNOWN: no outside balance (manual account without underlag, or no fetched data). Ask for the underlag or the fetch.
 - NOT_FETCHED_THROUGH: skattekonto snapshot older than the date. Ask for a fetch.
-- ALREADY_SIGNED_OFF: signed through that date or later. The user reopens it in Accounted (Avstämning) if it must change; you do not.
+- ALREADY_SIGNED_OFF: signed through that date or later. The user reopens it in Zimla Kontor (Avstämning) if it must change; you do not.
 - DATE_IN_FUTURE, INVALID_DATE: fix the date.
 - NOTE_REQUIRED: \`force\` needs a \`note\`.
 - SIGNOFF_RACE: someone else signed or reopened just now. Re-read the status before anything else.
@@ -130,7 +130,7 @@ Ask one precise question with the facts attached, never an open "what should I d
 
 ## Approval
 
-Every write here stages a pending operation. On Claude, \`gnubok_list_pending_operations({ render_ui: true })\` opens the approval widget. Without a widget (ChatGPT, Grok, a terminal), list what is staged (account, what it links or books, amount) and ask. On a clear yes, call \`gnubok_approve_pending_operation\` per operation; otherwise point the user to Granskning in Accounted. Approve in dependency order: links and bookings first, the sign-off last, since the sign-off re-checks the bridge when approved.
+Every write here stages a pending operation. On Claude, \`gnubok_list_pending_operations({ render_ui: true })\` opens the approval widget. Without a widget (ChatGPT, Grok, a terminal), list what is staged (account, what it links or books, amount) and ask. On a clear yes, call \`gnubok_approve_pending_operation\` per operation; otherwise point the user to Granskning in Zimla Kontor. Approve in dependency order: links and bookings first, the sign-off last, since the sign-off re-checks the bridge when approved.
 
 ## Stop conditions: this needs a human
 
@@ -160,7 +160,7 @@ End with short groups, in the user's language:
 - **Väntar på godkännande**: what is staged, per account
 - **Behöver ditt svar**: each open question, with the facts
 - **Kunde inte göras**: what and why (not connected, locked period, stale data)
-- **Nästa steg**: usually approve in Granskning, then \`month-end-close\`. Point at the Avstämning page in Accounted for anything the user wants to see.
+- **Nästa steg**: usually approve in Granskning, then \`month-end-close\`. Point at the Avstämning page in Zimla Kontor for anything the user wants to see.
 
 ## Tools used
 

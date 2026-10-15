@@ -11,7 +11,7 @@ export const VAT_REVIEW_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Momsdeklaration: Accounted</title>
+<title>Momsdeklaration: Zimla Kontor</title>
 <style>
   :root {
     --bg: #fafafa;

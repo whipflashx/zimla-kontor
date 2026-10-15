@@ -182,7 +182,7 @@ describe('computeAnnualDepreciation with an opening balance', () => {
     ).toBe(0)
   })
 
-  it('caps the charge at what is left after depreciation booked in Accounted', () => {
+  it('caps the charge at what is left after depreciation booked in Zimla Kontor', () => {
     const asset = makeAsset(MIGRATED)
     expect(computeAnnualDepreciation(asset, year(2025), 39_990).amount).toBe(10)
     expect(computeAnnualDepreciation(asset, year(2025), 40_000).amount).toBe(0)
@@ -190,7 +190,7 @@ describe('computeAnnualDepreciation with an opening balance', () => {
 })
 
 describe('buildAssetDisposalPlan with an opening balance', () => {
-  it('clears the opening amount from 12x9 together with Accounted depreciation', () => {
+  it('clears the opening amount from 12x9 together with Zimla Kontor depreciation', () => {
     const asset = makeAsset(MIGRATED)
     const plan = buildAssetDisposalPlan({
       asset,
@@ -232,7 +232,7 @@ describe('computeAssetNoteFigures with an opening balance', () => {
     expect(figures).toEqual({ ibAck: 60_000, aretsAvskrivning: 20_000, avgaendeAck: 0 })
   })
 
-  it('adds posted Accounted depreciation on top of the opening amount', () => {
+  it('adds posted Zimla Kontor depreciation on top of the opening amount', () => {
     const asset = makeAsset(MIGRATED)
     const figures = computeAssetNoteFigures({
       assets: [asset],
@@ -400,7 +400,7 @@ describe('updateAsset with an opening balance', () => {
     })
   })
 
-  it('refuses a change once Accounted has posted depreciation (409 path)', async () => {
+  it('refuses a change once Zimla Kontor has posted depreciation (409 path)', async () => {
     const { supabase, captured } = mockSupabase(makeAsset(), { postedCount: 1 })
     await expect(
       updateAsset(supabase, 'co', 'asset-1', {

@@ -31,7 +31,7 @@ import { isUuid } from '@/lib/invariants/uuid'
  * Self-hosted deployments are all-on for everything the instance runs itself:
  * the gate never withholds a local feature. The one exception is the
  * CONNECTOR_CAPABILITIES (bank sync, Skatteverket, org lookup, migration):
- * those run on services Accounted operates, so on a self-host they fall
+ * those run on services Zimla Kontor operates, so on a self-host they fall
  * through to the normal grant lookup, where the hourly connector sync writes
  * `source = 'connector'` grants from the instance's connector key.
  *
@@ -252,9 +252,9 @@ export const CAPABILITY_BLOCKED_MESSAGE_EN =
  * upsell copy would mislead the operator.
  */
 export const CAPABILITY_BLOCKED_MESSAGE_SELF_HOSTED_SV =
-  'Den här funktionen kräver en connector-nyckel från Accounted (GNUBOK_CONNECTOR_KEY) eller instansens egna API-uppgifter för tjänsten.'
+  'Den här funktionen kräver en connector-nyckel från Zimla Kontor (GNUBOK_CONNECTOR_KEY) eller instansens egna API-uppgifter för tjänsten.'
 export const CAPABILITY_BLOCKED_MESSAGE_SELF_HOSTED_EN =
-  'This feature requires an Accounted connector key (GNUBOK_CONNECTOR_KEY) or the instance\'s own API credentials for the service.'
+  'This feature requires an Zimla Kontor connector key (GNUBOK_CONNECTOR_KEY) or the instance\'s own API credentials for the service.'
 
 function blockedMessageSv(): string {
   return isSelfHosted() ? CAPABILITY_BLOCKED_MESSAGE_SELF_HOSTED_SV : CAPABILITY_BLOCKED_MESSAGE_SV

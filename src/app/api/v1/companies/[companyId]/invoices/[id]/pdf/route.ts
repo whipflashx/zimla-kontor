@@ -51,13 +51,13 @@ registerEndpoint({
   description:
     'Returns the invoice as application/pdf. The descriptive filename contains company, customer, document type, invoice number or draft identifier, and invoice date. This endpoint is byte-equivalent to the dashboard download.',
   useWhen:
-    'You need to fetch an invoice PDF for archival, forwarding to a customer outside the Accounted send flow, or attaching to an external workflow.',
+    'You need to fetch an invoice PDF for archival, forwarding to a customer outside the Zimla Kontor send flow, or attaching to an external workflow.',
   doNotUseFor:
     'Sending the invoice to the customer: use POST /invoices/{id}/send, which renders the PDF, emails it, and archives it as a verifikationsunderlag in one atomic step.',
   pitfalls: [
     'Drafts (no invoice_number yet) render with an "utkast" filename. The PDF carries no F-series number: do not treat it as a finalized invoice.',
     'PDF rendering can take several hundred milliseconds for invoices with many line items. Cache on the client if requesting repeatedly.',
-    'Credit notes embed the original invoice\'s löpnummer per ML 17 kap 22-23§: if the original was hard-deleted (not possible via Accounted but theoretically via a manual DB edit), the reference is omitted.',
+    'Credit notes embed the original invoice\'s löpnummer per ML 17 kap 22-23§: if the original was hard-deleted (not possible via Zimla Kontor but theoretically via a manual DB edit), the reference is omitted.',
     'An invoice without a customer (customer_id null, e.g. its customer was deleted) has no buyer to print: 409 INVOICE_CUSTOMER_MISSING. Set customer_id on the draft or delete it.',
   ],
   example: {

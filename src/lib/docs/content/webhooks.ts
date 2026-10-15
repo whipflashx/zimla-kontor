@@ -21,22 +21,22 @@ export const WEBHOOKS_MD = `# Webhooks
 
 > Receive HMAC-signed POST notifications when state changes in Accounted: invoices paid, journal entries committed, periods locked, salary runs booked, AGI files generated. At-least-once delivery with exponential backoff over ~87 hours (about 3.6 days).
 
-If you've used [Stripe webhooks](https://docs.stripe.com/webhooks), the model is identical: subscribe a URL to an event type, Accounted POSTs each event with a signed JSON body, your receiver returns 2xx to acknowledge. The signature header format and retry policy are the same. The event types are gnubok-specific.
+If you've used [Stripe webhooks](https://docs.stripe.com/webhooks), the model is identical: subscribe a URL to an event type, Zimla Kontor POSTs each event with a signed JSON body, your receiver returns 2xx to acknowledge. The signature header format and retry policy are the same. The event types are gnubok-specific.
 
 ## Lifecycle
 
 1. **Register a receiver** with [\`POST /api/v1/companies/{companyId}/webhooks\`](/docs/api/reference/webhooks#post-webhooks-create). The response includes an HMAC signing secret returned **exactly once**: store it on the receiver side immediately. If you lose it, rotate it with [\`POST /api/v1/companies/{companyId}/webhooks/{webhookId}/rotate-secret\`](/docs/api/reference/webhooks#post-webhooks-rotate_secret): a fresh secret is issued in place and the old one is invalidated immediately, with no change to the webhook's id or delivery history.
-2. **Prove you own the URL.** A new webhook starts with \`verification_status: "pending"\` and receives nothing until its URL passes the [verification handshake](#endpoint-verification): Accounted POSTs a signed \`webhook.verification\` event and your receiver answers with the challenge it contains. Run it with [\`POST /api/v1/companies/{companyId}/webhooks/{webhookId}/verify\`](/docs/api/reference/webhooks#post-webhooks-verify) once your receiver handles it.
-3. **Accounted emits events** internally (e.g. an invoice is marked paid via the dashboard or another API call). The webhook handler enqueues a delivery row.
+2. **Prove you own the URL.** A new webhook starts with \`verification_status: "pending"\` and receives nothing until its URL passes the [verification handshake](#endpoint-verification): Zimla Kontor POSTs a signed \`webhook.verification\` event and your receiver answers with the challenge it contains. Run it with [\`POST /api/v1/companies/{companyId}/webhooks/{webhookId}/verify\`](/docs/api/reference/webhooks#post-webhooks-verify) once your receiver handles it.
+3. **Zimla Kontor emits events** internally (e.g. an invoice is marked paid via the dashboard or another API call). The webhook handler enqueues a delivery row.
 4. **The dispatcher runs immediately after the event**, signs the payload with HMAC-SHA256, and POSTs to your URL with a 10-second timeout. A cron sweep every minute picks up anything the immediate pass did not get to, so first-attempt latency is normally a second or two but is never guaranteed to be: treat delivery as prompt, not synchronous.
 5. **Your receiver verifies the signature**, processes the event idempotently, and returns 2xx.
 6. **Failed deliveries retry** at \`1m / 5m / 30m / 2h / 12h / 24h / 48h\` (7 retries, ~87 hours total, about 3.6 days). After all attempts the delivery is marked \`dead\`. HTTP 410 from your receiver short-circuits to \`dead\` immediately and **auto-disables** the webhook.
 
 ## Endpoint verification
 
-Before Accounted delivers events to a URL, the URL has to show that whoever runs it wants them. This is a challenge-response handshake, required for every new webhook and whenever \`webhook_url\` changes.
+Before Zimla Kontor delivers events to a URL, the URL has to show that whoever runs it wants them. This is a challenge-response handshake, required for every new webhook and whenever \`webhook_url\` changes.
 
-**The request.** Accounted POSTs to your \`webhook_url\` exactly like a delivery: same headers, same \`X-Gnubok-Signature\` (signed with the webhook's own secret, so verify it as usual), same envelope. \`X-Gnubok-Event\` and \`type\` are \`webhook.verification\`, and \`data.object\` carries a random challenge:
+**The request.** Zimla Kontor POSTs to your \`webhook_url\` exactly like a delivery: same headers, same \`X-Gnubok-Signature\` (signed with the webhook's own secret, so verify it as usual), same envelope. \`X-Gnubok-Event\` and \`type\` are \`webhook.verification\`, and \`data.object\` carries a random challenge:
 
 \`\`\`json
 {
@@ -62,7 +62,7 @@ Before Accounted delivers events to a URL, the URL has to show that whoever runs
 
 The challenge is nested in the request but must come back at the top level: echoing the request body back does not pass. The response is read up to 4 KB; the \`Content-Type\` is not checked. Anything else (another status, a timeout, a redirect, no or a different \`challenge\`) fails the attempt and nothing is delivered.
 
-**When it runs.** Call [\`POST /webhooks/{webhookId}/verify\`](/docs/api/reference/webhooks#post-webhooks-verify) to run it immediately: \`200\` with \`verification_status: "verified"\` on a pass, \`422 WEBHOOK_VERIFICATION_FAILED\` with \`details.reason\` on a failure (one call per webhook per 10 seconds; faster repeats get \`429\`). Accounted also tries on its own after 1 minute, 5 minutes, 30 minutes, 2 hours, 12 hours, then daily, 8 attempts in all for a new or changed URL. Each attempt carries a fresh challenge and a fresh \`X-Gnubok-Delivery\` id.
+**When it runs.** Call [\`POST /webhooks/{webhookId}/verify\`](/docs/api/reference/webhooks#post-webhooks-verify) to run it immediately: \`200\` with \`verification_status: "verified"\` on a pass, \`422 WEBHOOK_VERIFICATION_FAILED\` with \`details.reason\` on a failure (one call per webhook per 10 seconds; faster repeats get \`429\`). Zimla Kontor also tries on its own after 1 minute, 5 minutes, 30 minutes, 2 hours, 12 hours, then daily, 8 attempts in all for a new or changed URL. Each attempt carries a fresh challenge and a fresh \`X-Gnubok-Delivery\` id.
 
 **Where you see it.** Every webhook read returns \`verification_status\`, \`verified_at\`, \`verification_grace_ends_at\`, \`verification_attempts\`, \`verification_last_attempt_at\`, \`verification_last_error\` and \`verification_next_attempt_at\`:
 
@@ -70,7 +70,7 @@ The challenge is nested in the request but must come back at the top level: echo
 |---|---|---|
 | \`verified\` | yes | The current URL passed the handshake. |
 | \`pending\` | no | A new URL, or one changed with \`PATCH\`, that has not passed yet. Events in the meantime are skipped, as for a disabled webhook, not delivered later. |
-| \`grace_period\` | yes | A webhook that existed before verification was introduced (2026-09). It keeps receiving events until \`verification_grace_ends_at\`, 30 days after the change went live, while Accounted attempts the handshake daily. |
+| \`grace_period\` | yes | A webhook that existed before verification was introduced (2026-09). It keeps receiving events until \`verification_grace_ends_at\`, 30 days after the change went live, while Zimla Kontor attempts the handshake daily. |
 | \`paused\` | no | The same webhook after its grace window closed without a pass. Deliveries already queued are withheld (\`error: endpoint_unverified\`) and retry on the normal schedule; pass the handshake to resume. |
 
 \`POST /webhooks/{webhookId}/test\` and \`POST /webhook-deliveries/{deliveryId}/retry\` send events, so they answer \`409 WEBHOOK_NOT_VERIFIED\` for a \`pending\` or \`paused\` webhook. Changing \`webhook_url\` resets verification (and ends any grace window): have the new receiver answer \`webhook.verification\` before you switch.
@@ -140,7 +140,7 @@ const app = express()
 const SECRET = process.env.GNUBOK_WEBHOOK_SECRET // whsec_...
 
 // Important: capture the RAW body before any JSON parsing: the signature
-// is computed against the exact bytes Accounted sent, not a re-serialised JSON.
+// is computed against the exact bytes Zimla Kontor sent, not a re-serialised JSON.
 app.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
@@ -239,7 +239,7 @@ def verify_signature(body: bytes, header: str, secret: bytes) -> bool:
 
 ### Common pitfalls
 
-- **Using parsed JSON instead of raw bytes.** Re-serialising the body (\`JSON.stringify(req.body)\`) produces different bytes than Accounted sent: the signature won't match. Capture the raw body before any framework parses it.
+- **Using parsed JSON instead of raw bytes.** Re-serialising the body (\`JSON.stringify(req.body)\`) produces different bytes than Zimla Kontor sent: the signature won't match. Capture the raw body before any framework parses it.
 - **Forgetting the timestamp window.** Without checking \`t\`, an attacker who captured one signed payload can replay it forever. 5 minutes is our recommended window; tighten if your clock skew is small.
 - **Treating retries as duplicates of failure.** Retries arrive when *we* didn't get a 2xx. A 200 response that arrives slowly may not reach us in time and we'll retry: your receiver sees the same \`X-Gnubok-Delivery\` twice. Idempotency is on you.
 - **Returning 5xx for application errors.** A 5xx triggers the full retry policy (~87h of attempts). If your handler hit an application bug that won't resolve on retry, return 200 and queue the failure for internal investigation; only return 5xx for genuinely transient problems.
@@ -269,7 +269,7 @@ Re-enable with [\`PATCH /api/v1/companies/{companyId}/webhooks/{webhookId}\`](/d
 
 Webhook delivery rows are *behandlingshistorik* (a system-event log) per BFNAR 2013:2 kap 8 §: they are immutable once they reach a terminal state (\`delivered\` or \`dead\`) so the audit trail of who-was-notified-when stays intact. The underlying *räkenskapsinformation* (the verifikation, the faktura, the AGI XML itself) lives in its own table with its own BFL 7 kap retention: webhook delivery rows are NOT räkenskapsinformation and the 7-year retention applies to the underlying record, not to the delivery envelope.
 
-For accounting-event delivery rows (\`journal_entry.*\`, \`period.*\`, \`salary_run.booked\`, \`agi.generated\`, \`invoice.paid\`, \`supplier_invoice.paid\`), Accounted keeps the delivery rows for 7 years. **This is a voluntary operational audit-trail policy Accounted chose because the duration aligns conveniently with BFL 7 kap retention on the underlying records: it is NOT itself a statutory obligation.** The 7-year statutory retention under BFL 7 kap 1 § applies to the underlying verifikation / faktura / AGI XML in its own table, not to the delivery envelope. The integrator's own retention obligations likewise attach to the underlying records you receive (and any local copies you persist), not to the delivery-row metadata.
+For accounting-event delivery rows (\`journal_entry.*\`, \`period.*\`, \`salary_run.booked\`, \`agi.generated\`, \`invoice.paid\`, \`supplier_invoice.paid\`), Zimla Kontor keeps the delivery rows for 7 years. **This is a voluntary operational audit-trail policy Zimla Kontor chose because the duration aligns conveniently with BFL 7 kap retention on the underlying records: it is NOT itself a statutory obligation.** The 7-year statutory retention under BFL 7 kap 1 § applies to the underlying verifikation / faktura / AGI XML in its own table, not to the delivery envelope. The integrator's own retention obligations likewise attach to the underlying records you receive (and any local copies you persist), not to the delivery-row metadata.
 
 Deleting a webhook does not delete its delivery history; the FK is \`ON DELETE SET NULL\` so the audit trail survives.
 `

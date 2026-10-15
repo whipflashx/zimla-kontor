@@ -28,7 +28,7 @@ import { getErrorMessage, type ErrorLocale } from '@/lib/errors/get-error-messag
 
  *
  * Response convention: the JSON body is returned as-is, typed as `T`. Most
- * Accounted routes wrap payloads as `{ data: ... }`, so the common usage is
+ * Zimla Kontor routes wrap payloads as `{ data: ... }`, so the common usage is
  * `useFetch<{ data: Account[] }>(...)` then read `result.data?.data`. Pass
  * `select` to unwrap/transform at the hook boundary instead.
  *

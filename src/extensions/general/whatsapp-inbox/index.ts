@@ -1,9 +1,9 @@
 /**
  * WhatsApp intake extension (PR3 of the WhatsApp track).
  *
- * Receives receipts sent to the shared Accounted WhatsApp number and lands
+ * Receives receipts sent to the shared Zimla Kontor WhatsApp number and lands
  * them in the document inbox (Underlag) through the same uploadAndExtract
- * funnel as email intake. Phone numbers bind to Accounted users via one-time
+ * funnel as email intake. Phone numbers bind to Zimla Kontor users via one-time
  * codes; unknown senders get one canned, throttled greeting and are never
  * processed further (no LLM, no media download, no content persistence).
  *

@@ -40,7 +40,7 @@ const EVIDENCE_STATUSES = new Set([
  *   over the timestamp and body, and keeping it would only tie a working
  *   signature to a second piece of Qvalia configuration.
  * - Only QVALIA_WEBHOOK_SECRET set (transition, and the state before Qvalia
- *   signed webhooks): the shared secret Accounted configured as Qvalia's
+ *   signed webhooks): the shared secret Zimla Kontor configured as Qvalia's
  *   outbound auth header, compared constant-time. Every such request logs a
  *   warning that signatures are not being verified.
  *

@@ -21,7 +21,7 @@ export interface CompanySkillRow {
   kind?: 'workflow' | 'rules' | 'analysis'
   /** Where a published item lives in erp-mafia/accounted-skills. */
   review_url?: string | null
-  /** Why Accounted sent a shared item back (it is private again). */
+  /** Why Zimla Kontor sent a shared item back (it is private again). */
   review_note?: string | null
 }
 

@@ -63,7 +63,7 @@ type Item = {
 }
 
 /**
- * The page of a knowledge pack from Accounted, or of anything the community
+ * The page of a knowledge pack from Zimla Kontor, or of anything the community
  * shared. A shared flow looks like any flow: its steps, what it brings along
  * and a start button in the company's AI, plus who shared it and the upvote.
  * Knowledge shows its own text, as the AI reads it, and can be given to flows.
@@ -201,13 +201,13 @@ function Detail({ companyId, companyName, segment, backHref }: { companyId: stri
   // Own items live under Egna.
   const back = item.own ? `${listHref}${listHref.includes('?') ? '&' : '?'}vy=egna` : listHref
   const isFlow = item.kind === 'workflow' && !!item.community
-  // Accounted's knowledge packs lead with what they cover in plain words; the text the AI reads is one click away.
+  // Zimla Kontor's knowledge packs lead with what they cover in plain words; the text the AI reads is one click away.
   const isPack = !builtIn && !mine && !!pack && pack.tier !== 'community'
   // Flows and analyses run in the company's AI; knowledge is given to flows instead.
   // An AI-saved draft is not loadable until it is added, so it cannot run yet.
   const runnable = (isFlow || item.kind === 'analysis') && !mine?.draft
   const steps = isFlow && body.data ? ownSkillSteps(body.data) : []
-  // Accounted's own analyses are fixed text, so they open filled in, as from the banner. An own or
+  // Zimla Kontor's own analyses are fixed text, so they open filled in, as from the banner. An own or
   // shared item carries what a person wrote, so on the web it is copied rather than put in a link.
   const fixedText = !!builtIn
   const prompt = pinCompany(t('skill_prompt', { name: item.name, slug: item.key, client }), t('prompt_company_pin', { company: companyName, companyId }))
@@ -222,7 +222,7 @@ function Detail({ companyId, companyName, segment, backHref }: { companyId: stri
     trackInstructions('instructions_connect_clicked', { client: 'claude', surface: 'item' })
     openAiConnector(aiConnectAction('claude', { origin: window.location.origin, appName }).open)
   }
-  // Every flow the company can give knowledge to: Accounted's, then its own.
+  // Every flow the company can give knowledge to: Zimla Kontor's, then its own.
   const ownFlows = (catalog.data ?? []).filter((s) => s.tier === 'own' && (s.itemKind ?? 'workflow') === 'workflow' && !s.draft && s.installations[0])
   const givable = [
     ...SHOWN_FLOWS.map((id) => ({ id: id as string, name: t(`skills.${id}.name`), task: t(`skills.${id}.short`), hue: itemHue('workflow', id, id), defaults: AGENTS[id].knowledge as readonly string[] })),

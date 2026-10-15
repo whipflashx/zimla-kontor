@@ -135,7 +135,7 @@ export function kindOf(skill: SkillSummary): ItemKind {
 export function rulesSegment(atomId: string): string {
   return `kunskap.${atomId.replace('/', '.')}`
 }
-/** An analysis of Accounted's own (analys-kassaprognos) opens at analys.<slug>. */
+/** An analysis of Zimla Kontor's own (analys-kassaprognos) opens at analys.<slug>. */
 export function analysisSegment(slug: string): string {
   return `analys.${slug}`
 }
@@ -154,6 +154,6 @@ export function knowledgeHref(base: string, id: string): string {
   return id.startsWith('own/') ? `${base}/egen.${id.slice(4)}` : `${base}/${rulesSegment(id)}`
 }
 export function communitySegment(slug: string): string {
-  // community/<name> -> community.<name>: the address accounted.se links to for "Lägg till i Accounted".
+  // community/<name> -> community.<name>: the address accounted.se links to for "Lägg till i Zimla Kontor".
   return `community.${slug.replace(/^community\//, '').replaceAll('/', '.')}`
 }

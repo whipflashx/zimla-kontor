@@ -51,7 +51,7 @@ registerEndpoint({
   description:
     'Renders the balansräkning as application/pdf, byte-equivalent to the dashboard export. Optional `as_of` (alias for `to_date`, YYYY-MM-DD inside the fiscal period) returns the balance position at that date, e.g. the latest month-end for bank reporting. Refuses to render when tillgångar and eget kapital + skulder differ by a full krona or more.',
   useWhen:
-    'You need a presentable PDF of the balance position at period end or a custom date: bank requests, board packs, or sharing outside Accounted.',
+    'You need a presentable PDF of the balance position at period end or a custom date: bank requests, board packs, or sharing outside Zimla Kontor.',
   doNotUseFor:
     'Machine-readable figures (use the JSON endpoint without /pdf). The formal K2/K3 årsredovisning document (use the year-end flow).',
   pitfalls: [

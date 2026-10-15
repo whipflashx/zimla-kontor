@@ -290,7 +290,7 @@ export async function getCompanyDocuments(companyId: number): Promise<TICDocumen
 
 /**
  * Get fiscal-year configurations for a company. v2 endpoint with no v1
- * equivalent: used to auto-fill fiscal-year selection during Accounted
+ * equivalent: used to auto-fill fiscal-year selection during Zimla Kontor
  * onboarding so the user doesn't have to enter MM-DD manually.
  */
 export async function getFiscalYears(companyId: number): Promise<TICFiscalYear[] | null> {

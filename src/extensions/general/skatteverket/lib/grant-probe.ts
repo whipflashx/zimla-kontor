@@ -18,13 +18,13 @@ const log = createLogger('skatteverket-grant-probe')
 /**
  * Behorighet verification.
  *
- * After the user grants Accounted's org number a behorighet in Skatteverket's
+ * After the user grants Zimla Kontor's org number a behorighet in Skatteverket's
  * Ombud och behorigheter e-service, nothing tells us: there is no callback.
  * Two ways to find out, tried in order:
  *
  *   1. The ombudsregister itself (Ombudshantering via API v2, scope `obr`):
  *      GET /ombud/autentisieratOmbud?huvudman={orgNumber} on SYSTEM
- *      credentials lists exactly which roles this company gave Accounted and
+ *      credentials lists exactly which roles this company gave Zimla Kontor and
  *      for how long. Authoritative: a role present and active today is
  *      granted, a 200 without it is denied. Only a failure to ASK the
  *      register (scope missing, 5xx, timeout, unparsable body) is an
@@ -148,7 +148,7 @@ export async function probeViaOmbudsregister(
     const posts = await listOmbudGrants({ huvudman: orgNumber }, actor)
     const summary = summarizeGrants(posts, today).get(orgNumber)
     const roles = summary?.roles ?? []
-    // The company granted Accounted something, but none of it classifies as
+    // The company granted Zimla Kontor something, but none of it classifies as
     // either behörighet: far more likely an unrecognised rollbeteckning (codes
     // not pinned yet, or a renamed rollbeskrivning) than a company that chose
     // only unrelated roles. 'error' never downgrades a granted row; 'denied'

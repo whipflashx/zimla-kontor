@@ -30,7 +30,7 @@ describe('buildAuthEmail', () => {
   it('renders the platform default without a brand', () => {
     const mail = buildAuthEmail({
       actionType: 'recovery',
-      appName: 'Accounted',
+      appName: 'Zimla Kontor',
       actionUrl: 'https://app.gnubok.se/auth/callback?token_hash=abc&type=recovery',
     })
     expect(mail.html).toContain('ACCOUNTED')

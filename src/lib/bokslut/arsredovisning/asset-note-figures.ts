@@ -155,7 +155,7 @@ export function computeAssetNoteFigures(params: {
     })
 
     // Depreciation booked in a previous system before the asset entered
-    // Accounted. It is on the ledger's 12x9 balance but on no schedule row,
+    // Zimla Kontor. It is on the ledger's 12x9 balance but on no schedule row,
     // so it is added to the booked figures here. An opening amount dated
     // inside the current period is treated as on the books at its start (the
     // usual case is a fiscal-year-end date, which lands before the period).
@@ -163,7 +163,7 @@ export function computeAssetNoteFigures(params: {
     const openingAck =
       opening && opening.date <= currentPeriod.period_end ? opening.amount : 0
 
-    // Depreciation booked or planned in Accounted before the period. The
+    // Depreciation booked or planned in Zimla Kontor before the period. The
     // engine is fed this alone (its opening-balance path reads the opening
     // amount from the asset itself).
     let accountedAck: number

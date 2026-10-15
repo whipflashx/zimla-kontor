@@ -64,7 +64,7 @@ export interface CloudFileState {
    * SHA-256 of the uploaded bytes. The upload itself is verified against the
    * provider's own checksum (Drive md5Checksum, Dropbox content_hash); this
    * hash is recorded for evidentiary value (the user can prove the file in
-   * their cloud storage is the one Accounted produced).
+   * their cloud storage is the one Zimla Kontor produced).
    */
   sha256: string
   /** False when the file was built without document blobs (size fallback). */

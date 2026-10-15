@@ -821,7 +821,7 @@ describe('markPeriodClosedExternally', () => {
     ).rejects.toThrow('vanliga årsbokslutet')
   })
 
-  it('refuses a period bookkept natively in Accounted (result accounts, no imported verifikat)', async () => {
+  it('refuses a period bookkept natively in Zimla Kontor (result accounts, no imported verifikat)', async () => {
     const period = makeFiscalPeriod({ id: 'fp-1', period_end: '2024-12-31' })
     results = [
       { data: period, error: null },                  // fetch

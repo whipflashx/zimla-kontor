@@ -111,7 +111,7 @@ export default async function DashboardPage() {
       // the person. Throws on a failed read: guessing "not connected" would
       // re-open the connect step for a connected user.
       readAiConnection(serviceClient, user.id),
-      // Accounted as ombud counts as connected too (lib/skatteverket/ombud-access.ts).
+      // Zimla Kontor as ombud counts as connected too (lib/skatteverket/ombud-access.ts).
       hasSkatteverketOmbudReadAccess(companyId),
     ])
 

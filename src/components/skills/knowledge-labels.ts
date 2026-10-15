@@ -26,7 +26,7 @@ export function useKnowledgeDesc() {
 }
 
 /**
- * An Accounted analysis's name and one-line summary in the page's language.
+ * An Zimla Kontor analysis's name and one-line summary in the page's language.
  * The analysis text the AI reads stays Swedish (lib/agent-skills/analyses.ts),
  * so an analysis without messages falls back to its own name and summary.
  */

@@ -549,7 +549,7 @@ describe('journeyReducer: robustness', () => {
   })
 })
 
-describe('journeyReducer: a form Accounted has scoped but cannot create yet', () => {
+describe('journeyReducer: a form Zimla Kontor has scoped but cannot create yet', () => {
   afterEach(() => {
     vi.unstubAllEnvs()
   })
@@ -724,7 +724,7 @@ describe('registry hint after a TIC miss (SCB knew the org number)', () => {
     expect(s.step).toBe('address')
   })
 
-  it('stops on the planned form when SCB names one Accounted cannot create yet', () => {
+  it('stops on the planned form when SCB names one Zimla Kontor cannot create yet', () => {
     vi.stubEnv('NEXT_PUBLIC_IDEELL_FORENING_ENABLED', 'true')
     const s = run(
       initJourney(),

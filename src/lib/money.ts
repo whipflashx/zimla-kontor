@@ -1,5 +1,5 @@
 /**
- * Canonical money primitives for Accounted.
+ * Canonical money primitives for Zimla Kontor.
  *
  * Swedish öresavrundning was abolished in 2010, but our journal entries still
  * store amounts in hundredths of SEK. Floating-point arithmetic accumulates

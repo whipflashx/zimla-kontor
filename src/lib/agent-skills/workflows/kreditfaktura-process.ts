@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Kreditfaktura: Accounted
+const body = `# Kreditfaktura: Zimla Kontor
 
 An invoice that went out wrong is never edited or deleted once it is issued. Swedish law gives it its own document: a kreditfaktura (ML 2023:200 calls it ändringsfaktura, 17 kap 22-23 §) that references the original, carries its own number and date, shows negative amounts with moms per original rate, and is archived like any other invoice. A booking that is wrong while the invoice itself is right is a different problem with a different tool: a rättelse of the verifikat (BFL 5 kap 5 §).
 
@@ -57,7 +57,7 @@ The rule of thumb: **if the customer received the invoice and it was wrong, it i
 - Sets the original to \`credited\` (it can never be credited again).
 - Posts the reversal: debit revenue (30xx) and utgående moms (26xx), credit kundfordringar (1510). The staged preview's \`posts_journal_entry\` says whether a verifikat is posted: under kontantmetoden an **unpaid** original was never booked, so the credit note is created without a verifikat. That is correct, not an error.
 
-**Always a full credit.** Swedish law allows a partial kreditfaktura, but Accounted credits the whole original. For a partial credit: credit the whole invoice, then issue a new invoice for what is still owed with \`gnubok_create_invoice\` (see \`invoicing-rules\`). Tell the user this before staging, with the numbers: "Jag krediterar hela faktura 1042 (12 500 kr) och skapar en ny faktura på 10 000 kr för de 8 timmar som ska stå kvar." Round money to whole öre (two decimals), never with toFixed.
+**Always a full credit.** Swedish law allows a partial kreditfaktura, but Zimla Kontor credits the whole original. For a partial credit: credit the whole invoice, then issue a new invoice for what is still owed with \`gnubok_create_invoice\` (see \`invoicing-rules\`). Tell the user this before staging, with the numbers: "Jag krediterar hela faktura 1042 (12 500 kr) och skapar en ny faktura på 10 000 kr för de 8 timmar som ska stå kvar." Round money to whole öre (two decimals), never with toFixed.
 
 Then deliver the credit note: \`gnubok_send_invoice({ invoice_id: <credit_note_id> })\` e-mails the PDF (requires a customer e-mail address). If the customer received the original by Peppol or by post, tell the user to deliver the credit note another way; Peppol sending does not take credit notes.
 
@@ -108,7 +108,7 @@ Never retry a write blindly: check \`gnubok_list_pending_operations\` first, bec
 
 ## Approval
 
-Every write here stages a pending operation. With a widget (claude.ai, Desktop) call \`gnubok_list_pending_operations({ render_ui: true })\`; the widget is optional. Without one (ChatGPT, Grok, a terminal), list each staged operation in chat (what, invoice, amount, which period it books in) and on a clear yes call \`gnubok_approve_pending_operation\` per operation; otherwise point the user to Granskning in Accounted. Stage the kreditfaktura, the new invoice and the send as separate operations so the user approves them in order.
+Every write here stages a pending operation. With a widget (claude.ai, Desktop) call \`gnubok_list_pending_operations({ render_ui: true })\`; the widget is optional. Without one (ChatGPT, Grok, a terminal), list each staged operation in chat (what, invoice, amount, which period it books in) and on a clear yes call \`gnubok_approve_pending_operation\` per operation; otherwise point the user to Granskning in Zimla Kontor. Stage the kreditfaktura, the new invoice and the send as separate operations so the user approves them in order.
 
 ## Stop conditions: this needs a human
 

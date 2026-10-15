@@ -1326,7 +1326,7 @@ export default function ArsredovisningPage() {
               />
             </div>
             <p className="text-xs text-muted-foreground md:col-span-2">
-              Accounted registrerar beviset men skapar inte själva underskriften. Spara
+              Zimla Kontor registrerar beviset men skapar inte själva underskriften. Spara
               originalet eller signeringskvittot enligt bolagets dokumenthantering.
             </p>
           </div>
@@ -1486,7 +1486,7 @@ export default function ArsredovisningPage() {
             }
           >
             <strong className="text-foreground">Digital inlämning är frivillig.</strong> Den görs som iXBRL genom en
-            ansluten programvara. Accounteds direktinlämning förblir stängd tills avtal,
+            ansluten programvara. Zimla Kontors direktinlämning förblir stängd tills avtal,
             certifikat och Bolagsverkets acceptanstest är klara. PDF-flödet ovan är den
             separata vägen för pappersinlämning.
           </p>

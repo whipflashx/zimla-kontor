@@ -191,13 +191,13 @@ const BOOKKEEPING: Record<string, StructuredErrorEntry> = {
   UNATTENDED_COMMIT_LIMIT_EXCEEDED: {
     httpStatus: 403,
     message_sv:
-      'Beloppet överstiger vad den här API-nyckeln får bokföra utan mänskligt godkännande. Underlaget ligger kvar och kan godkännas i Accounted.',
+      'Beloppet överstiger vad den här API-nyckeln får bokföra utan mänskligt godkännande. Underlaget ligger kvar och kan godkännas i Zimla Kontor.',
     message_en:
       'Amount exceeds what this API key may post without human approval. The operation is preserved and can be approved in the app.',
     retryable: false,
     remediation: {
       description:
-        'Do not retry, and do not split the entry into smaller ones: one affärshändelse is one verifikat (BFL 5 kap. 6 §). Ask a human to approve the staged operation in Accounted, or have the key owner raise the limit in API key settings. details.attempted and details.limit carry the numbers.',
+        'Do not retry, and do not split the entry into smaller ones: one affärshändelse is one verifikat (BFL 5 kap. 6 §). Ask a human to approve the staged operation in Zimla Kontor, or have the key owner raise the limit in API key settings. details.attempted and details.limit carry the numbers.',
     },
   },
   ACCOUNTS_NOT_IN_CHART: {
@@ -2659,8 +2659,8 @@ const PERIOD: Record<string, StructuredErrorEntry> = {
   },
   PERIOD_REOPEN_NOT_EXTERNAL: {
     httpStatus: 409,
-    message_sv: 'Räkenskapsåret stängdes med ett bokslut i Accounted och kan inte öppnas igen här.',
-    message_en: 'The fiscal year was closed with a year-end run in Accounted and cannot be reopened here.',
+    message_sv: 'Räkenskapsåret stängdes med ett bokslut i Zimla Kontor och kan inte öppnas igen här.',
+    message_en: 'The fiscal year was closed with a year-end run in Zimla Kontor and cannot be reopened here.',
   },
   // Creating and editing a räkenskapsår (lib/core/bookkeeping/fiscal-year-service.ts,
   // operations fiscal-periods.create / .update). The shape rules are BFL 3 kap.
@@ -2772,9 +2772,9 @@ const PERIOD: Record<string, StructuredErrorEntry> = {
     httpStatus: 409,
     thrown_message_sv: true,
     message_sv:
-      'Räkenskapsåret är bokfört i Accounted och ska stängas med det vanliga årsbokslutet, så att resultatet och balanserna förs över.',
+      'Räkenskapsåret är bokfört i Zimla Kontor och ska stängas med det vanliga årsbokslutet, så att resultatet och balanserna förs över.',
     message_en:
-      'The fiscal year was bookkept in Accounted, not migrated: close it with the normal year-end so the result and balances carry forward.',
+      'The fiscal year was bookkept in Zimla Kontor, not migrated: close it with the normal year-end so the result and balances carry forward.',
     remediation: {
       description: 'Run the year-end instead (POST /fiscal-periods/{id}/year-end, gnubok_run_year_end).',
       tool: 'gnubok_run_year_end',
@@ -3616,7 +3616,7 @@ const OPENING_BALANCE_IMPORT: Record<string, StructuredErrorEntry> = {
       'The fiscal year is closed, so its opening balances cannot be split per project. If the year was marked as closed in a previous program, reopen it (Settings › Bookkeeping › Fiscal years › Reopen) and try again.',
     remediation: {
       description:
-        'A year closed in Accounted (year-end posted) cannot be reopened: split the following year\'s opening balances instead. A year only marked closed externally is reopened with POST /fiscal-periods/{id}/reopen-external.',
+        'A year closed in Zimla Kontor (year-end posted) cannot be reopened: split the following year\'s opening balances instead. A year only marked closed externally is reopened with POST /fiscal-periods/{id}/reopen-external.',
     },
   },
   OB_SPLIT_PERIOD_LOCKED: {
@@ -3632,9 +3632,9 @@ const OPENING_BALANCE_IMPORT: Record<string, StructuredErrorEntry> = {
   OB_SPLIT_NO_PREVIOUS_YEAR: {
     httpStatus: 409,
     message_sv:
-      'Det finns inget tidigare räkenskapsår i Accounted att hämta projektsaldon från. Ingående balanser från en SIE-import delas upp per projekt när filen innehåller #OIB-rader.',
+      'Det finns inget tidigare räkenskapsår i Zimla Kontor att hämta projektsaldon från. Ingående balanser från en SIE-import delas upp per projekt när filen innehåller #OIB-rader.',
     message_en:
-      'There is no earlier fiscal year in Accounted to take project balances from. Opening balances from an SIE import are split per project when the file carries #OIB records.',
+      'There is no earlier fiscal year in Zimla Kontor to take project balances from. Opening balances from an SIE import are split per project when the file carries #OIB records.',
   },
   OB_SPLIT_DIMENSION_UNRESOLVED: {
     httpStatus: 409,
@@ -3848,9 +3848,9 @@ const PROVIDER_MIGRATION: Record<string, StructuredErrorEntry> = {
     // BL side, and until BL has released it for the company it cannot be.
     httpStatus: 422,
     message_sv:
-      'Företagsnyckeln stämmer, men företaget har inte aktiverat Accounted som integration i Björn Lundén. Aktivera integrationen under Integrationer i Lundify eller BL Administration och försök igen. Saknas Accounted i listan är integrationen inte släppt för ditt företag ännu: importera via SIE-fil så länge.',
+      'Företagsnyckeln stämmer, men företaget har inte aktiverat Zimla Kontor som integration i Björn Lundén. Aktivera integrationen under Integrationer i Lundify eller BL Administration och försök igen. Saknas Zimla Kontor i listan är integrationen inte släppt för ditt företag ännu: importera via SIE-fil så länge.',
     message_en:
-      'The company key is valid, but the company has not activated Accounted as an integration in Björn Lundén. Activate the integration under Integrations in Lundify or BL Administration and try again. If Accounted is missing from the list, the integration has not been released for your company yet: import via a SIE file for now.',
+      'The company key is valid, but the company has not activated Zimla Kontor as an integration in Björn Lundén. Activate the integration under Integrations in Lundify or BL Administration and try again. If Zimla Kontor is missing from the list, the integration has not been released for your company yet: import via a SIE file for now.',
   },
   BL_COMPANY_KEY_NOT_FOUND: {
     // 422: BL could not bind any company to the pasted User-Key (typo,
@@ -3951,9 +3951,9 @@ const PROVIDER_MIGRATION: Record<string, StructuredErrorEntry> = {
   PROVIDER_DOCUMENT_SCOPES_UNAVAILABLE: {
     httpStatus: 403,
     message_sv:
-      'Filimport från Fortnox är inte påslagen än: behörigheterna Arkiv och Koppla fil saknas för Accounted-integrationen hos Fortnox. Att koppla om hjälper inte, vi aktiverar det så snart behörigheten är på plats. Allt annat i migreringen är importerat.',
+      'Filimport från Fortnox är inte påslagen än: behörigheterna Arkiv och Koppla fil saknas för Zimla Kontor-integrationen hos Fortnox. Att koppla om hjälper inte, vi aktiverar det så snart behörigheten är på plats. Allt annat i migreringen är importerat.',
     message_en:
-      'Fortnox file import is not enabled yet: the Archive and Connect file permissions are missing for the Accounted integration at Fortnox. Reconnecting will not help; we enable this as soon as the permission is in place. Everything else in the migration was imported.',
+      'Fortnox file import is not enabled yet: the Archive and Connect file permissions are missing for the Zimla Kontor integration at Fortnox. Reconnecting will not help; we enable this as soon as the permission is in place. Everything else in the migration was imported.',
   },
   PROVIDER_DISCONNECT_FAILED: {
     httpStatus: 500,
@@ -4889,7 +4889,7 @@ const SALARY: Record<string, StructuredErrorEntry> = {
     message_en: 'Payroll rates for this year are not loaded yet. The calculation can run once they are.',
     remediation: {
       description:
-        'Accounted adds each year\'s statutory payroll rates in a release once they are officially set. Nothing in the input is wrong: do not move the payment date to get around it. Try again once the year\'s rates are in place.',
+        'Zimla Kontor adds each year\'s statutory payroll rates in a release once they are officially set. Nothing in the input is wrong: do not move the payment date to get around it. Try again once the year\'s rates are in place.',
     },
     retryable: false,
   },
@@ -5199,7 +5199,7 @@ const SALARY: Record<string, StructuredErrorEntry> = {
     message_en: 'This account has no company yet. Create the company in the web app, then retry; the connection picks it up automatically.',
     remediation: {
       description:
-        'Ask the user to finish company setup in the Accounted web app (/onboarding). No re-authentication is needed afterwards: the same connection binds to the new company on its next call.',
+        'Ask the user to finish company setup in the Zimla Kontor web app (/onboarding). No re-authentication is needed afterwards: the same connection binds to the new company on its next call.',
       tool: 'gnubok_list_companies',
     },
   },
@@ -5433,8 +5433,8 @@ const API_KEY: Record<string, StructuredErrorEntry> = {
 const PROVIDER: Record<string, StructuredErrorEntry> = {
   PROVIDER_CONFIGURATION_ERROR: {
     httpStatus: 503,
-    message_sv: 'Fortnox-anslutningen behöver åtgärdas av Accounted. Kontakta supporten. Du behöver inte återansluta.',
-    message_en: 'The Fortnox connection needs attention from Accounted. Contact support. You do not need to reconnect.',
+    message_sv: 'Fortnox-anslutningen behöver åtgärdas av Zimla Kontor. Kontakta supporten. Du behöver inte återansluta.',
+    message_en: 'The Fortnox connection needs attention from Zimla Kontor. Contact support. You do not need to reconnect.',
   },
   PROVIDER_AUTH_EXPIRED: {
     httpStatus: 401,
@@ -5666,7 +5666,7 @@ const MATCH_BATCH: Record<string, StructuredErrorEntry> = {
     // this hint when it knows the key's scopes.
     remediation: {
       description:
-        'Link the bank row to the vouchers the message names instead of booking it again: gnubok_reconcile_match (needs the reconciliation:write scope) with account_key "bank:<cash_account_id>" and one pair { external_ids: [transaction_id], journal_entry_ids: [...], allocations }. One voucher also links with gnubok_link_transaction_to_journal_entry. A key without reconciliation:write: the user links the row on the Avstämning page in Accounted, or reconnects the connector so its new key carries that scope. Only if the row is a genuinely separate affärshändelse, call again with force=true and expected_journal_entry_ids set to exactly the ids the refusal listed.',
+        'Link the bank row to the vouchers the message names instead of booking it again: gnubok_reconcile_match (needs the reconciliation:write scope) with account_key "bank:<cash_account_id>" and one pair { external_ids: [transaction_id], journal_entry_ids: [...], allocations }. One voucher also links with gnubok_link_transaction_to_journal_entry. A key without reconciliation:write: the user links the row on the Avstämning page in Zimla Kontor, or reconnects the connector so its new key carries that scope. Only if the row is a genuinely separate affärshändelse, call again with force=true and expected_journal_entry_ids set to exactly the ids the refusal listed.',
       tool: 'gnubok_reconcile_match',
     },
   },
@@ -6007,7 +6007,7 @@ const SKATTEVERKET: Record<string, StructuredErrorEntry> = {
     message_sv:
       'Anslutningen till Skatteverket saknas eller har gått ut. Om företaget varit anslutet tidigare är detta normalt: Skatteverkets personliga inloggning gäller bara ca 1 timme. Be användaren ansluta (igen) med BankID under Inställningar → Skatteverket.',
     message_en:
-      'The Skatteverket connection is missing or has expired. If the company was connected before this is expected: Skatteverket personal sessions last only about 1 hour. Tell the user to connect (or reconnect) with BankID under Inställningar → Skatteverket in Accounted. Only a person can do this; do not retry until they confirm they have reconnected.',
+      'The Skatteverket connection is missing or has expired. If the company was connected before this is expected: Skatteverket personal sessions last only about 1 hour. Tell the user to connect (or reconnect) with BankID under Inställningar → Skatteverket in Zimla Kontor. Only a person can do this; do not retry until they confirm they have reconnected.',
     remediation: {
       description:
         'A person must connect (or reconnect) to Skatteverket with BankID under Inställningar → Skatteverket. Personal Skatteverket sessions expire after about 1 hour by SKV design, so an expired session is normal, not a fault. Do not retry until the user confirms they have reconnected.',
@@ -6027,7 +6027,7 @@ const SKATTEVERKET: Record<string, StructuredErrorEntry> = {
     retryable: true,
     remediation: {
       description:
-        'Skip the skattekonto for now and continue with the other accounts; ask again later. The skattekonto is fetched right after each BankID consent and by the scheduled sync, and the user can fetch it now on the Skattekonto page in Accounted. If it stays empty, check the connection with gnubok_connect_skatteverket and have the user reconnect.',
+        'Skip the skattekonto for now and continue with the other accounts; ask again later. The skattekonto is fetched right after each BankID consent and by the scheduled sync, and the user can fetch it now on the Skattekonto page in Zimla Kontor. If it stays empty, check the connection with gnubok_connect_skatteverket and have the user reconnect.',
       tool: 'gnubok_connect_skatteverket',
     },
     thrown_message_sv: true,

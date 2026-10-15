@@ -7,11 +7,11 @@
  */
 export const ANSLUT_CLAUDE_MD = `# Anslut Claude
 
-> Prata med din bokföring. Koppla Accounted till Claude (claude.ai, Claude Desktop eller Claude Code) och ställ frågor, kontera transaktioner och förbered momsdeklarationen i vanligt språk. Varje skrivning stannar för ditt godkännande först.
+> Prata med din bokföring. Koppla Zimla Kontor till Claude (claude.ai, Claude Desktop eller Claude Code) och ställ frågor, kontera transaktioner och förbered momsdeklarationen i vanligt språk. Varje skrivning stannar för ditt godkännande först.
 
 _This page in English: [Connect with Claude](/docs/api/connect-claude)._
 
-Accounted har en [MCP](https://modelcontextprotocol.io)-server som exponerar hela bokföringsmotorn (150+ verktyg) för vilken MCP-klient som helst. Adressen är:
+Zimla Kontor har en [MCP](https://modelcontextprotocol.io)-server som exponerar hela bokföringsmotorn (150+ verktyg) för vilken MCP-klient som helst. Adressen är:
 
 \`\`\`
 https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted
@@ -21,11 +21,11 @@ Det finns tre vägar in, beroende på vilken klient du använder. Alla tre når 
 
 ## Väg A: claude.ai eller Claude Desktop (ett klick)
 
-**[→ Anslut Accounted till Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Accounted&connectorUrl=https%3A%2F%2Fapp.accounted.se%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
+**[→ Anslut Zimla Kontor till Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Zimla Kontor&connectorUrl=https%3A%2F%2Fapp.accounted.se%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
 
 Länken öppnar claude.ai med namn och adress ifyllda. Du granskar värdena och godkänner; länken fyller bara i formuläret och ger ingenting i sig. Ingen API-nyckel att hålla reda på.
 
-**Du behöver inget Accounted-konto ännu.** Inloggningen öppnas direkt när du lägger till anslutningen, och där skapar du som ny kontot på plats (BankID eller e-post + 2FA).
+**Du behöver inget Zimla Kontor-konto ännu.** Inloggningen öppnas direkt när du lägger till anslutningen, och där skapar du som ny kontot på plats (BankID eller e-post + 2FA).
 
 **Alla behörigheter förvalda, varje skrivning stannar ändå.** Godkännandesidan ger hela behörighetslistan med ett klick. Fäll ut **Behörigheter** och välj **Endast läs** för en läsande anslutning (lista fakturor, läsa rapporter, räkna moms): så kan en granskare ansluta läsande medan du själv har en anslutning med skrivrättigheter för det dagliga arbetet. Oavsett behörigheter lägger skrivverktygen (skapa faktura, kontera, bokföra verifikat, köra bokslut) bara upp en pending operation som du bekräftar innan något bokförs, och åtkomsten går att återkalla under Inställningar → API & MCP.
 
@@ -34,7 +34,7 @@ Länken öppnar claude.ai med namn och adress ifyllda. Du granskar värdena och 
 Resten av inställningarna görs på Claudes sida, i den här ordningen:
 
 1. **Connector-dialogen.** claude.ai öppnar **Add custom connector** med namn och adress ifyllda. Kontrollera adressen och gå vidare: dialogen känner av att servern kräver inloggning (**Always required**) och att Claude kan registrera sig själv automatiskt. Behåll de valen och klicka **Add**. Claude Desktop visar samma dialog under Inställningar → Connectors.
-2. **Inloggningen öppnas.** claude.ai ber dig ansluta och öppnar Accounteds inloggning (BankID eller e-post + 2FA) följd av godkännandesidan. Den visar bolaget som just nu är aktivt i appen (byt bolag i appen först om du har flera) med alla behörigheter förvalda; fäll ut **Behörigheter** och välj **Endast läs** för en läsande anslutning. Godkänn, så visas anslutningen som ansluten med Accounteds verktyg listade.
+2. **Inloggningen öppnas.** claude.ai ber dig ansluta och öppnar Zimla Kontors inloggning (BankID eller e-post + 2FA) följd av godkännandesidan. Den visar bolaget som just nu är aktivt i appen (byt bolag i appen först om du har flera) med alla behörigheter förvalda; fäll ut **Behörigheter** och välj **Endast läs** för en läsande anslutning. Godkänn, så visas anslutningen som ansluten med Zimla Kontors verktyg listade.
 3. **Ställ din första fråga.** Till exempel *"Vilket bolag är jag ansluten till?"*. Härifrån går varje fråga mot det bolaget, och skrivningar stannar under **/pending** tills du bekräftar.
 
 Inloggad, men Claude säger fortfarande att servern inte går att nå? Fråga igen i samma chatt först. Hjälper inte det: öppna Inställningar → Connectors, ta bort anslutningen och lägg till den igen via länken ovan, med autentisering kvar på **Always required**.
@@ -58,7 +58,7 @@ Bäst i terminalen. Pluginet installerar både anslutningen och åtta färdiga a
 /plugin install accounted@accounted
 \`\`\`
 
-Kör sedan \`/mcp\` och logga in med Accounted (samma OAuth-ruta som i väg A). Börja med \`/accounted:start\`.
+Kör sedan \`/mcp\` och logga in med Zimla Kontor (samma OAuth-ruta som i väg A). Börja med \`/accounted:start\`.
 
 | Kommando | Vad det gör |
 |---|---|
@@ -95,7 +95,7 @@ claude mcp add --transport http accounted \\
 
 Bäst när du hellre använder en långlivad API-nyckel än OAuth-flödet, eller när du skriptar.
 
-1. Skapa en API-nyckel i Accounted under **Inställningar → API & MCP**. En \`gnubok_sk_test_*\`-nyckel läser ditt riktiga bolag men tvingar varje skrivning till dry-run, så den är säker medan du utvärderar; byt till en skarp nyckel (\`gnubok_sk_*\`, utan \`test_\`) när skrivningar ska bokföras.
+1. Skapa en API-nyckel i Zimla Kontor under **Inställningar → API & MCP**. En \`gnubok_sk_test_*\`-nyckel läser ditt riktiga bolag men tvingar varje skrivning till dry-run, så den är säker medan du utvärderar; byt till en skarp nyckel (\`gnubok_sk_*\`, utan \`test_\`) när skrivningar ska bokföras.
 2. Lägg till bryggan i din \`claude_desktop_config.json\`:
    \`\`\`json
    {
@@ -111,7 +111,7 @@ Bäst när du hellre använder en långlivad API-nyckel än OAuth-flödet, eller
      }
    }
    \`\`\`
-   Kör du Accounted i egen drift pekar du om bryggan med \`ACCOUNTED_URL\`.
+   Kör du Zimla Kontor i egen drift pekar du om bryggan med \`ACCOUNTED_URL\`.
 3. Starta om Claude Desktop. Bryggan skickar vidare stdio-JSON-RPC till den hostade MCP-servern över HTTPS, och nyckeln bär de rättigheter du gav den när den skapades.
 
 Nyckelns rättigheter styr exakt vilka verktyg som går att kalla: en nyckel utan skrivrättigheter kan läsa rapporter och reskontror men inte lägga upp en bokföring.
@@ -143,7 +143,7 @@ Alla tre är rena läsningar och säkra att köra mot ditt riktiga bolag (med en
 
 En snabb genomgång som visar att anslutningen fungerar innan du släpper in den på skarp data. Kör stegen i ordning. Varje steg säger vad du gör och vad du ska se.
 
-1. **Anslut.** Väg A med **Endast läs** valt på godkännandesidan, väg B, eller väg C med en \`gnubok_sk_test_*\`-nyckel. → Claude listar Accounteds verktyg (rubriker som *List Uncategorized Transactions* och *VAT Declaration (Momsdeklaration)*).
+1. **Anslut.** Väg A med **Endast läs** valt på godkännandesidan, väg B, eller väg C med en \`gnubok_sk_test_*\`-nyckel. → Claude listar Zimla Kontors verktyg (rubriker som *List Uncategorized Transactions* och *VAT Declaration (Momsdeklaration)*).
 2. **Kontrollera bolaget.** Fråga *"Vilket bolag är jag ansluten till?"* → Claude namnger bolaget som nyckeln eller samtycket gäller.
 3. **Kör fråga 1** (okonterade och konteringsförslag). → En lista med okonterade rader plus förslag. Ingen bokföring sker.
 4. **Kör fråga 2** (förfallna fakturor). → Minst en förfallen kundfaktura med åldersfördelning.

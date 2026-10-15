@@ -147,7 +147,7 @@ describe('GET /api/extensions/skatteverket/ombud/sync/cron', () => {
 
   it('asks the register with the cron-only empty-on-404 option', async () => {
     await GET(request())
-    // The whole register is Accounted's own call as ombud: explicitly not
+    // The whole register is Zimla Kontor's own call as ombud: explicitly not
     // audited in the per-company table (the transport logs it instead).
     expect(mockListOmbudGrants).toHaveBeenCalledWith({}, 'ombud_register', { emptyOn404: true })
   })

@@ -669,7 +669,7 @@ export function DigitalInlamning({ periodId }: { periodId: string }) {
               </div>
               <p className="text-xs text-muted-foreground">
                 Personnumren skickas till Bolagsverket för att skapa eget utrymme och bjuda
-                in undertecknaren. De sparas inte i Accounted och skrivs inte till loggar.
+                in undertecknaren. De sparas inte i Zimla Kontor och skrivs inte till loggar.
               </p>
 
               {registryInformation && (

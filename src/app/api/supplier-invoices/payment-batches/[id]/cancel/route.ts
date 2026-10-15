@@ -10,7 +10,7 @@ ensureInitialized()
  * Cancel a payment batch. Compare-and-set on status='created' so two racing
  * cancels resolve to exactly one winner; the loser gets ALREADY_CANCELLED.
  *
- * Cancelling only changes what Accounted will re-serve: a file already
+ * Cancelling only changes what Zimla Kontor will re-serve: a file already
  * uploaded to the bank is not recalled by this. The confirm dialog says so.
  * Rules in lib/payments/batch-operations.ts (shared with v1 and MCP).
  */

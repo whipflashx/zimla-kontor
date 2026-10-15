@@ -66,7 +66,7 @@ function knowledgeFor(defaults: readonly string[], agentId: string) {
   ]
 }
 
-/** Accounted's packs, then the demo company's own knowledge, as /api/agents/knowledge lists them. */
+/** Zimla Kontor's packs, then the demo company's own knowledge, as /api/agents/knowledge lists them. */
 function allOptions(): KnowledgeOption[] {
   return [...OPTIONS, ...CATALOG.filter((c) => c.tier === 'own' && c.itemKind === 'rules').map((c) => ({ id: c.slug, tier: 'own' as const, title: c.name, summary: String(c.summary ?? ''), version: null, reviewed_at: null }))]
 }
@@ -191,7 +191,7 @@ function installFixtures() {
       case '/api/skills/usage': return json({ bookkeep: { count: 12, last_at: '2026-09-22T09:14:00Z' }, 'quarterly-vat-review': { count: 2, last_at: '2026-08-12T08:00:00Z' } })
       case '/api/skills': {
         const slug = url.searchParams.get('slug')
-        // Accounted's own analyses ship in code, as they do in the app.
+        // Zimla Kontor's own analyses ship in code, as they do in the app.
         if (!slug) return json([...CATALOG, ...analysisSkills.map(({ body: _body, ...s }) => ({ ...s, active: true, installations: [] }))])
         if (slug === 'own/00000000-0000-4000-8000-000000000001') return json({ body: OWN_BODY })
         const analysis = analysisSkills.find((s) => s.slug === slug)
@@ -204,7 +204,7 @@ function installFixtures() {
         const pack = OPTIONS.find((o) => o.id === slug)
         if (pack) return json({ body: `# ${pack.title}\n\nI appen visas packets egen text här, samma text som din AI läser.` })
         const item = CATALOG.find((c) => c.slug === slug)
-        return json({ body: item ? `# ${item.name}\n\n${item.summary}` : '# Accounted workflow' })
+        return json({ body: item ? `# ${item.name}\n\n${item.summary}` : '# Zimla Kontor workflow' })
       }
       default: return json(null)
     }

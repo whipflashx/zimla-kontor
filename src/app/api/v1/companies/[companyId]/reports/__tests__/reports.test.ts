@@ -588,7 +588,7 @@ describe('GET /reports/sie-export', () => {
         },
       }),
     )
-    mocks.generateSIEExport.mockResolvedValue('#FLAGGA 0\n#PROGRAM Accounted\n')
+    mocks.generateSIEExport.mockResolvedValue('#FLAGGA 0\n#PROGRAM Zimla Kontor\n')
 
     const res = await sieExport(
       makeReq(

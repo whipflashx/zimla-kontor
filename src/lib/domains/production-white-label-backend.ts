@@ -1,4 +1,4 @@
-// Accounted's hosted production identity, as checked-in configuration.
+// Zimla Kontor's hosted production identity, as checked-in configuration.
 //
 // HOSTED_PRODUCTION_NAMESPACE is the DNS zone the hosted product serves its
 // customers from: app.accounted.se plus one <brand>.accounted.se host per
@@ -22,7 +22,7 @@ const PRODUCTION_SUPABASE_HOST = 'pwxtzglxptnnvjrpixpg.supabase.co'
 // classified by hand. Hosts inside the namespace are never listed: the
 // namespace rule already covers them.
 //
-// Checked in: only Accounted's own legacy canonical host, which is live
+// Checked in: only Zimla Kontor's own legacy canonical host, which is live
 // production today. A customer that brings its own domain
 // (docs/WHITELABEL.md step 1) is classified through the
 // PRODUCTION_CUSTOM_DOMAIN_HOSTS env var instead (comma-separated hostnames):
@@ -119,7 +119,7 @@ export interface WhiteLabelDeploymentEnv {
  *
  * Hosts outside the hosted namespace stay out of scope unless they are an
  * approved customer domain: a self-hosted deployment runs its own backend on
- * its own domain, and demanding Accounted's project there would brick it. The
+ * its own domain, and demanding Zimla Kontor's project there would brick it. The
  * one exception is the hosted project without a usable inventory, which cannot
  * rule any host out and so treats all of them as production.
  */
@@ -146,7 +146,7 @@ function requiresProductionBackend(
 }
 
 /**
- * Block Accounted's customer-facing production hosts from any backend that is
+ * Block Zimla Kontor's customer-facing production hosts from any backend that is
  * not the production Supabase project. The backend host is an exact match:
  * this is an environment safety boundary, not suffix-based domain
  * authorization.

@@ -1,10 +1,10 @@
 export const CONNECT_CLAUDE_MD = `# Connect with Claude
 
-> Talk to your bookkeeping. Connect Accounted to Claude (claude.ai, Claude Desktop, or Claude Code) and ask questions, categorise transactions, and prepare a momsdeklaration in plain language: every write still stages for your approval first.
+> Talk to your bookkeeping. Connect Zimla Kontor to Claude (claude.ai, Claude Desktop, or Claude Code) and ask questions, categorise transactions, and prepare a momsdeklaration in plain language: every write still stages for your approval first.
 
 _Den här sidan på svenska: [Anslut Claude](/docs/api/anslut-claude)._
 
-Accounted ships an [MCP](https://modelcontextprotocol.io) server that exposes the full bookkeeping engine (150+ tools) to any MCP client. The endpoint is:
+Zimla Kontor ships an [MCP](https://modelcontextprotocol.io) server that exposes the full bookkeeping engine (150+ tools) to any MCP client. The endpoint is:
 
 \`\`\`
 https://app.accounted.se/api/extensions/ext/mcp-server/mcp?tool_namespace=accounted
@@ -14,11 +14,11 @@ There are three ways to connect, depending on your client. All three reach the s
 
 ## Path A: claude.ai or Claude Desktop (one click)
 
-**[→ Connect Accounted to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Accounted&connectorUrl=https%3A%2F%2Fapp.accounted.se%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
+**[→ Connect Zimla Kontor to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Zimla Kontor&connectorUrl=https%3A%2F%2Fapp.accounted.se%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
 
 The link opens claude.ai with the connector name and URL already filled in. You review the values and confirm; the link only prefills the dialog, it grants nothing on its own. No API key to manage.
 
-**You do not need an Accounted account yet.** Adding the connector opens the Accounted sign-in straight away, and a new user creates the account right there (BankID or e-mail + 2FA).
+**You do not need an Zimla Kontor account yet.** Adding the connector opens the Zimla Kontor sign-in straight away, and a new user creates the account right there (BankID or e-mail + 2FA).
 
 **All permissions pre-selected, every write still staged.** The consent page grants the full scope set with one click. Expand **Behörigheter** and choose **Endast läs** to connect read-only (list invoices, read reports, compute VAT): a reviewer can do that while you keep a write-enabled connection for daily work. Whatever the scopes, write tools (create invoice, categorise, book vouchers, run year-end) only stage a pending operation that you confirm before anything is booked, and the grant can be revoked under Settings → API & MCP.
 
@@ -27,7 +27,7 @@ The link opens claude.ai with the connector name and URL already filled in. You 
 The rest of the setup happens on Claude's side, in this order:
 
 1. **The connector dialog.** claude.ai opens **Add custom connector** with the name and URL filled in. Check the URL and continue: the dialog detects that the server requires a sign-in (**Always required**) and that Claude can register itself automatically. Keep those and click **Add**. Claude Desktop shows the same dialog under Settings → Connectors.
-2. **The sign-in opens.** claude.ai asks you to connect and opens the Accounted sign-in (BankID or e-mail + 2FA), followed by the consent page. It shows the company that is currently active in the app (switch company in the app first if you have several) with every permission pre-selected; expand **Behörigheter** and choose **Endast läs** for a read-only connection. Approve, and the connector shows as connected with the Accounted tools listed.
+2. **The sign-in opens.** claude.ai asks you to connect and opens the Zimla Kontor sign-in (BankID or e-mail + 2FA), followed by the consent page. It shows the company that is currently active in the app (switch company in the app first if you have several) with every permission pre-selected; expand **Behörigheter** and choose **Endast läs** for a read-only connection. Approve, and the connector shows as connected with the Zimla Kontor tools listed.
 3. **Ask your first question.** For example *"Which company am I connected to?"*. From here every question runs against that company; writes stage at **/pending** until you confirm.
 
 Signed in, but Claude still says it cannot reach the server? Ask again in the same chat first. If that does not help, open Settings → Connectors, remove the connector, and add it again from the link above, with authentication left on **Always required**.
@@ -51,7 +51,7 @@ Best in the terminal. The plugin installs the connection *and* eight workflow co
 /plugin install accounted@accounted
 \`\`\`
 
-Then run \`/mcp\` and sign in with Accounted (the same OAuth consent screen as Path A). Start with \`/accounted:start\`.
+Then run \`/mcp\` and sign in with Zimla Kontor (the same OAuth consent screen as Path A). Start with \`/accounted:start\`.
 
 | Command | What it does |
 |---|---|
@@ -88,7 +88,7 @@ claude mcp add --transport http accounted \\
 
 Best for Claude Desktop on a machine where you'd rather use a long-lived API key than the OAuth flow, or for scripting.
 
-1. Mint an API key in the Accounted dashboard under **Settings → API & MCP** (\`/settings/api\`). A \`gnubok_sk_test_*\` key reads your real company but forces every write into dry-run, so it is safe while you evaluate; switch to a live key (\`gnubok_sk_*\`, no \`test_\` infix) when you want writes to commit.
+1. Mint an API key in the Zimla Kontor dashboard under **Settings → API & MCP** (\`/settings/api\`). A \`gnubok_sk_test_*\` key reads your real company but forces every write into dry-run, so it is safe while you evaluate; switch to a live key (\`gnubok_sk_*\`, no \`test_\` infix) when you want writes to commit.
 2. Add the stdio bridge to your \`claude_desktop_config.json\`:
    \`\`\`json
    {
@@ -104,7 +104,7 @@ Best for Claude Desktop on a machine where you'd rather use a long-lived API key
      }
    }
    \`\`\`
-   Running Accounted yourself? Point the bridge at your own host with \`ACCOUNTED_URL\`.
+   Running Zimla Kontor yourself? Point the bridge at your own host with \`ACCOUNTED_URL\`.
 3. Restart Claude Desktop. The bridge proxies stdio JSON-RPC to the hosted MCP endpoint over HTTPS; the key carries the scopes you granted it at mint time.
 
 The key's scopes gate exactly which tools are callable: a key without write scopes can read reports and ledgers but cannot stage a booking.
@@ -138,7 +138,7 @@ All three are read-only and safe to run against your real company (with a \`gnub
 
 A quick end-to-end pass to confirm the connection works before you trust it with real data. Run the steps in order; each lists what you do and what you should see.
 
-1. **Connect.** Use Path A (choose **Endast läs** on the consent page), Path B, or Path C with a \`gnubok_sk_test_*\` key. → Claude lists the Accounted tools (titles like *List Uncategorized Transactions*, *VAT Declaration (Momsdeklaration)*).
+1. **Connect.** Use Path A (choose **Endast läs** on the consent page), Path B, or Path C with a \`gnubok_sk_test_*\` key. → Claude lists the Zimla Kontor tools (titles like *List Uncategorized Transactions*, *VAT Declaration (Momsdeklaration)*).
 2. **Confirm the company.** Ask *"Which company am I connected to?"* → Claude names the company the key or consent was issued for.
 3. **Run prompt 1** (*uncategorized + suggest categories*). → A list of uncategorised rows plus category suggestions; no booking happens.
 4. **Run prompt 2** (*overdue invoices*). → At least one overdue customer invoice with aging.

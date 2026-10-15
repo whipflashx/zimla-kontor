@@ -80,7 +80,7 @@ export function isSystemReadActive(): boolean {
 }
 
 /**
- * The company's background reads run on Accounted's ombud credentials, so a
+ * The company's background reads run on Zimla Kontor's ombud credentials, so a
  * dead personal BankID session is no reason to ask anyone to log in again.
  * One definition for resolveReadAuth, /status, the agent briefing and core's
  * Hem and notice surfaces (through the extension's services).

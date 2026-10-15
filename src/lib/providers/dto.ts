@@ -124,7 +124,7 @@ export interface SourceVoucherRefDto {
 /**
  * The invoice a kreditfaktura credits, as the PROVIDER states it: the
  * provider's own id of that invoice and its number as printed. Never an
- * Accounted id. The importer resolves it against the invoices it has
+ * Zimla Kontor id. The importer resolves it against the invoices it has
  * imported (this run or an earlier one) and pairs the rows through
  * `invoices.credited_invoice_id` when it can; when it cannot, the number is
  * still written onto the credit note so the pairing stays legible.

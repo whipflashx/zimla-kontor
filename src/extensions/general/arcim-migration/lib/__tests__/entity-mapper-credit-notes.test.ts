@@ -18,7 +18,7 @@ import { buildSupplierCreditNoteRow, supplierPayableEffectSek } from '@/lib/supp
  * the credited amounts while the credit notes themselves, which are
  * räkenskapsinformation, never landed.
  *
- * Accounted models a credit note as an ordinary invoice row with reversed
+ * Zimla Kontor models a credit note as an ordinary invoice row with reversed
  * amounts (app/api/invoices/route.ts, app/api/v1/.../invoices/[id]/credit) and
  * a `credited_invoice_id` pointing at the invoice it credits.
  */
@@ -181,7 +181,7 @@ describe('mapSalesInvoice: kreditfaktura', () => {
 
   it('carries the credited invoice the provider named, for the pairing pass', () => {
     // Bokio's invoiceRef names the credited invoice by its own id and number.
-    // The mapper cannot turn that into an Accounted id (the original may be
+    // The mapper cannot turn that into an Zimla Kontor id (the original may be
     // inserted later in the run, or by an earlier run), so it hands the
     // reference on and reports the row unpaired as written.
     const ref = { id: 'a419cf69-db6f-4de9-992c-b1a60942a443', invoiceNumber: 'IN-2024-001' }

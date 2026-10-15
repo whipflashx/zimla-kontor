@@ -132,7 +132,7 @@ export interface CancelledBatch {
 /**
  * Cancel a batch. Compare-and-set on status='created' so two racing cancels
  * resolve to exactly one winner; the loser gets SI_BATCH_ALREADY_CANCELLED.
- * Cancelling only changes what Accounted will re-serve: a file already
+ * Cancelling only changes what Zimla Kontor will re-serve: a file already
  * uploaded to the bank is not recalled by this.
  */
 export async function cancelPaymentBatch(
@@ -161,7 +161,7 @@ export async function cancelPaymentBatch(
         total_amount: existing.total_amount,
         file_downloaded: (existing.download_count ?? 0) > 0,
         note:
-          'Cancelling stops Accounted from serving the file again and frees its invoices for a new batch. ' +
+          'Cancelling stops Zimla Kontor from serving the file again and frees its invoices for a new batch. ' +
           'A file already uploaded to the bank is NOT recalled: stop the payment in the bank too.',
       },
     }

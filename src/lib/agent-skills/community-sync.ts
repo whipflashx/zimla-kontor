@@ -6,7 +6,7 @@ import { communityBodySha } from './community-approval'
  * Publishing: what is merged into community/ in erp-mafia/accounted-skills
  * becomes a tier 'community' atom, and what is removed there is switched off
  * here. The repository is public and a push to main is not a review, so an
- * atom is exposed to AIs only when an Accounted reviewer approved that exact
+ * atom is exposed to AIs only when an Zimla Kontor reviewer approved that exact
  * text: the submission's approved_body_sha (set when the reviewer opened it
  * as a pull request) or the atom's own approved_sha (set by "Godkänn och
  * publicera" in the review list). A new or changed text without one waits,
@@ -22,7 +22,7 @@ export interface CommunitySyncResult {
   published: string[]
   updated: string[]
   deactivated: string[]
-  /** Submissions from Accounted that are now published. */
+  /** Submissions from Zimla Kontor that are now published. */
   linked: string[]
   /** Merged texts no reviewer approved yet: stored, not exposed, listed for review. */
   pending: string[]

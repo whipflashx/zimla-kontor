@@ -271,7 +271,7 @@ export function buildWintSieFile(options: BuildWintSieOptions): string {
 
   const lines: string[] = [];
   lines.push('#FLAGGA 0');
-  lines.push(`#PROGRAM ${quote('Accounted')} ${quote(programVersion)}`);
+  lines.push(`#PROGRAM ${quote('Zimla Kontor')} ${quote(programVersion)}`);
   // Declared PC8 with a UTF-8 body, the same de-facto convention Fortnox and
   // Bokio ship: this file goes straight into our own parser, whose encoding
   // detection ignores the header, and never leaves the import pipeline as

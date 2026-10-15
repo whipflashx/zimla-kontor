@@ -26,7 +26,7 @@ import type {
 import type { ArsredovisningData } from '@/lib/bokslut/arsredovisning/types'
 
 /** TA §4.3.4-4.3.5: "<leverantör> - <produkt>", version "<huvud>.<revision>". */
-export const PROGRAMVARA_NAMN = 'Accounted - Accounted'
+export const PROGRAMVARA_NAMN = 'Zimla Kontor - Zimla Kontor'
 export const PROGRAMVARA_VERSION = '2026.1'
 
 export interface BuildIxbrlOptions {

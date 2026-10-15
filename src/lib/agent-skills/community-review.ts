@@ -4,7 +4,7 @@ import { communityRepoUrl, communitySlug, githubNewFileUrl, privacyFindings, pub
 import { communityBodySha } from './community-approval'
 
 /**
- * Accounted's review of shared own items, before anything is public: the
+ * Zimla Kontor's review of shared own items, before anything is public: the
  * reviewer reads the exact SKILL.md that would be published, with a privacy
  * screen, and either opens it as a pull request in erp-mafia/accounted-skills
  * (as themselves, from GitHub's editor) or sends it back with a reason. A
@@ -138,7 +138,7 @@ function isWithdrawn(signals: Record<string, unknown> | null): boolean {
   return typeof signals?.withdrawn_at === 'string'
 }
 
-/** Taken back by its author but still in the public repository: Accounted removes the folder. */
+/** Taken back by its author but still in the public repository: Zimla Kontor removes the folder. */
 export interface WithdrawnItem {
   slug: string
   title: string

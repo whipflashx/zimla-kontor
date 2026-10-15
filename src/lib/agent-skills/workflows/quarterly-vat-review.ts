@@ -8,7 +8,7 @@ const YEAR_END_CUTOFF_NOTE = isKontantmetodCutoffSuspended()
   ? 'If this period contains the fiscal year-end, the year-end cut-off from `year-end-close` is temporarily suspended (#3440), so the moms on invoices unpaid at year end is not in this declaration yet. Say so to the user before they file, and never book that moms or the receivables and payables by hand as a workaround.'
   : 'If this period contains the fiscal year-end, ask whether the year-end cut-off from `year-end-close` has been done before filing.'
 
-const body = `# Quarterly VAT Review (Momsdeklaration): Accounted
+const body = `# Quarterly VAT Review (Momsdeklaration): Zimla Kontor
 
 Review one momsdeklaration (SKV 4700) ruta by ruta, get it to a state that can be filed, and, when Skatteverket is connected and the user says so, stage the filing for approval. Works for monthly, quarterly and annual (helårsmoms) filers despite the slug.
 
@@ -32,7 +32,7 @@ Answer each question with the tool named. Do not guess any of them.
 
 1. **Which company?** \`gnubok_list_companies\`. One company: use it. Several: ask which one, then pass that \`company_id\` on every call, including approval. Then \`gnubok_get_agent_briefing\` for \`entity_type\` (aktiebolag or enskild firma), \`accounting_method\` (\`accrual\` = faktureringsmetoden, \`cash\` = kontantmetoden) and \`skatteverket_connection\`.
 2. **Is the company VAT registered?** This skill only lists for VAT-registered companies. If the user says they are not registered, stop: there is no momsdeklaration to file.
-3. **Which cadence?** Call \`gnubok_vat_close_check\` once for the period the user named (or the most recently ended one) and read \`payment.moms_period\`: \`monthly\`, \`quarterly\` or \`yearly\`. That is the company's setting. When it is \`null\`, ask the user; never infer it from turnover. For context only, the default periods are: beskattningsunderlag up to 1M SEK annual, over 1M to 40M quarterly, over 40M monthly; a business may choose a shorter period (and is then bound for 24 months before switching back). If the user's answer differs from the setting, tell them the setting in Accounted must be corrected before filing.
+3. **Which cadence?** Call \`gnubok_vat_close_check\` once for the period the user named (or the most recently ended one) and read \`payment.moms_period\`: \`monthly\`, \`quarterly\` or \`yearly\`. That is the company's setting. When it is \`null\`, ask the user; never infer it from turnover. For context only, the default periods are: beskattningsunderlag up to 1M SEK annual, over 1M to 40M quarterly, over 40M monthly; a business may choose a shorter period (and is then bound for 24 months before switching back). If the user's answer differs from the setting, tell them the setting in Zimla Kontor must be corrected before filing.
 4. **Which period?** Translate to \`period_type\` + \`year\` + \`period\`: monthly \`1-12\`, quarterly \`1-4\`, yearly \`1\` with \`year\` = the year the räkenskapsår ENDS. If the user asks for a period type that is not their cadence, say so before continuing: a quarterly filer does not file a monthly declaration.
 5. **Fiscal year and period status.** \`gnubok_list_fiscal_periods\`: is the fiscal year open, locked or closed? A locked month is normal after month-end close and does not stop you reading or filing. A closed year means corrections cannot be booked into it (see Stop conditions).
 6. **Is the bank connected and reconciled?** Covered by the \`bank_unreconciled\` blocker in step 1; \`gnubok_get_reconciliation_status\` for detail.
@@ -161,15 +161,15 @@ Only then: \`gnubok_vat_declaration_submit({ period_type, year, period })\`. It 
 Approval:
 
 - claude.ai / Claude Desktop: \`gnubok_list_pending_operations({ render_ui: true })\` opens the approval widget; the user approves there.
-- ChatGPT, Grok, local agents (no widget): show the staged preview (period, rutor, kontrollresultat) and ask. On a clear yes in this conversation, call \`gnubok_approve_pending_operation({ operation_id, confirmed: true })\`. \`confirmed: true\` is required for a high-risk operation and is only passed after that yes. Otherwise point them to Granskning in Accounted.
+- ChatGPT, Grok, local agents (no widget): show the staged preview (period, rutor, kontrollresultat) and ask. On a clear yes in this conversation, call \`gnubok_approve_pending_operation({ operation_id, confirmed: true })\`. \`confirmed: true\` is required for a high-risk operation and is only passed after that yes. Otherwise point them to Granskning in Zimla Kontor.
 
 After approval the result carries a \`signing_url\`: give it to the user and ask them to sign with BankID. When they say they signed, call \`gnubok_vat_declaration_status({ period_type, year, period, state: "submitted" })\`. Report "inlämnad" only when \`submitted\` is no longer null.
 
-After filing, remind the user of the payment (ruta 49 positive) and that the momsredovisning verifikat (26xx cleared to 2650) is booked from the momsdeklaration report in Accounted. Synced skattekonto rows are booked with \`gnubok_book_skattekonto_rows\` (search-only, reach it via \`gnubok_stage_tool\` if your client needs to; staged); do that only if the user asks.
+After filing, remind the user of the payment (ruta 49 positive) and that the momsredovisning verifikat (26xx cleared to 2650) is booked from the momsdeklaration report in Zimla Kontor. Synced skattekonto rows are booked with \`gnubok_book_skattekonto_rows\` (search-only, reach it via \`gnubok_stage_tool\` if your client needs to; staged); do that only if the user asks.
 
 ## When Skatteverket is not connected
 
-- \`gnubok_connect_skatteverket\` returns \`available: false\` (or a tool fails with \`EXTENSION_DISABLED\`): the integration is not enabled on this installation. Do the full review (steps 0-4; \`gnubok_vat_close_check\` already carries the same completeness checks as step 5), then tell the user to file the momsdeklaration themselves at skatteverket.se with the reviewed figures; Accounted can download the declaration as a file.
+- \`gnubok_connect_skatteverket\` returns \`available: false\` (or a tool fails with \`EXTENSION_DISABLED\`): the integration is not enabled on this installation. Do the full review (steps 0-4; \`gnubok_vat_close_check\` already carries the same completeness checks as step 5), then tell the user to file the momsdeklaration themselves at skatteverket.se with the reviewed figures; Zimla Kontor can download the declaration as a file.
 - \`available: true, connected: false\`, or any Skatteverket tool fails with \`SKATTEVERKET_NOT_CONNECTED\`: give the user \`connect_url\` (on claude.ai a connect card renders) and explain they sign in with BankID as firmatecknare. Personal Skatteverket sessions last about an hour, so an expired connection is normal. Do not retry until they say they reconnected.
 - \`SKATTEVERKET_ACCESS_DENIED\`: the signed-in person lacks authority for this company at Skatteverket (firmatecknare or deklarationsombud). Only the user can fix that; stop.
 - \`SKATTEVERKET_RATE_LIMITED\`: wait, then retry the read once.

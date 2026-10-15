@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Bank Reconciliation: Accounted
+const body = `# Bank Reconciliation: Zimla Kontor
 
 Reconcile the company's bank statements against the bookkeeping ledger so that the cash position in the books matches the bank. Run at month-end and before VAT close.
 
@@ -13,7 +13,7 @@ Reconcile the company's bank statements against the bookkeeping ledger so that t
 
 ## Choosing the right matching/linking tool
 
-Accounted has several reconciliation tools because the *right* one depends on what
+Zimla Kontor has several reconciliation tools because the *right* one depends on what
 you already have in hand. Decide along two axes (**what you're connecting** and
 **whether a verifikat already exists**) then pick:
 
@@ -95,7 +95,7 @@ and matching balances. If the balances still disagree:
 
 ### Step 5: Document the reconciliation
 
-For each fiscal period, Accounted stores the reconciliation state automatically.
+For each fiscal period, Zimla Kontor stores the reconciliation state automatically.
 For a printed audit trail (BFL 8 kap), generate the supplier ledger and AR
 ledger after reconciliation:
 

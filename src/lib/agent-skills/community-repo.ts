@@ -6,7 +6,7 @@ import { SkillBodySchema } from './validation'
 /**
  * Community instructions live in the public, MIT-licensed repository
  * erp-mafia/accounted-skills, one folder per item under community/ with a
- * SKILL.md (format: community/README.md there). Accounted reviews every
+ * SKILL.md (format: community/README.md there). Zimla Kontor reviews every
  * pull request; a merge publishes, and an hourly sync (community-sync.ts)
  * brings merged items into every company's catalogue. This module is the
  * format both ways: an own item written out for review, and a file read back.
@@ -22,7 +22,7 @@ const ITEM_KIND: Record<string, CommunityKind> = { workflow: 'workflow', knowled
 export const COMMUNITY_INDUSTRIES = ['konsult-it', 'bygg-hantverk', 'e-handel', 'restaurang-cafe', 'vard-halsa', 'software-saas-ai', 'reklambyra-marknadsforing'] as const
 
 /**
- * Accounted's own knowledge packs are named swedish-* (.claude/skills in the
+ * Zimla Kontor's own knowledge packs are named swedish-* (.claude/skills in the
  * same repository), and accounted.se serves both at /instruktioner/<name>.
  * A community folder may not take such a name, or it would take over the
  * pack's page there.
@@ -33,7 +33,7 @@ export function isReservedCommunitySlug(slug: string): boolean {
   return slug.startsWith(RESERVED_PREFIX)
 }
 
-/** A folder name from a title: lowercase ascii, digits and hyphens, never one of Accounted's own pack names. */
+/** A folder name from a title: lowercase ascii, digits and hyphens, never one of Zimla Kontor's own pack names. */
 export function communitySlug(title: string): string {
   const slug = title.toLowerCase()
     .replace(/[åä]/g, 'a').replace(/ö/g, 'o').replace(/é/g, 'e')
@@ -117,14 +117,14 @@ export interface ParsedCommunitySkill {
   author: string
   industries: string[]
   submissionId: string | null
-  /** The whole file, frontmatter included: what the AI reads, as for Accounted's own skills. */
+  /** The whole file, frontmatter included: what the AI reads, as for Zimla Kontor's own skills. */
   body: string
 }
 
 /** Reads one community/<slug>/SKILL.md; an error names what to fix. */
 export function parseCommunitySkillMd(slug: string, text: string): ParsedCommunitySkill | { error: string } {
   if (!/^[a-z0-9][a-z0-9-]{0,99}$/.test(slug)) return { error: 'folder name: lowercase letters, digits and hyphens' }
-  if (isReservedCommunitySlug(slug)) return { error: 'folder name: swedish-* is reserved for Accounted\'s own knowledge' }
+  if (isReservedCommunitySlug(slug)) return { error: 'folder name: swedish-* is reserved for Zimla Kontor\'s own knowledge' }
   const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/.exec(text)
   if (!match) return { error: 'missing frontmatter' }
   let raw: unknown

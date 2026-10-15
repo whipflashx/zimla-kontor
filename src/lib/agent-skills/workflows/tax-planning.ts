@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Tax Planning Before Year-End (Skatteplanering): Accounted
+const body = `# Tax Planning Before Year-End (Skatteplanering): Zimla Kontor
 
 Before the räkenskapsår ends, work out the owner's options and what each one does to tax, result and cash. You compute and explain. You never book anything in this skill: every figure is an estimate, and the owner decides. Dispositions the owner chooses are booked later through the \`year-end-close\` skill (\`gnubok_load_skill({ slug: "year-end-close" })\`).
 
@@ -13,7 +13,7 @@ Not this skill: booking the bokslut (\`year-end-close\`), the monthly close (\`m
 
 ## Where the numbers come from
 
-Every rate and threshold below comes from Accounted's Swedish tax rule pack, with the year it applies to. **Never use a rate, threshold or percentage that is not in this table or in a tool result.** If you need one that is missing (brytpunkt for statlig skatt, municipal tax, the 8 IBB year in the 2026 3:12 löneavdrag, pension rules, anything for a year not listed), do not estimate it: say it is outside what you can compute and hand over (see Stop conditions). Always cite the year when you quote a figure ("bolagsskatt 20.6 % (2026)").
+Every rate and threshold below comes from Zimla Kontor's Swedish tax rule pack, with the year it applies to. **Never use a rate, threshold or percentage that is not in this table or in a tool result.** If you need one that is missing (brytpunkt for statlig skatt, municipal tax, the 8 IBB year in the 2026 3:12 löneavdrag, pension rules, anything for a year not listed), do not estimate it: say it is outside what you can compute and hand over (see Stop conditions). Always cite the year when you quote a figure ("bolagsskatt 20.6 % (2026)").
 
 | Parameter | 2025 | 2026 |
 |---|---|---|
@@ -64,7 +64,7 @@ Along the way, ask one precise question when a number surprises you: "The result
 - \`gnubok_get_income_statement({ period_id })\`: booked result so far. Use \`from_date\`/\`to_date\` to split by month if you need the run rate.
 - \`gnubok_get_balance_sheet({ period_id })\`: equity, cash, obeskattade reserver.
 - \`gnubok_get_general_ledger({ period_id, account_from: "2110", account_to: "2139" })\` (AB): existing periodiseringsfonder, one account per year. Account 2150 is överavskrivningar, not periodiseringsfond: never mix them.
-- \`gnubok_propose_dispositioner({ fiscal_period_id })\` (AB): Accounted's own calculation of mandatory återföring, överavskrivningar, periodiseringsfond avsättning, SLP and bolagsskatt. It is based on what is **booked so far**, so mid-year it is a floor, not the full-year answer. Read \`warnings\` and \`completedDispositions\`.
+- \`gnubok_propose_dispositioner({ fiscal_period_id })\` (AB): Zimla Kontor's own calculation of mandatory återföring, överavskrivningar, periodiseringsfond avsättning, SLP and bolagsskatt. It is based on what is **booked so far**, so mid-year it is a floor, not the full-year answer. Read \`warnings\` and \`completedDispositions\`.
 - \`gnubok_preview_ef_declaration({ fiscal_period_id, category, kapitalunderlag, prior_year_schablonavdrag, prior_year_actual_charged, pfond_desired_amount })\` (EF): egenavgifter, räntefördelning, periodiseringsfond, expansionsfond. Pass only values the owner gave you; leave the rest out rather than guessing. It also works on booked-so-far figures.
 - \`gnubok_list_assets\` if the owner plans purchases or asks about avskrivningar.
 
@@ -77,7 +77,7 @@ Follow the rule pack's order, because each step changes the base for the next:
 1. **Mandatory återföring.** Each periodiseringsfond must be reversed no later than the 6th tax year after the avsättning year, oldest first. A fond reaching that limit this year adds to taxable income whether the owner wants it or not. Say which fond and the amount.
 2. **Överavskrivningar.** Limited by the inventarier base (30-regeln or 20-regeln, whichever gives the larger deduction). Use the \`gnubok_propose_dispositioner\` figure; do not compute the pool yourself. Note the rule-pack warning: booking more than the tax maximum systematically for more than one year forfeits räkenskapsenlig avskrivning.
 3. **Periodiseringsfond avsättning.** Up to 25 % of skattemässigt överskott before the avsättning. Show: amount, tax deferred (amount x 20.6 %), and the cost of the schablonintäkt next year (fund x SLR, floor 0.5 %, taxed at 20.6 %). Explain it is a deferral: the tax comes back when the fond is reversed, at the latest in year 6, and the cash stays in the company meanwhile. If the company is heading for a loss year, a reversal against that loss is where the saving becomes permanent.
-4. **Bolagsskatt estimate.** 20.6 % of the estimated taxable result after the above. Say that non-deductible costs (e.g. representation over the limit, böter) and a prior-year underskott change the base, and that \`gnubok_propose_dispositioner\` includes the tax adjustments registered in Accounted.
+4. **Bolagsskatt estimate.** 20.6 % of the estimated taxable result after the above. Say that non-deductible costs (e.g. representation over the limit, böter) and a prior-year underskott change the base, and that \`gnubok_propose_dispositioner\` includes the tax adjustments registered in Zimla Kontor.
 5. **Lön vs utdelning (fåmansföretag).** Only the structure the rule pack gives:
    - Combined company-plus-owner burden (rule pack, approximate): utdelning within gränsbelopp about 36.5 %; lön below brytpunkt about 47-52 % including arbetsgivaravgifter; lön above brytpunkt about 58-63 %; utdelning above gränsbelopp about 52-58 %.
    - Salary is a deductible company cost plus 31.42 % arbetsgivaravgifter (2026), and builds SGI and pension. The rule pack's common pattern: salary up to the pension ceiling, 8.07 x IBB (about 673 000 kr for 2026), then utdelning within gränsbelopp.

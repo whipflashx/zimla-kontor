@@ -18,7 +18,7 @@ import type { SkatteverketTokens } from '../types'
  *
  * 'user'   : the personal BankID OAuth token (per-user, 65-minute refresh
  *            chain). The only mode that existed before the hybrid model.
- * 'system' : Accounted's own Client Credentials token (org certificate),
+ * 'system' : Zimla Kontor's own Client Credentials token (org certificate),
  *            authorized per company via an ombud grant at Skatteverket.
  *            Used by background reads; carries no user session at all.
  *            NEVER brokered through the connector: the org certificate and
@@ -70,7 +70,7 @@ export interface SkvAuditTarget extends SkvCallAudit {
 }
 
 /**
- * Accounted's own calls as ombud to the Ombudshantering register that belong
+ * Zimla Kontor's own calls as ombud to the Ombudshantering register that belong
  * to no company (the whole-register grant listing, /roller). The audit table
  * is per company, so these are not written there; the transport logs one
  * line per call instead.
@@ -978,11 +978,11 @@ async function sendSkvRequest(
         )
       }
       // With valid system credentials, a 403 means this company has not
-      // granted (or has revoked) the behorighet for Accounted's org number.
+      // granted (or has revoked) the behorighet for Zimla Kontor's org number.
       // Company-level: the caller downgrades the connection row, other
       // companies in the same run are unaffected.
       throw new SkatteverketAuthError(
-        'Företaget har inte gett Accounted behörighet hos Skatteverket, ' +
+        'Företaget har inte gett Zimla Kontor behörighet hos Skatteverket, ' +
         'eller så har behörigheten återkallats i Ombud och behörigheter.',
         'OMBUD_GRANT_MISSING'
       )
@@ -1072,7 +1072,7 @@ async function sendSkvRequest(
  *                        be minted, was rejected, or lacks scope. Run-level:
  *                        affects every company, fix is configuration-side.
  *   OMBUD_GRANT_MISSING: 403 on a system-mode call: this company has not
- *                        granted (or has revoked) Accounted's behorighet at
+ *                        granted (or has revoked) Zimla Kontor's behorighet at
  *                        Skatteverket. Company-level.
  */
 export class SkatteverketAuthError extends Error {

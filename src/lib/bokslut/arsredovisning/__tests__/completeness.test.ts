@@ -111,7 +111,7 @@ describe('validateAnnualReportCompleteness', () => {
       code: 'AR-SCOPE-CURRENCY',
       severity: 'error' as const,
       section: 'scope' as const,
-      message: 'Accounteds årsredovisningsflöde stöder ännu endast SEK som redovisningsvaluta.',
+      message: 'Zimla Kontors årsredovisningsflöde stöder ännu endast SEK som redovisningsvaluta.',
     }
     value.eligibility = {
       ...eligibility,

@@ -1,8 +1,8 @@
 import type { Skill } from '../types'
 
-const body = `# Lön och AGI: Accounted
+const body = `# Lön och AGI: Zimla Kontor
 
-One salary run for one month, booked, and its arbetsgivardeklaration (AGI) prepared or filed. You work like a payroll consultant for a small business owner who is not an accountant: check the facts first, ask precise questions, let Accounted do the calculation, and stage every write for the user to approve.
+One salary run for one month, booked, and its arbetsgivardeklaration (AGI) prepared or filed. You work like a payroll consultant for a small business owner who is not an accountant: check the facts first, ask precise questions, let Zimla Kontor do the calculation, and stage every write for the user to approve.
 
 ## When to use
 
@@ -17,7 +17,7 @@ Answer each question with a tool, not a guess:
 
 1. **Which company?** \`gnubok_list_companies\`. Several: ask which one, then pass that \`company_id\` on every call, including approvals.
 2. **Legal form:** \`gnubok_get_agent_briefing\`, read \`entity_type\`.
-   - **Enskild firma (EF):** the owner is not a separate legal person and can never be paid lön. The owner's money is **eget uttag** (konto 2013), booked against equity, not in a salary run. Accounted refuses an EF owner or board member as an employee. This skill only applies to an EF's hired staff, who are paid and booked exactly as in an AB. If an EF owner asks to "pay myself a salary", explain eget uttag in one or two sentences and stop this workflow.
+   - **Enskild firma (EF):** the owner is not a separate legal person and can never be paid lön. The owner's money is **eget uttag** (konto 2013), booked against equity, not in a salary run. Zimla Kontor refuses an EF owner or board member as an employee. This skill only applies to an EF's hired staff, who are paid and booked exactly as in an AB. If an EF owner asks to "pay myself a salary", explain eget uttag in one or two sentences and stop this workflow.
    - **Aktiebolag (AB):** the owner can be an employee with \`employment_type: "company_owner"\` (booked to 7220, löner till företagsledare). Board fees use \`"board_member"\`.
 3. **Who is on payroll?** \`gnubok_list_employees\`. Per employee check \`personnummer_masked\`, \`salary_type\` with \`monthly_salary\` or \`hourly_rate\`, \`tax_table_number\` + \`tax_column\`, \`employment_type\`. For one employee's full setup (employment start/end, F-skatt status, jämkning, bank details, vacation rule) use \`gnubok_get_employee({ employee_id })\` (search-only read: call it through \`gnubok_call_tool\` if it is not in your tool list).
 4. **Which months are already booked?** \`gnubok_get_salary_journal({ year })\` (search-only read, via \`gnubok_call_tool\`) lists booked runs per employee and month. A gap (February booked, March missing, now asked for April) is a question for the user before you create anything.
@@ -62,11 +62,11 @@ To change a draft's payment date, voucher series or note: \`gnubok_update_salary
 ### Step 2: Register this month's changes (before calculating)
 
 - **Owner salary or other variable base pay:** \`gnubok_set_run_salary({ salary_run_id, employee_id, monthly_salary })\` (hourly-paid: \`hours_worked\` instead, only when the period has no calendar days). Per-run value; the employee's fixed salary is untouched. \`0\` is a nollkörning. Never edit the base salary payslip line instead: recalculation rebuilds it from this value.
-- **Sick leave, VAB, parental leave, unpaid leave:** \`gnubok_register_absence({ employee_id, from, to, absence_type, hours_per_day })\` with type \`sick\`, \`vab\`, \`parental\`, \`pregnancy\`, \`care_relative\`, \`study\`, \`unpaid_leave\` or \`other_leave\`. Max 92 days per call; weekends are skipped unless \`include_weekends\`. Use \`hours_per_day: 4\` for half days. The dates must be inside the run's avvikelseperiod to count this month. Check what is already registered with \`gnubok_list_absence\` (search-only read) and remove a wrong range with \`gnubok_delete_absence\`. Accounted derives karensavdrag and sjuklön (80 % for day 2 to 14) from these rows. Läkarintyg applies from day 8; from day 15 Försäkringskassan pays, not the employer: tell the user when a sick period passes day 14.
+- **Sick leave, VAB, parental leave, unpaid leave:** \`gnubok_register_absence({ employee_id, from, to, absence_type, hours_per_day })\` with type \`sick\`, \`vab\`, \`parental\`, \`pregnancy\`, \`care_relative\`, \`study\`, \`unpaid_leave\` or \`other_leave\`. Max 92 days per call; weekends are skipped unless \`include_weekends\`. Use \`hours_per_day: 4\` for half days. The dates must be inside the run's avvikelseperiod to count this month. Check what is already registered with \`gnubok_list_absence\` (search-only read) and remove a wrong range with \`gnubok_delete_absence\`. Zimla Kontor derives karensavdrag and sjuklön (80 % for day 2 to 14) from these rows. Läkarintyg applies from day 8; from day 15 Försäkringskassan pays, not the employer: tell the user when a sick period passes day 14.
 - **Vacation days taken:** \`gnubok_register_absence\` has no vacation type. Add an \`item_type: 'vacation'\` line with \`quantity\` = days through \`gnubok_add_payslip_line\` (see the next point); \`vacation_category\` says which pool the days come from (paid when omitted). Check the balance first with \`gnubok_get_vacation_balance({ employee_id })\` (search-only read) and tell the user if more days are taken than remain.
 - **Overtime, OB, bonus, traktamente, deductions:** \`gnubok_add_payslip_line({ salary_run_id, employee_id, item_type, description, amount, ... })\` adds a line to a draft run; \`gnubok_delete_payslip_line\` removes one and \`gnubok_update_payslip_line\` edits one. Put one-off övertid on \`item_type: 'overtime'\` and one-off OB on \`'other'\`: the calculation rebuilds \`overtime_50\`, \`overtime_100\`, \`ob_*\` and absence lines from worked hours and absence, so such a line added by hand is gone after the next calculation. Send the tax flags the tool describes (skattefri traktamente is not taxable), and \`account_number\` on a company owner's line (owners book on 7220). Deductions carry a negative amount.
 - **Hours for hourly staff:** \`gnubok_set_worked_days({ employee_id, days: [{ work_date, hours }] })\`; check with \`gnubok_list_worked_days\` and remove a wrong day with \`gnubok_delete_worked_days\`. The calculation reads them for the run's avvikelseperiod.
-- **Förmåner:** \`gnubok_add_employee_benefit\` registers one per employee (\`gnubok_list_employee_benefits\`, \`gnubok_update_employee_benefit\`, \`gnubok_delete_employee_benefit\`), and the calculation adds a taxable, avgift-bearing line for each active benefit. The monthly value comes from the user: Accounted does not compute a car benefit's value. A benefit is taxable even though no cash is paid: never drop a benefit the user mentions.
+- **Förmåner:** \`gnubok_add_employee_benefit\` registers one per employee (\`gnubok_list_employee_benefits\`, \`gnubok_update_employee_benefit\`, \`gnubok_delete_employee_benefit\`), and the calculation adds a taxable, avgift-bearing line for each active benefit. The monthly value comes from the user: Zimla Kontor does not compute a car benefit's value. A benefit is taxable even though no cash is paid: never drop a benefit the user mentions.
 - **Deductions every month** (union fee and the like): \`gnubok_add_employee_recurring_line\` applies to every run from \`valid_from\`, with a negative amount (\`gnubok_list_employee_recurring_lines\`, \`gnubok_update_employee_recurring_line\`, \`gnubok_delete_employee_recurring_line\`).
 - **Who is on the run:** \`gnubok_add_salary_run_employee\` and \`gnubok_remove_salary_run_employee\` on a draft run; removing an employee also removes their lines on it.
 
@@ -80,7 +80,7 @@ Confirm in one short message: the employees on the run (and anyone expected but 
 
 ### Step 4: Calculate
 
-\`gnubok_calculate_salary_run({ salary_run_id })\` (draft only; safe to rerun). Accounted computes gross, skatteavdrag from the tax table, net, arbetsgivaravgifter per employee (31.42 % standard; reduced rates for older employees and the temporary youth rate where they apply) and semesterlöneskuld. Never recompute or override these yourself. Pass every entry in \`warnings\` to the user.
+\`gnubok_calculate_salary_run({ salary_run_id })\` (draft only; safe to rerun). Zimla Kontor computes gross, skatteavdrag from the tax table, net, arbetsgivaravgifter per employee (31.42 % standard; reduced rates for older employees and the temporary youth rate where they apply) and semesterlöneskuld. Never recompute or override these yourself. Pass every entry in \`warnings\` to the user.
 
 After any approved change (salary, absence, payslip line, payment date) calculate again.
 
@@ -104,11 +104,11 @@ That verifikat already credits the bank account and books the tax and avgift lia
 
 1. **Generate:** \`gnubok_generate_agi({ salary_run_id })\` stages the AGI underlag. The run must be past draft; book first so the AGI matches the books.
 2. **File, when Skatteverket is connected:** \`gnubok_agi_submit({ salary_run_id })\` stages the filing. Approval sends the underlag and returns a BankID signing link: **nothing is filed until the user signs** at Skatteverket. Afterwards \`gnubok_agi_status({ salary_run_id })\` (search-only read) shows the filing state and kvittensnummer.
-3. **Not connected** (\`connected: false\`, or a filing error about the connection): give the user the \`connect_url\` from \`gnubok_connect_skatteverket\` (they authorise with BankID as firmatecknare) and offer the manual path. **Not available** (\`available: false\`, or error \`EXTENSION_DISABLED\`): only the manual path exists. Manual path: download the AGI file from the salary run in Accounted and upload it in Skatteverket's e-tjänst for arbetsgivardeklaration, then sign there.
+3. **Not connected** (\`connected: false\`, or a filing error about the connection): give the user the \`connect_url\` from \`gnubok_connect_skatteverket\` (they authorise with BankID as firmatecknare) and offer the manual path. **Not available** (\`available: false\`, or error \`EXTENSION_DISABLED\`): only the manual path exists. Manual path: download the AGI file from the salary run in Zimla Kontor and upload it in Skatteverket's e-tjänst for arbetsgivardeklaration, then sign there.
 
 **Deadline:** the AGI and payment of tax and avgifter are due on the 12th of the month after the payment month; in January and August it is the 17th for companies with turnover up to 40 MSEK; a weekend or holiday moves it to the next business day. The money must be on the skattekonto by then. Late filing costs a förseningsavgift (625 kr, 1 250 kr when repeated). Always state the concrete date for this run, and warn clearly if it is close or past.
 
-A month with nobody paid: a registered employer still files an AGI with only the huvuduppgift (a nolldeklaration); in Accounted that is a run with no employees on it. Ask whether the company is registered as employer before assuming one is needed.
+A month with nobody paid: a registered employer still files an AGI with only the huvuduppgift (a nolldeklaration); in Zimla Kontor that is a run with no employees on it. Ask whether the company is registered as employer before assuming one is needed.
 
 ## A run that is already booked
 
@@ -133,8 +133,8 @@ A month with nobody paid: a registered employer still files an AGI with only the
 
 ## Approval discipline
 
-- Every write in this skill stages a pending operation. The user approves in chat (you call \`gnubok_approve_pending_operation\` on a clear yes, with \`confirmed: true\` for high-risk operations) or in Granskning in Accounted. A widget-capable client can show them with \`gnubok_list_pending_operations({ render_ui: true })\` (optional); without widgets, list them in chat: what, who, amount.
-- Never invent amounts, dates, tax tables or personnummer. Every number comes from the user, the employee record or Accounted's calculation.
+- Every write in this skill stages a pending operation. The user approves in chat (you call \`gnubok_approve_pending_operation\` on a clear yes, with \`confirmed: true\` for high-risk operations) or in Granskning in Zimla Kontor. A widget-capable client can show them with \`gnubok_list_pending_operations({ render_ui: true })\` (optional); without widgets, list them in chat: what, who, amount.
+- Never invent amounts, dates, tax tables or personnummer. Every number comes from the user, the employee record or Zimla Kontor's calculation.
 - If you add or compare amounts yourself, round to whole öre (two decimals), never with toFixed. Account numbers are strings ("7210").
 - Never delete anything, never edit a booked run or a posted verifikat, never bypass approval.
 - Changed bank details on an employee are a fraud risk: when \`gnubok_update_employee\` touches \`clearing_number\` or \`bank_account_number\`, say so explicitly and ask the user to confirm it with the employee directly.

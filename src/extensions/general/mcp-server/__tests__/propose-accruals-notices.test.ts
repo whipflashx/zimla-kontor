@@ -11,7 +11,7 @@ vi.mock('@/lib/bokslut/accruals/accrual-detector', () => ({
   buildAccrualsProposal: vi.fn().mockResolvedValue({
     fiscalPeriod: { id: 'p1', name: '2026', period_start: '2026-01-01', period_end: '2026-12-31' },
     proposals: [],
-    notices: ['Semesterlöneskuld 1 361 046 kr på 2920 men inga anställda finns i Accounted; lön körs troligen i ett annat system. Ingen justering föreslås; stäm av skulden mot lönesystemet.'],
+    notices: ['Semesterlöneskuld 1 361 046 kr på 2920 men inga anställda finns i Zimla Kontor; lön körs troligen i ett annat system. Ingen justering föreslås; stäm av skulden mot lönesystemet.'],
   }),
 }))
 

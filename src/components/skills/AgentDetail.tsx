@@ -458,7 +458,7 @@ function ConnectionChip({ connection }: { connection: AgentConnectionState }) {
 
 const GROUPS = ['horizontal', 'vertical', 'modifier'] as const
 
-/** Kunskap, as in Oasis's skill picker: Accounted or community, a search, and cards to add or take away. */
+/** Kunskap, as in Oasis's skill picker: Zimla Kontor or community, a search, and cards to add or take away. */
 export function KnowledgePanel({ held, options, onBack, onChange, initialFailed = false }: {
   held: KnowledgeMeta[]
   options: KnowledgeOption[]
@@ -521,8 +521,8 @@ export function KnowledgePanel({ held, options, onBack, onChange, initialFailed 
   )
 }
 
-/** Share an own agent with the community: it waits for Accounted's review before anyone else sees it. */
-/** Share an own item: Accounted reviews it, and a published one is open to everyone under MIT on accounted.se. */
+/** Share an own agent with the community: it waits for Zimla Kontor's review before anyone else sees it. */
+/** Share an own item: Zimla Kontor reviews it, and a published one is open to everyone under MIT on accounted.se. */
 export function ShareBox({ status, canWrite, onShare, publishedUrl, reviewNote, preview }: {
   status: NonNullable<SkillSummary['shareStatus']>
   canWrite: boolean

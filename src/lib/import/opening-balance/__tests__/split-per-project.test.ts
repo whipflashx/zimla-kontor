@@ -147,7 +147,7 @@ describe('planOpeningBalanceSplit', () => {
 
   it('never overwrites an IB already split per project from another source (SIE #OIB) with other amounts', () => {
     // The IB was imported with #OIB: P1 carries the old system's cumulative
-    // 5000, while last year's tagged closing in Accounted only holds 300.
+    // 5000, while last year's tagged closing in Zimla Kontor only holds 300.
     const [plan] = planOpeningBalanceSplit({
       currentLines: [line('1470', 5000, { dimensions: { '6': 'P1' } }), line('1470', 1000)],
       objectBalances: new Map([['1470', [P('P1', 300)]]]),

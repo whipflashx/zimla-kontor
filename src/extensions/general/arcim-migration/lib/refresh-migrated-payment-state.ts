@@ -18,7 +18,7 @@
  * Guarantees:
  * - Only `status`, `paid_amount`, `remaining_amount` and `paid_at` are
  *   written, on rows of this company only. Nothing is inserted or deleted.
- * - Candidates exclude anything already booked or paid in Accounted
+ * - Candidates exclude anything already booked or paid in Zimla Kontor
  *   (registration or payment voucher present, or paid_amount > 0) and every
  *   credit note, so a repair can never touch a row a verifikat depends on.
  * - The join is strict: invoice number AND invoice date, only when that pair

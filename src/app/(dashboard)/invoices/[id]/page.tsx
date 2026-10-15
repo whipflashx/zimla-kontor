@@ -192,7 +192,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
   const [invoice, setInvoice] = useState<InvoiceWithRelations | null>(null)
   const [reminders, setReminders] = useState<ReminderHistoryRow[]>([])
   const [deliveries, setDeliveries] = useState<InvoiceDeliveryView[]>([])
-  // An empty deliveries list means "nothing was ever sent through Accounted".
+  // An empty deliveries list means "nothing was ever sent through Zimla Kontor".
   // A failed read also produces an empty list, and the two must never be
   // conflated: the archived PDF the customer received is the räkenskapsunderlag
   // (BFL 7 kap), and a freshly re-rendered one is a different document.

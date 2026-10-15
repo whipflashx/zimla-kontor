@@ -39,7 +39,7 @@ export function KopplingarChips({
   hasBank: boolean
   hasSkatteverket: boolean
   /**
-   * Accounted can be the company's ombud (system auth on): the pill appoints
+   * Zimla Kontor can be the company's ombud (system auth on): the pill appoints
    * it at Skatteverket instead of starting an hourly BankID session.
    */
   skvOmbudEnabled?: boolean

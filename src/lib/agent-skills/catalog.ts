@@ -12,7 +12,7 @@ export interface CatalogSkill extends Skill {
   shareStatus?: CompanySkillRow['share_status']
   /** A published own item: its public page. */
   publishedUrl?: string | null
-  /** A shared own item Accounted sent back, and why. */
+  /** A shared own item Zimla Kontor sent back, and why. */
   reviewNote?: string | null
   /** Saved by an AI, waiting for a person to add it on the Skills page. */
   draft?: boolean

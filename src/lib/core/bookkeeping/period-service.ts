@@ -410,7 +410,7 @@ export async function assertPeriodExternallyClosable(
   }
 
   // Klarmarkera exists for MIGRATED years. A period bookkept natively in
-  // Accounted must go through the real year-end: closing it without a
+  // Zimla Kontor must go through the real year-end: closing it without a
   // bokslutsverifikat leaves 3xxx-8xxx untransferred and the next year
   // without IB (BFL 5-6 kap), with no clean way back once locked.
   // "Migrated" is read from the ledger itself. The period passes when it
@@ -449,14 +449,14 @@ export async function assertPeriodExternallyClosable(
     }
     if (ledger.hasResultLines) {
       throw new Error(
-        'Perioden innehåller resultatkonton (3000-8999) bokförda i Accounted och inga importerade verifikat. Använd det vanliga årsbokslutet i stället, så att årets resultat förs över.'
+        'Perioden innehåller resultatkonton (3000-8999) bokförda i Zimla Kontor och inga importerade verifikat. Använd det vanliga årsbokslutet i stället, så att årets resultat förs över.'
       )
     }
     if (ledger.entryCount > 0) {
       const nextPeriod = await findNextPeriod(supabase, companyId, fiscalPeriodId)
       if (!nextPeriod?.opening_balance_entry_id) {
         throw new Error(
-          'Perioden innehåller bokföring skapad i Accounted och nästa räkenskapsår saknar ingående balanser. Använd det vanliga årsbokslutet i stället, så förs balanserna över.'
+          'Perioden innehåller bokföring skapad i Zimla Kontor och nästa räkenskapsår saknar ingående balanser. Använd det vanliga årsbokslutet i stället, så förs balanserna över.'
         )
       }
     }
@@ -592,7 +592,7 @@ export async function markPeriodClosedExternally(
  * The close was a person's control decision, not a year-end run, so undoing
  * it is the same kind of decision. It is allowed only while the closed state
  * still comes from klarmarkera: closed_externally is set and no closing entry
- * exists in Accounted. A period closed by closePeriod keeps its
+ * exists in Zimla Kontor. A period closed by closePeriod keeps its
  * bokslutsverifikat and is not reopened here. Clears locked_at as well: the
  * reason to reopen is to change the period's contents (replace a wrong
  * prior-year SIE import, add missing bokslutsdispositioner), and the user can
@@ -626,7 +626,7 @@ export async function reopenExternallyClosedPeriod(
 
   if (!period.closed_externally || period.closing_entry_id) {
     throw new Error(
-      'Period was closed with a year-end run in Accounted and cannot be reopened here'
+      'Period was closed with a year-end run in Zimla Kontor and cannot be reopened here'
     )
   }
 

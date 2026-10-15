@@ -143,7 +143,7 @@ export function Catalog({ hrefBase, catalog, options, overview, usage, own, comp
   }
 
   // ── every item of every kind, one shape ──
-  // What each flow the company sees carries: Accounted's shown flows, then its own (an unadjusted own flow carries the default).
+  // What each flow the company sees carries: Zimla Kontor's shown flows, then its own (an unadjusted own flow carries the default).
   const flowKnowledge: string[][] = overview ? [
     ...overview.agents.filter((a) => (SHOWN_FLOWS as readonly string[]).includes(a.id)).map((a) => a.knowledge.map((k) => k.id)),
     ...own.filter((s) => (s.itemKind ?? 'workflow') === 'workflow' && !s.draft)
@@ -159,7 +159,7 @@ export function Catalog({ hrefBase, catalog, options, overview, usage, own, comp
     source: 'accounted', meta: null, categories: [], popularity: usage?.[s.id]?.count ?? 0, connections: AGENTS[s.id].connections, lede: t(`skills.${s.id}.desc`),
     status: agentStatus({ id: s.id, aiKnown: true, overview, waiting: undefined, lastAt: undefined, t: (key, values) => t(key, values), formatDate: (iso) => iso }),
   }))
-  // Accounted's packs only: the company's own knowledge is listed under Egna from the catalog.
+  // Zimla Kontor's packs only: the company's own knowledge is listed under Egna from the catalog.
   const packs: Item[] = options.filter((o) => o.tier !== 'community' && o.tier !== 'own').map((o) => ({
     key: o.id, kind: 'rules', title: knowledgeName(o.id, o.title), desc: knowledgeDesc(o.id, o.summary), href: `${hrefBase}/${rulesSegment(o.id)}`,
     source: 'accounted', meta: null, categories: o.tier === 'vertical' || o.tier === 'modifier' ? [o.id] : [], popularity: usedByFlows(o.id), usedByFlows: usedByFlows(o.id),
@@ -171,7 +171,7 @@ export function Catalog({ hrefBase, catalog, options, overview, usage, own, comp
     return { key: s.slug, kind: k, title: s.name, desc: s.summary, href: k === 'workflow' ? `${hrefBase}/${agentSegment(s.slug)}` : `${hrefBase}/egen.${s.slug.slice(4)}`, source: 'own', meta: null, categories: [], popularity: s.draft ? 1 : 0,
       ...(s.draft ? { status: { presence: 'busy' as const, text: t('draft_tag') } } : {}) }
   })
-  // Accounted's own analyses: examples of what an analysis is, next to the community's.
+  // Zimla Kontor's own analyses: examples of what an analysis is, next to the community's.
   const analyses: Item[] = catalog.filter((s) => s.source === 'accounted' && s.itemKind === 'analysis').map((s) => {
     const label = analysisLabel(s.slug, { name: s.name, summary: s.summary })
     return {
@@ -398,11 +398,11 @@ function Featured({ item, industry, client, aiReady, overview }: { item: Item; i
   const [outcome, setOutcome] = useState<StartOutcome | null>(null)
   const hue = itemHue(item.kind, item.source === 'own' ? item.title : item.key, item.source === 'accounted' && item.kind === 'workflow' ? item.key as never : null)
   const ai = AI_CLIENTS.find((c) => c.id === client)!
-  // Accounted's flows and analyses start from the banner; community items open their page first.
+  // Zimla Kontor's flows and analyses start from the banner; community items open their page first.
   const runnable = (item.kind === 'workflow' || item.kind === 'analysis') && item.source === 'accounted' && aiReady
   const states = overview?.agents.find((a) => a.id === item.key)?.connections ?? []
   const id = item.key as RegistrySkillId
-  // Accounted's own text: filled in on the web, with the company pinned only where no URL carries it.
+  // Zimla Kontor's own text: filled in on the web, with the company pinned only where no URL carries it.
   const prompt = pinCompany(
     item.kind === 'analysis' ? t('skill_prompt', { name: item.title, slug: item.key, client }) : t('prompt', { say: t(`skills.${id}.say`), agent: id, client }),
     t('prompt_company_pin', { company: company?.name ?? '', companyId: company?.id ?? '' }),
@@ -450,9 +450,9 @@ function Featured({ item, industry, client, aiReady, overview }: { item: Item; i
 }
 
 /**
- * One connection as its logo, saying where it stands: an Accounted connection
+ * One connection as its logo, saying where it stands: an Zimla Kontor connection
  * is connected or links to where it is set up; mail and browser live in the
- * company's AI, which Accounted cannot see.
+ * company's AI, which Zimla Kontor cannot see.
  */
 function ConnectionBadge({ kind, state, clientName }: { kind: AgentConnection; state: AgentConnectionState | undefined; clientName: string }) {
   const t = useTranslations('skills_registry')

@@ -173,7 +173,7 @@ describe('Skills registry', () => {
     const allBodies = [...skills.map((skill) => skill.body), invoiceComplianceAtom].join('\n')
 
     // The release-pinned EN 16931 validation stack is still open (docs/PEPPOL_FOUNDATION.md),
-    // so no text may claim Accounted validates against it.
+    // so no text may claim Zimla Kontor validates against it.
     expect(allBodies).not.toMatch(/Accounted\s+(?:renders|generates|produces|validates)[^.\n]*EN\s*16931/i)
     // Peppol send is live behind a per-company access grant (app/api/invoices/[id]/peppol/send).
     // A text that claims the capability is absent sends users to a competitor; say gated instead.
@@ -189,7 +189,7 @@ describe('Skills registry', () => {
       expect(
         [
           'It does not generate e-invoice XML or deliver invoices through Peppol.',
-          'Peppol invoices are not generated or sent by Accounted.',
+          'Peppol invoices are not generated or sent by Zimla Kontor.',
           'Peppol sending has not been built.',
           'Peppol sending is not yet available.',
         ].some((claim) => pattern.test(claim)),
@@ -446,7 +446,7 @@ describe('gnubok_list_skills tool', () => {
     expect(result.skills[0].slug).toBe('vertical/konsult-it')
   })
 
-  it('says whether each own item is a workflow, knowledge or an analysis, and marks Accounted analyses', async () => {
+  it('says whether each own item is a workflow, knowledge or an analysis, and marks Zimla Kontor analyses', async () => {
     const tool = tools.find((t) => t.name === 'gnubok_list_skills')!
     const own = (n: number, kind?: 'workflow' | 'rules' | 'analysis') => ({
       id: `aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa${n}`, name: `Own ${n}`, description: 'd', body: 'Steps.', share_status: 'private',
@@ -628,7 +628,7 @@ describe('gnubok_create_skill tool', () => {
     const row = (insert.mock.calls[0] as unknown[])[0] as Record<string, string | null>
     expect(row).toMatchObject({ company_id: 'company-1', team_id: null, created_by: 'user-1', atom_id: null, kind: 'workflow', name: 'Månadens fakturor', draft: true })
     expect(row.body).toContain('1. Hämta fakturorna.\n2. Kolla momsen.')
-    expect(row.body).toContain('- Inget bokförs, skickas eller lämnas in utan att användaren godkänt det i Accounted.')
+    expect(row.body).toContain('- Inget bokförs, skickas eller lämnas in utan att användaren godkänt det i Zimla Kontor.')
   })
 
   it('writes English headings when asked', async () => {

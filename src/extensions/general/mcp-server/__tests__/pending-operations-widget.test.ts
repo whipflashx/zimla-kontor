@@ -196,7 +196,7 @@ describe('Pending operations widget', () => {
     it('the widget swaps Godkänn and Avvisa for a pointer to the app when can_approve is false', () => {
       const html = findUiWidget('ui://pending-operations/app.html')!.html
       expect(html).toContain('canApprove = sc.can_approve !== false')
-      expect(html).toContain(`if (!canApprove) return '<span class="status-note">I Accounted</span>'`)
+      expect(html).toContain(`if (!canApprove) return '<span class="status-note">I Zimla Kontor</span>'`)
       expect(html).toContain('Att g\\u00f6ra \\u203a Agentf\\u00f6rslag')
     })
 

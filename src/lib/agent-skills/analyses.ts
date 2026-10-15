@@ -1,7 +1,7 @@
 import type { Skill } from './types'
 
 /**
- * Accounted's own analyses: three examples of what an analysis is, each a
+ * Zimla Kontor's own analyses: three examples of what an analysis is, each a
  * different kind (an overview, a forecast, a list to act on). Each asks the
  * AI to build a dashboard as an artifact where the client shows artifacts,
  * with charts drawn as plain SVG: in testing, generated charts that loaded a
@@ -16,9 +16,9 @@ export const DASHBOARD_RULES = `## Så byggs dashboarden
 - Bygg den som en artifact om din klient kan visa artifacts (till exempel Claude på webben eller i appen). Går det inte: visa samma innehåll som tabeller i svaret.
 - Rita diagram som enkel SVG direkt i sidan, utan externa bibliotek, så att de fungerar överallt.
 - Kontrollera innan du visar den att diagrammet och tabellerna visar samma siffror.
-- Använd bara belopp du hämtat från Accounted. Räkna aldrig fram ett belopp som inte går att härleda ur bokföringen, och skilj alltid på kända och uppskattade belopp.
+- Använd bara belopp du hämtat från Zimla Kontor. Räkna aldrig fram ett belopp som inte går att härleda ur bokföringen, och skilj alltid på kända och uppskattade belopp.
 - Längst ner: bolagets namn, perioden och när siffrorna hämtades.
-- Ändra ingenting i Accounted och lägg inga förslag. En analys läser bara.`
+- Ändra ingenting i Zimla Kontor och lägg inga förslag. En analys läser bara.`
 
 const manadsoversikt = `# Månadsöversikt
 
@@ -29,7 +29,7 @@ Så har det gått månad för månad: intäkter, kostnader, resultat och några 
 - Intäkter = kontoklass 3. Kostnader = kontoklass 4 till 7. Resultat före bokslutsposter = intäkter minus kostnader (klass 8 räknas inte med, men nämn finansiella poster om de är stora).
 - Bruttomarginal = (intäkter minus klass 4) delat med intäkter. Visa den bara när det finns både intäkter och klass 4.
 - Likvida medel = saldot på 19xx vid varje månads slut.
-- Hämta siffrorna ur resultat- och balansräkningen eller huvudboken i Accounted.
+- Hämta siffrorna ur resultat- och balansräkningen eller huvudboken i Zimla Kontor.
 
 ## Så visas den
 - Överst fyra nyckeltal för perioden: intäkter, resultat, bruttomarginal och likvida medel idag, var och en med förändringen mot året innan.

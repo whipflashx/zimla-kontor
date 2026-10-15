@@ -6,7 +6,7 @@ const THIRD_PROJECT_URL = 'https://qqqqqqqqqqqqqqqqqqqq.supabase.co'
 const PRODUCTION_URL = 'https://pwxtzglxptnnvjrpixpg.supabase.co'
 
 // Invented hosts only: this repository is public, so no real customer
-// hostname belongs in it. app.gnubok.se is Accounted's own legacy canonical
+// hostname belongs in it. app.gnubok.se is Zimla Kontor's own legacy canonical
 // host, the one checked-in entry the hosted-namespace rule cannot derive.
 const APPROVED_PRODUCTION_HOSTS = [
   'app.accounted.se',

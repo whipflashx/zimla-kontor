@@ -640,7 +640,7 @@ describe('capabilityBlockedResponse', () => {
 /**
  * Sovereign self-host partition (plan WS3 PR3). Local capabilities stay all-on
  * on a self-host; the CONNECTOR_CAPABILITIES (bank sync, Skatteverket, org
- * lookup, migration: services Accounted operates) fall through to the grant
+ * lookup, migration: services Zimla Kontor operates) fall through to the grant
  * lookup, where the connector sync writes source='connector' rows. Hosted
  * behaviour is untouched by construction (the tests above still pass).
  */

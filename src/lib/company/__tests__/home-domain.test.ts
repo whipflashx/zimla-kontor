@@ -15,7 +15,7 @@ interface Entry {
 
 const CANONICAL = {
   canonicalDomain: 'app.gnubok.se',
-  canonicalAppName: 'Accounted',
+  canonicalAppName: 'Zimla Kontor',
 }
 
 const siffraBrand: TeamBrandRef = { domain: 'app.siffra.se', appName: 'Siffra' }
@@ -76,7 +76,7 @@ describe('partitionCompaniesByHomeDomain', () => {
       {
         item: { id: 'own-firma', teamId: 'personal-1' },
         domain: 'app.gnubok.se',
-        appName: 'Accounted',
+        appName: 'Zimla Kontor',
       },
     ])
   })

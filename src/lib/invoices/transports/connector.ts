@@ -22,7 +22,7 @@ import {
  * Instance-side Peppol transport for connector mode (WS3).
  *
  * A self-hosted instance with a connector key and no Qvalia keys of its own
- * reaches Arcim's contracted access point through the Accounted Connect
+ * reaches Arcim's contracted access point through the Zimla Kontor Connect
  * service (`/api/connect/peppol/*` under GNUBOK_CONNECT_URL). The service
  * lives in its own private repo; this repo keeps only the wire contract
  * (`@accounted/connect-contract`). The service speaks the PeppolTransport

@@ -56,7 +56,7 @@ const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 const PERSONNUMMER_PATTERN = /\b\d{6}-?\d{4}\b|\b\d{8}-?\d{4}\b/
 // gnubok API keys (secret keys and invite tokens). The wire-format prefix is
 // permanent (see CLAUDE.md: the gnubok_* prefixes are kept on purpose), so
-// this pattern will not rot with the Accounted rename.
+// this pattern will not rot with the Zimla Kontor rename.
 const API_KEY_PATTERN = /gnubok_(?:sk|inv)_[A-Za-z0-9_]+/g
 // Swedish IBAN: SE + 22 digits, optionally grouped with spaces
 // ("SE4550000000058398257466" or "SE45 5000 0000 0583 9825 7466").

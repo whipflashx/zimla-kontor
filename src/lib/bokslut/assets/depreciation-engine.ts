@@ -83,9 +83,9 @@ export interface OpeningDepreciation {
 
 /**
  * The asset's opening accumulated depreciation (depreciation booked in a
- * previous system before the asset entered Accounted), or null when there is
+ * previous system before the asset entered Zimla Kontor), or null when there is
  * none. It is part of the accumulated depreciation on the books but was never
- * posted by Accounted, so every place that sums posted schedules must add it.
+ * posted by Zimla Kontor, so every place that sums posted schedules must add it.
  */
 export function openingDepreciationOf(asset: Asset): OpeningDepreciation | null {
   const amount = roundOre(Number(asset.opening_accumulated_depreciation ?? 0) || 0)
@@ -120,7 +120,7 @@ export function openingAccumulatedBefore(asset: Asset, periodStart: string): num
  * the life ends and never below its salvage value.
  *
  * The charge is capped at what is left after the opening amount and the
- * depreciation already booked in Accounted, so the final period absorbs the
+ * depreciation already booked in Zimla Kontor, so the final period absorbs the
  * whole-krona rounding and the total lands öre-exactly on the remaining
  * value.
  */
@@ -384,7 +384,7 @@ export async function proposeAnnualPostings(
 
     const existingSchedule = existing.get(asset.id)
     // Restvärde after this period: cost less the opening accumulated
-    // depreciation from a previous system, less what Accounted has booked,
+    // depreciation from a previous system, less what Zimla Kontor has booked,
     // less this period's charge.
     const openingAmount = openingDepreciationOf(asset)?.amount ?? 0
     const netBookValueAfter = roundOre(

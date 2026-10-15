@@ -1067,7 +1067,7 @@ describe('calculateVatDeclaration: parent/summary accounts', () => {
 // ============================================================
 // #1261: the company's OWN revenue accounts reach ruta 05.
 //
-// ACCOUNT_RUTA maps 3000-3003 only, and Accounted's BAS chart ships no
+// ACCOUNT_RUTA maps 3000-3003 only, and Zimla Kontor's BAS chart ships no
 // varugrupp accounts at all, so a company selling on 3013 had that revenue
 // dropped from the declaration entirely: the map's keys ARE the account filter
 // sent to the aggregation RPC. Membership now comes from the konto's own
@@ -1809,7 +1809,7 @@ describe('calculateVatDeclaration: revenue accounts without a ruta (#3387)', () 
       { account_number: '3011', account_name: 'Försäljning tjänster inom Sverige, 25 % moms', default_vat_rate: null },
       // Unconfigured, but no balance in the period (nets to zero).
       { account_number: '3547', account_name: 'Avgift', default_vat_rate: null },
-      // Not omsättning, booked by Accounted itself without moms.
+      // Not omsättning, booked by Zimla Kontor itself without moms.
       { account_number: '3740', account_name: 'Öres- och kronutjämning', default_vat_rate: null },
       { account_number: '3960', account_name: 'Valutakursvinster', default_vat_rate: null },
     ]

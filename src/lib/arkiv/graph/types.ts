@@ -1,5 +1,5 @@
 /**
- * Arkiv phase 9b: the graph read model. One picture of everything Accounted
+ * Arkiv phase 9b: the graph read model. One picture of everything Zimla Kontor
  * knows about a company, for the page and for agents alike.
  *
  * The one rule: the graph is never a second truth. Every node is a row that

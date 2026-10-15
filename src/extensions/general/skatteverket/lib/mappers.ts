@@ -5,7 +5,7 @@ import type { SkatteverketMomsuppgift } from '../types'
 export { formatRedovisare, formatRedovisningsperiod } from '@/lib/skatteverket/format'
 
 /**
- * Convert Accounted VatDeclarationRutor to Skatteverket's momsuppgift payload.
+ * Convert Zimla Kontor VatDeclarationRutor to Skatteverket's momsuppgift payload.
  *
  * Fields with value 0 are omitted (Skatteverket treats absent fields as 0).
  * This keeps the payload clean and avoids sending unnecessary data.

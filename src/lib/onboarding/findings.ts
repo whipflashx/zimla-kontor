@@ -192,7 +192,7 @@ export async function loadBooksFindings(
   const bank = (bankRows ?? [])[0] as
     | { bank_name: string | null; status: string; last_sie_sweep: { auto_linked?: number; suggested?: number; unmatched?: number } | null }
     | undefined
-  // Accounted as ombud counts as connected: its reads need no personal
+  // Zimla Kontor as ombud counts as connected: its reads need no personal
   // BankID session. Asked only when no session is active (one lookup less).
   const skvActive =
     ((skvRows ?? []) as { status: string | null }[]).some((r) => r.status === 'active') ||

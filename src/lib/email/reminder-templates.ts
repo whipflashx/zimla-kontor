@@ -46,7 +46,7 @@ export interface ReminderEmailData {
  * The lagstadgad påminnelseavgift is a Swedish-krona statute: Lag (1981:739) om
  * ersättning för inkassokostnader m.m. 2 §, with the amount fixed at 60 kr by
  * förordning (1981:1057) 1 §. There is no conversion rule for a foreign-currency
- * claim, and Accounted books the fee 1510/3990 in SEK regardless of the invoice
+ * claim, and Zimla Kontor books the fee 1510/3990 in SEK regardless of the invoice
  * currency (lib/bookkeeping/reminder-fee-entries.ts).
  *
  * So the fee is always quoted in SEK. Rendering "60" with the invoice's currency

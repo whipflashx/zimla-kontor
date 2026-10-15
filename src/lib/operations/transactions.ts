@@ -62,7 +62,7 @@ export const transactionsDelete = defineOperation({
   docs: {
     summary: 'Delete an unbooked transaction that was added by hand (e.g. a duplicate you created).',
     description:
-      'Hard-deletes one transaction the company created in Accounted (manual entry or POST /transactions/ingest). Bank-synced and bank-file rows are an external record of money that moved and are never deleted: ignore them (POST /transactions/{id}/ignore). A booked or matched row is räkenskapsinformation and is never deleted either: unlink it or reverse (storno) its verifikat. Idempotent. Dry-runnable.',
+      'Hard-deletes one transaction the company created in Zimla Kontor (manual entry or POST /transactions/ingest). Bank-synced and bank-file rows are an external record of money that moved and are never deleted: ignore them (POST /transactions/{id}/ignore). A booked or matched row is räkenskapsinformation and is never deleted either: unlink it or reverse (storno) its verifikat. Idempotent. Dry-runnable.',
     useWhen: 'A manually added or API-ingested row is a mistake or a duplicate and has not been booked.',
     doNotUseFor:
       'Rows from the bank feed or a bank file (POST /transactions/{id}/ignore), booked rows (unlink, or reverse the verifikat), or undoing a whole bank file (POST /imports/bank/{id}/undo).',

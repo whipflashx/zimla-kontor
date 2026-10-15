@@ -33,7 +33,7 @@ export const COMMUNITY_KINDS = ['workflow', 'rules', 'analysis'] as const
 export const AUTHOR_HANDLE = /^[a-z0-9][a-z0-9-]{0,38}$/
 
 /**
- * Handles nobody may publish under: they read as Accounted itself or as its
+ * Handles nobody may publish under: they read as Zimla Kontor itself or as its
  * staff. A handle is only a display name (authors are not verified by it), so
  * these names must not be takeable at all.
  */
@@ -43,7 +43,7 @@ const RESERVED_HANDLES = new Set([
   'skatteverket', 'bolagsverket', 'anthropic', 'claude', 'openai', 'chatgpt', 'grok', 'xai',
 ])
 
-/** Whether a handle is reserved: an exact name, or one that starts with Accounted's own names (accounted-team). */
+/** Whether a handle is reserved: an exact name, or one that starts with Zimla Kontor's own names (accounted-team). */
 export function isReservedHandle(handle: string): boolean {
   const name = handle.toLowerCase()
   return RESERVED_HANDLES.has(name) || /^(accounted|gnubok)(-|$)/.test(name)

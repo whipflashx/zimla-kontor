@@ -18,7 +18,7 @@ export { AREAS, type Area } from './areas'
  *    `areas` routes the company's industry and company-form sections: those
  *    tagged with any of the agent's areas are inlined when it starts (areas.ts).
  *  - Kopplingar: where the agent acts. `bank`, `skatteverket` and `peppol` are
- *    Accounted connections the page can check; `mail` and `browser` live in the
+ *    Zimla Kontor connections the page can check; `mail` and `browser` live in the
  *    customer's own AI client (Gmail connector, Claude in Chrome) and are only named.
  *
  * Each workflow is named for its job (Kvittoagent, Momsagent). Its picture is a
@@ -48,7 +48,7 @@ const YEAR_END = 'horizontal/swedish-year-end-closing'
 /**
  * Community sharing (share, upvote, community items and authors): the page,
  * the knowledge picker and the share route all read this one switch. Shared
- * items are reviewed by Accounted and published through the public MIT repo
+ * items are reviewed by Zimla Kontor and published through the public MIT repo
  * erp-mafia/accounted-skills (community-repo.ts, community-sync.ts).
  *
  * Open since 2026-09-27 (founder): withdrawing returns an item to private and
@@ -113,7 +113,7 @@ export const AGENTS: Record<RegistrySkillId, AgentDefinition> = {
   'invoicing-rules': {
     knowledge: [INVOICE, VAT],
     references: [`${INVOICE}/invoice-rules`, 'horizontal/swedish-e-invoicing/swedish-cius-and-specifics', 'horizontal/swedish-e-invoicing/consumer-and-b2c'],
-    // Invoices go out by e-mail from Accounted; Peppol is optional, so the agent does not wait on it.
+    // Invoices go out by e-mail from Zimla Kontor; Peppol is optional, so the agent does not wait on it.
     connections: [],
     facts: ['legal_name', 'org_number', 'registered_office', 'f_skatt', 'vat_registered', 'sni_codes'],
     agreements: false,
@@ -149,7 +149,7 @@ export const AGENTS: Record<RegistrySkillId, AgentDefinition> = {
   },
 }
 
-/** Connections Accounted can check; `mail` and `browser` sit in the AI client. */
+/** Connections Zimla Kontor can check; `mail` and `browser` sit in the AI client. */
 export const CHECKABLE_CONNECTIONS = ['bank', 'skatteverket', 'peppol'] as const
 export type CheckableConnection = (typeof CHECKABLE_CONNECTIONS)[number]
 
@@ -157,7 +157,7 @@ export function isCheckable(connection: AgentConnection): connection is Checkabl
   return (CHECKABLE_CONNECTIONS as readonly string[]).includes(connection)
 }
 
-/** Where the user fixes a missing Accounted connection. */
+/** Where the user fixes a missing Zimla Kontor connection. */
 export const CONNECTION_SETTINGS: Record<CheckableConnection, string> = {
   bank: '/settings/banking',
   skatteverket: '/settings/tax',

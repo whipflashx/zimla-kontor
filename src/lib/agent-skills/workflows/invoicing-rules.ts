@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Fakturera rätt: Accounted
+const body = `# Fakturera rätt: Zimla Kontor
 
 How to get one correct Swedish kundfaktura (or offert) from "I need to invoice X" to sent, the way an experienced consultant would: orient first, ask the few questions that decide the invoice, stage, and let the user approve. The user is a business owner, not an accountant: you carry the rules, they carry the facts.
 
@@ -55,7 +55,7 @@ Good question: "Last time Acme AB was invoiced 1 250 kr per hour + moms for cons
 
 ## VAT treatment
 
-The customer's \`customer_type\` and VIES status drive the default rate; Accounted refuses any rate other than 0, 6, 12 or 25 %. Override per line with \`vat_rate\` only when you know why.
+The customer's \`customer_type\` and VIES status drive the default rate; Zimla Kontor refuses any rate other than 0, 6, 12 or 25 %. Override per line with \`vat_rate\` only when you know why.
 
 | Customer | Treatment | Rate |
 |---|---|---|
@@ -68,7 +68,7 @@ Reduced rates: 6 % for books, newspapers, passenger transport, cultural and spor
 
 ### EU customers and VIES
 
-- Reverse charge needs a valid VAT number checked in VIES. Accounted runs VIES when the customer is created or updated with \`vat_number\`, and stores the result. When \`gnubok_create_invoice\` returns \`vat_warnings\`, read them to the user: they say which reverse-charge condition failed.
+- Reverse charge needs a valid VAT number checked in VIES. Zimla Kontor runs VIES when the customer is created or updated with \`vat_number\`, and stores the result. When \`gnubok_create_invoice\` returns \`vat_warnings\`, read them to the user: they say which reverse-charge condition failed.
 - VIES down or number invalid: the invoice falls back to Swedish moms. Do not override to 0 % to "fix" it. Ask the user to confirm the number, stage \`gnubok_update_customer\` to revalidate, and invoice once it validates.
 - Issue the invoice for an intra-EU sale by the 15th of the month after delivery (ML 17 kap. 19 §). EU sales also go in the periodisk sammanställning; \`quarterly-vat-review\` covers that.
 - Goods to an EU company are zero-rated only if they physically leave Sweden and the transport can be proven. If the user cannot say how the goods were shipped, stop and hand over.
@@ -77,7 +77,7 @@ Reduced rates: 6 % for books, newspapers, passenger transport, cultural and spor
 
 ### A company that is not VAT registered
 
-When \`vat_registered\` is false, Accounted zeroes every line rate and books the sale as momsfri; no moms line appears. Do not add moms, do not show a VAT number, and do not tell the user to register based on this invoice. An exempt invoice should carry a reference to the exemption: ask the user for the wording they use (or were given by their accountant) and put it in \`notes\`. If the user thinks the company should be registered, that is their settings decision, not something to change here.
+When \`vat_registered\` is false, Zimla Kontor zeroes every line rate and books the sale as momsfri; no moms line appears. Do not add moms, do not show a VAT number, and do not tell the user to register based on this invoice. An exempt invoice should carry a reference to the exemption: ask the user for the wording they use (or were given by their accountant) and put it in \`notes\`. If the user thinks the company should be registered, that is their settings decision, not something to change here.
 
 ## Workflow
 
@@ -109,7 +109,7 @@ Approval creates a **draft**: no number and no verifikat yet. The F-number is al
 - F-skatt on the company; the customer is a private person (\`individual\`) with \`personal_number\` on file (add it via \`gnubok_update_customer\`).
 - ROT/RUT: labour on its own line(s) with \`deduction_type: 'rot' | 'rut'\`, \`labor_hours\` and \`work_type\` (Skatteverket arbetstypskod); material on separate lines without a deduction.
 - ROT: \`housing_designation\` (fastighetsbeteckning), or \`apartment_number\` + \`brf_org_number\` for a bostadsrätt, on the first deduction line.
-- Rates per the rule pack: RUT 50 % of labour incl. moms; ROT 30 % standard (50 % May-Dec 2025); ceilings ROT 50 000, RUT 75 000, combined 75 000 kr per person and year. Accounted computes the deduction; do not calculate it yourself. If you cannot verify the rate for the invoice date, ask the user to confirm it with Skatteverket before sending.
+- Rates per the rule pack: RUT 50 % of labour incl. moms; ROT 30 % standard (50 % May-Dec 2025); ceilings ROT 50 000, RUT 75 000, combined 75 000 kr per person and year. Zimla Kontor computes the deduction; do not calculate it yourself. If you cannot verify the rate for the invoice date, ask the user to confirm it with Skatteverket before sending.
 - **Grön teknik** (skattereduktion för installation of solceller, batterilager, laddpunkt): \`deduction_type: 'gron_teknik'\` on the labour AND material lines, \`work_type\` \`INSTALLATION_SOLCELLER\` (15 %), \`INSTALLATION_LAGRING\` or \`INSTALLATION_LADDPUNKT\` (50 %) of arbete och material incl. moms. Labour and material on lines of their own (the invoice must show both costs); travel, freight, machinery, projektering and rented material on unflagged lines. Fixed price (totalentreprenad): Skatteverket counts arbete och material as 97 % of the price, so flag a line with 97 % and leave 3 % unflagged. Material sold on its own gives no reduction. Actual \`labor_hours\` on at least one line per installation type, also at a fixed price (material lines may leave them empty). Property is required as for ROT. Own ceiling 50 000 kr per person and year, outside the ROT/RUT one. Never on the same invoice as ROT/RUT lines.
 - The Skatteverket share sits on 1513 until paid out; the ROT/RUT claim file comes from \`gnubok_generate_rot_rut_file\`. Grön teknik has no file yet: the user requests it in Skatteverket's e-tjänst for grön teknik. Whether the customer already used their yearly ceiling elsewhere only the customer knows: ask.
 
@@ -141,7 +141,7 @@ If the customer requires an e-invoice (public sector, or a buyer asking for Pepp
 
 ## E-invoicing via Peppol (including B2G)
 
-Accounted sends Peppol BIS Billing 3 e-invoices from the invoice page in the dashboard. Peppol sending is gated per company: the user requests access under Inställningar > Kopplingar > E-faktura via Peppol (Settings > Connections > E-invoicing via Peppol) and Accounted's operators enable it; a grant may carry a send cap, and when it is used up the dashboard says so and support raises it. Restrictions: the sending company must have an organisationsnummer, which every legal form has except enskild firma (its org number is the owner's personnummer, so it is refused until GLN identifiers are supported), standard invoices only (no credit notes, no self-billed invoices), the customer must be a Swedish business or organization whose org number is not a personnummer (an enskild firma customer is refused until GLN identifiers are supported), and the invoice must be in SEK with taxable Swedish VAT at 6, 12 or 25 % (no reverse charge, no VAT-exempt sales, no ROT/RUT deductions) and carry Er referens. An agent can send it too: check \`gnubok_get_invoice_peppol_readiness\` first, then stage \`gnubok_send_invoice_peppol\` (a person approves; v1: POST /invoices/{id}/send-peppol). The same access grant, send cap and restrictions apply. Never tell a user that Accounted lacks Peppol sending; say it is gated per company. A successful dashboard Peppol send issues the invoice itself (number, status, and the verifikat under faktureringsmetoden), so do not mark it as sent afterwards. If the dashboard reports that the invoice was sent via Peppol but could not be marked as sent, call \`gnubok_mark_invoice_as_sent\` on the still-draft invoice to complete the issuance; a number already allocated is reused, never consumed twice. If that invoice already shows as sent, the number and the verifikat exist and only the invoice's link to the verifikat needs repair: do not mark it as sent again (it returns 409), leave the repair to support. If the company has no Peppol access, or is an enskild firma, and the customer requires an e-invoice, deliver it through an external e-invoice provider, then use \`gnubok_mark_invoice_as_sent\` to record the delivery and apply the same booking effect without sending another email.
+Zimla Kontor sends Peppol BIS Billing 3 e-invoices from the invoice page in the dashboard. Peppol sending is gated per company: the user requests access under Inställningar > Kopplingar > E-faktura via Peppol (Settings > Connections > E-invoicing via Peppol) and Zimla Kontor's operators enable it; a grant may carry a send cap, and when it is used up the dashboard says so and support raises it. Restrictions: the sending company must have an organisationsnummer, which every legal form has except enskild firma (its org number is the owner's personnummer, so it is refused until GLN identifiers are supported), standard invoices only (no credit notes, no self-billed invoices), the customer must be a Swedish business or organization whose org number is not a personnummer (an enskild firma customer is refused until GLN identifiers are supported), and the invoice must be in SEK with taxable Swedish VAT at 6, 12 or 25 % (no reverse charge, no VAT-exempt sales, no ROT/RUT deductions) and carry Er referens. An agent can send it too: check \`gnubok_get_invoice_peppol_readiness\` first, then stage \`gnubok_send_invoice_peppol\` (a person approves; v1: POST /invoices/{id}/send-peppol). The same access grant, send cap and restrictions apply. Never tell a user that Zimla Kontor lacks Peppol sending; say it is gated per company. A successful dashboard Peppol send issues the invoice itself (number, status, and the verifikat under faktureringsmetoden), so do not mark it as sent afterwards. If the dashboard reports that the invoice was sent via Peppol but could not be marked as sent, call \`gnubok_mark_invoice_as_sent\` on the still-draft invoice to complete the issuance; a number already allocated is reused, never consumed twice. If that invoice already shows as sent, the number and the verifikat exist and only the invoice's link to the verifikat needs repair: do not mark it as sent again (it returns 409), leave the repair to support. If the company has no Peppol access, or is an enskild firma, and the customer requires an e-invoice, deliver it through an external e-invoice provider, then use \`gnubok_mark_invoice_as_sent\` to record the delivery and apply the same booking effect without sending another email.
 
 ## Offert (quotes)
 
@@ -158,7 +158,7 @@ An offert is \`document_type: 'quote'\` on \`gnubok_create_invoice\` with a requ
 
 ## Approval discipline
 
-- Every write here stages a pending operation (except \`gnubok_set_quote_status\`). The user approves in Accounted (Granskning), or on a clear yes in chat you call \`gnubok_approve_pending_operation({ operation_id })\`. A widget-capable client can open the approval widget with \`gnubok_list_pending_operations({ render_ui: true })\`; this is optional, and ChatGPT, Grok and terminal agents list the staged items in text instead.
+- Every write here stages a pending operation (except \`gnubok_set_quote_status\`). The user approves in Zimla Kontor (Granskning), or on a clear yes in chat you call \`gnubok_approve_pending_operation({ operation_id })\`. A widget-capable client can open the approval widget with \`gnubok_list_pending_operations({ render_ui: true })\`; this is optional, and ChatGPT, Grok and terminal agents list the staged items in text instead.
 - Stage the invoice and the send as two separate approvals unless the user said "send it" up front. Never approve without an explicit yes.
 - Never delete an invoice the user did not ask to delete, never edit a sent invoice, never skip or set an invoice number, never invent an amount, a date or a VAT number.
 - Round money to whole öre (two decimals), never with toFixed. Account numbers are strings ('1510', '3001').
@@ -171,7 +171,7 @@ Say "this needs a human: here is what I found", with the facts, when:
 - ROT/RUT eligibility is unclear (is it the customer's home, is the work type covered, is the ceiling already used).
 - The invoice would land in a closed year or a locked period.
 - The user wants to change something already sent or paid (hand over to \`kreditfaktura-process\`).
-- The answer is not in this skill or in Accounted's messages. Do not answer Swedish tax questions from memory.
+- The answer is not in this skill or in Zimla Kontor's messages. Do not answer Swedish tax questions from memory.
 
 ## Report format
 

@@ -32,7 +32,7 @@ vi.mock('@/lib/extensions/registry', () => ({
 vi.mock('@/lib/email/service', () => ({
   getEmailService: () => ({ isConfigured: () => false, sendEmail: vi.fn() }),
 }))
-vi.mock('@/lib/branding/service', () => ({ getBranding: () => ({ appName: 'Accounted' }) }))
+vi.mock('@/lib/branding/service', () => ({ getBranding: () => ({ appName: 'Zimla Kontor' }) }))
 vi.mock('@/extensions/general/enable-banking/lib/api-client', async () => {
   const actual = await vi.importActual<
     typeof import('@/extensions/general/enable-banking/lib/api-client')

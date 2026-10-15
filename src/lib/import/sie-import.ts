@@ -513,7 +513,7 @@ export function closedPeriodRefusal(period: ClosedPeriodState): string | null {
     }
     if (period.closing_entry_id) {
       return (
-        `${label} är stängt med ett årsbokslut i Accounted och tar inte emot fler verifikationer. ` +
+        `${label} är stängt med ett årsbokslut i Zimla Kontor och tar inte emot fler verifikationer. ` +
         `Bokför rättelser i det öppna räkenskapsåret i stället.`
       )
     }
@@ -633,7 +633,7 @@ export async function precheckFiscalPeriod(
       verdict: 'conflict',
       existingPeriod,
       message:
-        `SIE-filens räkenskapsår (${startDate} till ${endDate}) överlappar men matchar inte ett befintligt räkenskapsår i Accounted ` +
+        `SIE-filens räkenskapsår (${startDate} till ${endDate}) överlappar men matchar inte ett befintligt räkenskapsår i Zimla Kontor ` +
         `(${existingPeriod.name}: ${existingPeriod.periodStart} till ${existingPeriod.periodEnd}). ` +
         `Justera räkenskapsåret i Inställningar → Företag så att det matchar SIE-filen exakt, eller importera en SIE-fil som täcker exakt samma period.`,
     }
@@ -2442,7 +2442,7 @@ export async function loadMappings(supabase: SupabaseClient, companyId: string):
  *     manual cleanup.
  *
  * Replace only cancels journal entries with source_type='import'; entries
- * the user created natively in Accounted (categorized transactions, invoices,
+ * the user created natively in Zimla Kontor (categorized transactions, invoices,
  * etc.) are left alone. See the replace_sie_import RPC.
  *
  * `updateAccountNames` (default true) carries the SIE file's #KONTO names

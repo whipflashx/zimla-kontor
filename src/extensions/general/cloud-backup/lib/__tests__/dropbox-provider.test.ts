@@ -95,7 +95,7 @@ describe('dropboxProvider.prepareTarget', () => {
   })
 
   it('deep-links into the company folder when the app folder name is configured', async () => {
-    process.env.DROPBOX_APP_FOLDER_NAME = 'Accounted'
+    process.env.DROPBOX_APP_FOLDER_NAME = 'Zimla Kontor'
 
     const { target } = await dropboxProvider.prepareTarget({
       accessToken: 'token',

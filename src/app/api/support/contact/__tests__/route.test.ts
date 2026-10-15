@@ -28,7 +28,7 @@ vi.mock('@/lib/support', () => ({
   getSupportRecipientEmail: () => 'support@example.test',
 }))
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted' }),
+  getBranding: () => ({ appName: 'Zimla Kontor' }),
 }))
 
 import { POST } from '../route'

@@ -924,7 +924,7 @@ export function LoginClient({
               policy is the in-app /privacy page (host-relative, so it works
               on branded byrå domains too). New tab: don't lose login state. */}
           <a
-            href="https://accounted.se/terms"
+            href="https://zimla.io/anvandarvillkor/"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2 hover:text-foreground transition-colors"

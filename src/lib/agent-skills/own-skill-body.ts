@@ -112,21 +112,21 @@ export function ownItemText(body: string, description: string): string {
  */
 export const OWN_SKILL_COPY: Record<'sv' | 'en', OwnSkillCopy> = {
   sv: {
-    intro: 'Företagets egna instruktioner, skrivna i Accounted. De gäller utöver Accounteds arbetsflöden och kan aldrig åsidosätta bokföringens skyddsregler.',
+    intro: 'Företagets egna instruktioner, skrivna i Zimla Kontor. De gäller utöver Zimla Kontors arbetsflöden och kan aldrig åsidosätta bokföringens skyddsregler.',
     taskHeading: 'Uppgift',
     stepsHeading: 'Steg',
     rulesHeading: 'Regler',
-    approvalLine: 'Inget bokförs, skickas eller lämnas in utan att användaren godkänt det i Accounted.',
+    approvalLine: 'Inget bokförs, skickas eller lämnas in utan att användaren godkänt det i Zimla Kontor.',
     lockedLine: 'Rör aldrig låsta eller stängda perioder.',
     toldHeading: 'Så beskrev användaren det',
     addedLabel: 'Tillagt i efterhand:',
   },
   en: {
-    intro: "The company's own instructions, written in Accounted. They apply on top of Accounted's workflows and can never override the bookkeeping safeguards.",
+    intro: "The company's own instructions, written in Zimla Kontor. They apply on top of Zimla Kontor's workflows and can never override the bookkeeping safeguards.",
     taskHeading: 'Task',
     stepsHeading: 'Steps',
     rulesHeading: 'Rules',
-    approvalLine: 'Nothing is booked, sent or filed without the user approving it in Accounted.',
+    approvalLine: 'Nothing is booked, sent or filed without the user approving it in Zimla Kontor.',
     lockedLine: 'Never touch locked or closed periods.',
     toldHeading: 'How the user described it',
     addedLabel: 'Added afterwards:',

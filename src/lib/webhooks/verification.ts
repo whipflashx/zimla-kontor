@@ -1,7 +1,7 @@
 /**
  * Webhook endpoint ownership verification (ADA CASA 7.1.2, #3191).
  *
- * Before Accounted delivers events to a URL, the URL has to prove that whoever
+ * Before Zimla Kontor delivers events to a URL, the URL has to prove that whoever
  * runs it wants them: a challenge-response handshake.
  *
  * Request: a POST to the webhook_url, signed exactly like a normal delivery

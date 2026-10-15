@@ -247,7 +247,7 @@ export const fiscalPeriodsCloseExternal = defineOperation({
   docs: {
     summary: 'Mark a migrated fiscal year as closed in the previous system (klarmarkera).',
     description:
-      'Closes and locks an imported historical räkenskapsår whose bokslut was done in the previous bookkeeping software, without a closing entry here, and writes the decision to the audit log. Only for migrated years: the year must have ended, have no closing entry in Accounted, and hold imported verifikat, no verifikat, or balance-sheet-only verifikat with the next year\'s IB already posted. Unbooked bank transactions in the year block it, as for a lock. Undo with reopen-external. Idempotent. Dry-runnable.',
+      'Closes and locks an imported historical räkenskapsår whose bokslut was done in the previous bookkeeping software, without a closing entry here, and writes the decision to the audit log. Only for migrated years: the year must have ended, have no closing entry in Zimla Kontor, and hold imported verifikat, no verifikat, or balance-sheet-only verifikat with the next year\'s IB already posted. Unbooked bank transactions in the year block it, as for a lock. Undo with reopen-external. Idempotent. Dry-runnable.',
     useWhen: 'After an SIE migration, the earlier years show as pending bokslut although their bokslut was done in the old system.',
     doNotUseFor:
       'Closing a year bookkept in Accounted: run the year-end (POST /fiscal-periods/{id}/year-end), which transfers the result and carries the balances forward.',
@@ -309,7 +309,7 @@ export const fiscalPeriodsReopenExternal = defineOperation({
   docs: {
     summary: 'Undo klarmarkera: reopen a year marked closed in the previous system.',
     description:
-      'Reopens and unlocks a räkenskapsår that close-external closed, and writes the decision to the audit log. Only while that close is still the klarmarkera one: a year closed by a year-end run in Accounted is never reopened. Typical need: the prior-year SIE file was wrong and must be replaced. Idempotent. Dry-runnable.',
+      'Reopens and unlocks a räkenskapsår that close-external closed, and writes the decision to the audit log. Only while that close is still the klarmarkera one: a year closed by a year-end run in Zimla Kontor is never reopened. Typical need: the prior-year SIE file was wrong and must be replaced. Idempotent. Dry-runnable.',
     useWhen: 'A year was marked closed in the previous system by mistake, or its imported contents must be replaced.',
     doNotUseFor: 'Reopening a year closed by a year-end here (not possible), or unlocking a locked year (POST /fiscal-periods/{id}/unlock).',
     pitfalls: [
@@ -336,7 +336,7 @@ export const fiscalPeriodsReopenExternal = defineOperation({
     name: 'gnubok_reopen_fiscal_period_external',
     title: 'Reopen Externally Closed Fiscal Period',
     description:
-      'Stage undoing klarmarkera: reopen and unlock a räkenskapsår that was marked closed in the previous system. Refused for a year closed by a year-end run in Accounted.',
+      'Stage undoing klarmarkera: reopen and unlock a räkenskapsår that was marked closed in the previous system. Refused for a year closed by a year-end run in Zimla Kontor.',
     keywords: ['ångra klarmarkera', 'öppna räkenskapsår', 'återöppna importerat år'],
     stage: { pendingType: 'reopen_fiscal_period_external', title: () => 'Öppna klarmarkerat räkenskapsår' },
   },

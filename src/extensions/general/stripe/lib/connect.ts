@@ -4,7 +4,7 @@ import { getStripe } from '@/lib/stripe/client'
 /**
  * Stripe Connect (OAuth for Standard accounts) helpers.
  *
- * Accounted's own Stripe account is the Connect PLATFORM. A company's Stripe
+ * Zimla Kontor's own Stripe account is the Connect PLATFORM. A company's Stripe
  * account attaches via the OAuth flow; from then on every API call runs with
  * the platform secret key plus the `Stripe-Account` header. We never hold a
  * per-company key or token: the stored acct_... id is useless without the

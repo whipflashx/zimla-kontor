@@ -149,7 +149,7 @@ registerEndpoint({
   path: '/api/v1/companies/:companyId/webhooks/:id',
   summary: 'Update a webhook subscription.',
   description:
-    'Update the URL, name, description, or active flag. event_type is immutable: delete and recreate to change it. Setting active=false manually pauses delivery without deleting; setting active=true clears any disabled_at/disabled_reason set by the auto-disable on HTTP 410. A new webhook_url resets verification to \'pending\' (and ends any grace window): nothing is delivered to the new URL until it passes the ownership handshake, which Accounted attempts within a minute; POST /webhooks/{id}/verify runs it immediately.',
+    'Update the URL, name, description, or active flag. event_type is immutable: delete and recreate to change it. Setting active=false manually pauses delivery without deleting; setting active=true clears any disabled_at/disabled_reason set by the auto-disable on HTTP 410. A new webhook_url resets verification to \'pending\' (and ends any grace window): nothing is delivered to the new URL until it passes the ownership handshake, which Zimla Kontor attempts within a minute; POST /webhooks/{id}/verify runs it immediately.',
   useWhen: 'You need to point an existing webhook at a new URL or temporarily pause delivery.',
   doNotUseFor:
     'Rotating the signing secret: use POST /webhooks/{id}/rotate-secret, which issues a fresh secret in place and keeps the webhook id and delivery history. Changing event_type: delete and recreate.',

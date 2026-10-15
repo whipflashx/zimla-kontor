@@ -742,7 +742,7 @@ export function rattelseEvent(
     // #BTRANS/#RTRANS). Not a rättelse made here: no actor, and the row's
     // created_at is the import moment, not when the correction happened
     // (SIE carries who, never when). Labelled apart so behandlingshistoriken
-    // never claims a correction Accounted did not perform.
+    // never claims a correction Zimla Kontor did not perform.
     const struck = Array.isArray(row.struck_lines) ? row.struck_lines : []
     const added = Array.isArray(row.added_lines) ? row.added_lines : []
     if (struck.length > 0) details.push(`Strukna rader i källsystemet (${struck.length}): ${struck.map(describeLine).join('; ')}`)

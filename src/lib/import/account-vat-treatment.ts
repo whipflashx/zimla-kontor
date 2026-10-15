@@ -73,7 +73,7 @@ function providerSuggestedRate(
  * confirm (or "Bekräfta alla föreslagna"), because a reviewed row is written
  * onto an existing chart account by syncMappedAccounts and the mapping step
  * is skipped when nothing needs review. A code the user never saw must not
- * overwrite a treatment they cleared in Accounted on a later re-sync.
+ * overwrite a treatment they cleared in Zimla Kontor on a later re-sync.
  *
  * Only class 3-6 identity mappings are touched, the same rows the label
  * suggestion covers: a remapped account gets the target's treatment, and

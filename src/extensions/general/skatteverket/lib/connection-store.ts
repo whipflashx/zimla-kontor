@@ -302,7 +302,7 @@ export async function listVerifiedCompanies(
  * address Skatteverket by the company's current org number, so a grant
  * recorded for another number must not serve them: a tenant could otherwise
  * verify its own number, then switch its settings to a number whose owner
- * appointed Accounted. Fails closed: a settings read error keeps nothing.
+ * appointed Zimla Kontor. Fails closed: a settings read error keeps nothing.
  */
 export async function keepRowsOnCurrentOrgNumber<T extends { company_id: string; org_number: string }>(
   rows: T[]

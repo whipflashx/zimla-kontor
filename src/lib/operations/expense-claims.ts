@@ -274,7 +274,7 @@ export const expenseClaimsRecordPayout = defineOperation({
   docs: {
     summary: 'Record that the company paid a person back for their expense claims.',
     description:
-      'Books one repayment of N registered claims of ONE person: Debit the liability account (2013 eget uttag for an enskild firma owner\'s 2018), Credit cash_account (19xx), for the claims\' total, and marks them paid, all in one transaction that locks the claims. No money moves: this records a transfer made outside Accounted. Idempotent. Dry-runnable.',
+      'Books one repayment of N registered claims of ONE person: Debit the liability account (2013 eget uttag for an enskild firma owner\'s 2018), Credit cash_account (19xx), for the claims\' total, and marks them paid, all in one transaction that locks the claims. No money moves: this records a transfer made outside Zimla Kontor. Idempotent. Dry-runnable.',
     useWhen:
       'The person was paid back from an account without a bank feed, or the transfer cannot be matched to a bank row.',
     doNotUseFor:
@@ -310,7 +310,7 @@ export const expenseClaimsRecordPayout = defineOperation({
     name: 'gnubok_record_expense_payout',
     title: 'Record Expense Payout',
     description:
-      'Stage recording that one person was paid back for their utlägg: approval books liability against a 19xx account and marks the claims paid. For a bank row in Accounted use gnubok_match_expense_payout instead.',
+      'Stage recording that one person was paid back for their utlägg: approval books liability against a 19xx account and marks the claims paid. For a bank row in Zimla Kontor use gnubok_match_expense_payout instead.',
     keywords: ['betala ut utlägg', 'återbetala utlägg', 'utbetalning utlägg', 'ersätt utlägg'],
     stage: {
       pendingType: 'record_expense_payout',
@@ -333,7 +333,7 @@ export const transactionsMatchExpensePayout = defineOperation({
       'Books the bank row as the payout of the given registered claims: Debit their liability account (2013 for an enskild firma owner\'s 2018), Credit the transaction\'s own cash account, dated the transaction date, and links the row to the verifikat in the same transaction, so it can never be booked twice. The claims\' total must equal the outflow to the öre. Idempotent. Dry-runnable.',
     useWhen: 'An unbooked SEK outflow is the transfer that paid an owner or employee back for their utlägg.',
     doNotUseFor:
-      'A transfer with no bank row in Accounted (POST /expense-claims/payouts), partial repayments, or salary.',
+      'A transfer with no bank row in Zimla Kontor (POST /expense-claims/payouts), partial repayments, or salary.',
     pitfalls: [
       'The sum of the picked claims must equal |amount| exactly: 400 EXPENSE_PAYOUT_MATCH_AMOUNT otherwise.',
       'Only unbooked outgoing SEK rows: incoming returns EXPENSE_PAYOUT_MATCH_NOT_EXPENSE, another currency EXPENSE_PAYOUT_MATCH_CURRENCY, an already booked row EXPENSE_PAYOUT_MATCH_TX_ALREADY_LINKED.',

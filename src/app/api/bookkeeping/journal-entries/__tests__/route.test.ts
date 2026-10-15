@@ -525,7 +525,7 @@ describe('GET /api/bookkeeping/journal-entries', () => {
 
     it('treats a customer invoice pointing at the entry as underlag (#2298)', async () => {
       // E1: a SIE-imported voucher the user matched to an invoice created in
-      // Accounted (invoice_payments row). E2: nothing points at it.
+      // Zimla Kontor (invoice_payments row). E2: nothing points at it.
       enqueue({ data: [candidate(E1, 1), candidate(E2, 2)], error: null })
       enqueue({ data: [], error: null }) // no direct documents
       enqueue({ data: [], error: null }) // no SI references (registration FK)

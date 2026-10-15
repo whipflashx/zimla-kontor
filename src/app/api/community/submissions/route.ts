@@ -5,7 +5,7 @@ import { isCommunityReviewer } from '@/lib/agent-skills/reviewers'
 import { loadPendingItems, loadSubmissionsForReview, loadWithdrawnItems } from '@/lib/agent-skills/community-review'
 
 /**
- * Accounted's review list, reviewers only (everyone else gets 404):
+ * Zimla Kontor's review list, reviewers only (everyone else gets 404):
  * submissions shared from the app, merged texts waiting for approval, and
  * texts their authors withdrew that are still in the repository.
  */

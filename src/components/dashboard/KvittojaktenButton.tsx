@@ -27,8 +27,8 @@ import {
 } from '@/lib/onboarding/ai-clients'
 
 /**
- * Kvittojakten needs two connections, and Accounted can only see one of them.
- * The button renders on an MCP OAuth key, which proves Accounted reached the
+ * Kvittojakten needs two connections, and Zimla Kontor can only see one of them.
+ * The button renders on an MCP OAuth key, which proves Zimla Kontor reached the
  * client; whether a *mailbox* is connected inside that client is invisible
  * from here. Saying so once, before the first run, is convention 10 (confirm
  * up front) rather than letting the user find out from an empty report.

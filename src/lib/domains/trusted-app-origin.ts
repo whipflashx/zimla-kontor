@@ -21,7 +21,7 @@ import { createLogger } from '@/lib/logger'
 // only when it is exactly the canonical app host, exactly one of this
 // deployment's own Vercel hostnames, or exactly a registered brand domain.
 // Everything else falls back to NEXT_PUBLIC_APP_URL, so a spoofed header
-// can at most select another host Accounted already serves. GoTrue's own
+// can at most select another host Zimla Kontor already serves. GoTrue's own
 // redirect allowlist remains the backstop behind all of this: it matches
 // the FULL redirect_to including the query, with `*` stopping at `.` and
 // `/`, so hosted carries `https://*.accounted.se/auth/callback**` and

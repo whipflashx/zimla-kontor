@@ -35,7 +35,7 @@ function nextDayIso(closingDate: string): string {
  *      Swedish bookkeeping error. Hence `reverses_on` is empty for this
  *      proposal; the wizard / UI suppresses the reversal badge accordingly.
  *
- *   3. No employees in Accounted is not the same as no vacation liability.
+ *   3. No employees in Zimla Kontor is not the same as no vacation liability.
  *      A company whose payroll runs in another system carries 2920 from
  *      that system, and the vacation report (zero rows) knows nothing
  *      about it. Proposing "target 0" there would reverse the whole
@@ -71,14 +71,14 @@ export async function assessVacationLiability(
     ? Math.round((row2920.closing_credit - row2920.closing_debit) * 100) / 100
     : 0
 
-  // Rule 3: a liability with nobody behind it in Accounted came from
+  // Rule 3: a liability with nobody behind it in Zimla Kontor came from
   // somewhere else. Never propose zeroing it.
   if (report.rows.length === 0 && Math.abs(currentLiability) >= 1) {
     const kr = Math.round(Math.abs(currentLiability)).toLocaleString('sv-SE')
     return {
       proposal: null,
       notice:
-        `Semesterlöneskuld ${kr} kr på 2920 men inga anställda finns i Accounted; ` +
+        `Semesterlöneskuld ${kr} kr på 2920 men inga anställda finns i Zimla Kontor; ` +
         'lön körs troligen i ett annat system. Ingen justering föreslås; stäm av skulden mot lönesystemet.',
     }
   }

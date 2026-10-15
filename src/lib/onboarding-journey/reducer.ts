@@ -97,7 +97,7 @@ interface JourneySnapshot {
   /** EF only: the verksamhetsnamn question was explicitly answered. */
   nameConfirmedForEf: boolean
   /**
-   * The registry named a form Accounted has scoped but cannot create yet (a
+   * The registry named a form Zimla Kontor has scoped but cannot create yet (a
    * planned form's code, or a flagged-off EntityType): the picker becomes
    * a "stöds inte ännu" stop. Null when the registry named nothing of the
    * kind.
@@ -226,7 +226,7 @@ function stay(state: JourneyState, patch: Partial<JourneyState>): JourneyState {
 }
 
 /**
- * The form the picker must stop on when the registry named one Accounted
+ * The form the picker must stop on when the registry named one Zimla Kontor
  * cannot create yet: a planned form's code, or a known form whose creation
  * flag is off. Null when the registry named nothing, or a creatable form.
  */

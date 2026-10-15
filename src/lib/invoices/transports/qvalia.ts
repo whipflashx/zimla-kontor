@@ -102,7 +102,7 @@ export interface QvaliaConfig {
   /**
    * Account registration number the documents are sent from. Consolidated
    * setup: the partner account itself. Multi-tenant setup (later): one per
-   * Accounted company.
+   * Zimla Kontor company.
    */
   accountRegNo: string
   baseUrl: string
@@ -482,7 +482,7 @@ export function readQvaliaOutgoingStatus(record: unknown): QvaliaOutgoingStatus 
  * case or surrounding space. `processed`, `processed_with_warning` and
  * `error` are final at Qvalia; `pending`, `delayed` and `warning` are not and
  * yield no event, nor does a message without an outcome (null). A delivered
- * message is `transport_succeeded`, not terminal for Accounted (a business
+ * message is `transport_succeeded`, not terminal for Zimla Kontor (a business
  * response may follow); `error` is final at Qvalia, so it is `failed`. Any
  * other value throws instead of being guessed from its wording.
  */

@@ -81,7 +81,7 @@ export function RegisterClient({ authSettings }: { authSettings: GoTrueAuthSetti
   const [isRegistered, setIsRegistered] = useState(false)
   const [duplicateEmail, setDuplicateEmail] = useState<string | null>(null)
   // Invite-only brand domain (signup gate said no): the form is replaced by
-  // an interstitial pointing at the canonical Accounted signup.
+  // an interstitial pointing at the canonical Zimla Kontor signup.
   const [inviteOnlyBlocked, setInviteOnlyBlocked] = useState(false)
   const [inviteEmail, setInviteEmail] = useState<string | null>(null)
   const [bankIdUser, setBankIdUser] = useState<{ givenName?: string; surname?: string } | null>(null)
@@ -378,7 +378,7 @@ export function RegisterClient({ authSettings }: { authSettings: GoTrueAuthSetti
         }
         if (error.code === 'signup_not_allowed') {
           // Invite-only brand domain: swap the form for the interstitial
-          // that sends the visitor to the canonical Accounted signup.
+          // that sends the visitor to the canonical Zimla Kontor signup.
           setInviteOnlyBlocked(true)
           return
         }
@@ -964,7 +964,7 @@ export function RegisterClient({ authSettings }: { authSettings: GoTrueAuthSetti
           {/* Same targets as the login page: platform terms on the marketing
               site, in-app /privacy (host-relative for branded domains). */}
           <a
-            href="https://accounted.se/terms"
+            href="https://zimla.io/anvandarvillkor/"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2 hover:text-foreground transition-colors"

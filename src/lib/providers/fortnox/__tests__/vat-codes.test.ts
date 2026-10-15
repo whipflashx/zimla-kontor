@@ -9,7 +9,7 @@ import {
 /**
  * Fortnox names each momskod after the momsdeklaration ruta it feeds. The
  * translation is therefore checked ruta by ruta: a code translates for an
- * account only when Accounted files that account on the ruta the code
+ * account only when Zimla Kontor files that account on the ruta the code
  * names, and answers null everywhere else.
  */
 describe('fortnoxVatCodeToTreatment', () => {
@@ -37,8 +37,8 @@ describe('fortnoxVatCodeToTreatment', () => {
     expect(resolveVatTreatmentRuta(treatment, Number(account.charAt(0)), account)?.box).toBe(ruta)
   })
 
-  it('refuses IV and IT where Accounted would file the account on the other of rutor 23 and 24', () => {
-    // Accounted derives the 23/24 split from the account number (class 4 is
+  it('refuses IV and IT where Zimla Kontor would file the account on the other of rutor 23 and 24', () => {
+    // Zimla Kontor derives the 23/24 split from the account number (class 4 is
     // varor except 4425-4427; classes 5-6 are tjänster). A Fortnox IT on a
     // custom 46xx underentreprenör account would be filed on 23 here, so
     // the code must not translate: the row falls back to the label and the
@@ -65,7 +65,7 @@ describe('fortnoxVatCodeToTreatment', () => {
       expect(fortnoxVatCodeToTreatment(code, '4010')).toBeNull()
       expect(fortnoxVatCodeToTreatment(code, '2611')).toBeNull()
     }
-    // Rutor Accounted has no treatment for yet.
+    // Rutor Zimla Kontor has no treatment for yet.
     for (const code of ['UT', '3VEU', '3FEU', 'BI']) {
       expect(fortnoxVatCodeToTreatment(code, '3001')).toBeNull()
       expect(fortnoxVatCodeToTreatment(code, '4010')).toBeNull()
@@ -90,7 +90,7 @@ describe('fortnoxVatCodeToTreatment', () => {
     expect(fortnoxVatCodeToTreatment('IVEU', '7010')).toBeNull()
   })
 
-  it('only ever names a treatment Accounted knows', () => {
+  it('only ever names a treatment Zimla Kontor knows', () => {
     for (const { treatment } of Object.values(FORTNOX_VAT_CODES)) {
       expect(ACCOUNT_VAT_TREATMENTS).toContain(treatment)
     }

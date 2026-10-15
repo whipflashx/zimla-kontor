@@ -310,7 +310,7 @@ function migrateFailureResponse(error: unknown, consentId: string): NextResponse
  * Provider Migration extension
  *
  * Migrates bookkeeping data from external Swedish accounting systems
- * (Fortnox, Visma, Bokio, Björn Lundén, Briox) into Accounted by talking
+ * (Fortnox, Visma, Bokio, Björn Lundén, Briox) into Zimla Kontor by talking
  * directly to each provider's API.
  *
  * Bookkeeping data (accounts, balances, vouchers) is imported via SIE

@@ -3,7 +3,7 @@
  * invoice, reminder) assert the three sender states:
  *
  *   - branded company  -> brand sender + brand-domain links + no platform
- *                         ("Accounted") leakage in the mail body
+ *                         ("Zimla Kontor") leakage in the mail body
  *   - unbranded company-> today's output, unchanged
  *   - unverified sender domain -> platform-address fallback (fromName set,
  *                         no fromAddress; the Resend service renders the brand
@@ -19,7 +19,7 @@ vi.mock('@/lib/branding/resolve', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted', appUrl: 'https://app.gnubok.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.gnubok.se' }),
 }))
 
 import { getSenderForCompany, getBaseUrlForBrand } from '../brand-sender'
@@ -82,7 +82,7 @@ describe('invite mail (template class: invite)', () => {
     }
   }
 
-  it('branded: brand sender, brand-domain link, no Accounted leakage', async () => {
+  it('branded: brand sender, brand-domain link, no Zimla Kontor leakage', async () => {
     resolveBrandForCompanyMock.mockResolvedValue(VERIFIED)
     const mail = await composeInvite()
     expect(mail.sender).toMatchObject({
@@ -232,7 +232,7 @@ describe('reminder mail (template class: reminder)', () => {
     }
   }
 
-  it('branded: action link on the brand home domain, no Accounted leakage', async () => {
+  it('branded: action link on the brand home domain, no Zimla Kontor leakage', async () => {
     resolveBrandForCompanyMock.mockResolvedValue(VERIFIED)
     const sender = await getSenderForCompany('company-1')
     const baseUrl = getBaseUrlForBrand(sender.brand)

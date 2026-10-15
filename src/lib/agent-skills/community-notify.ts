@@ -74,7 +74,7 @@ export async function notifyPublishedAuthors(service: SupabaseClient, fetchImpl:
 }
 
 /**
- * Tells Accounted's reviewers that an item was shared and waits for them.
+ * Tells Zimla Kontor's reviewers that an item was shared and waits for them.
  * Best effort: a failure is logged, never shown to the author, whose share
  * is already saved and listed on the review page.
  */

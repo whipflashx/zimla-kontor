@@ -53,7 +53,7 @@ describe('classifyPaymentHistoryGap', () => {
     ).toEqual({ kind: 'none' })
   })
 
-  it('reports a migrated invoice paid before Accounted had it (#2213)', () => {
+  it('reports a migrated invoice paid before Zimla Kontor had it (#2213)', () => {
     expect(
       classifyPaymentHistoryGap({
         status: 'paid',

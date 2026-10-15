@@ -4,12 +4,12 @@ import en from '@/messages/en.json'
 import { analysisSkills } from '../analyses'
 
 /**
- * The Instruktioner page names Accounted's analyses and knowledge packs from
+ * The Instruktioner page names Zimla Kontor's analyses and knowledge packs from
  * messages, so the English UI never shows a Swedish title (Catalog.tsx,
  * ItemDetail.tsx via components/skills/knowledge-labels.ts).
  */
 describe('Instruktioner labels', () => {
-  it('gives every Accounted analysis a name and summary in both languages, the Swedish ones equal to what the AI is served', () => {
+  it('gives every Zimla Kontor analysis a name and summary in both languages, the Swedish ones equal to what the AI is served', () => {
     for (const skill of analysisSkills) {
       const svLabel = (sv.skills_registry.analyses as Record<string, { name: string; summary: string }>)[skill.slug]
       const enLabel = (en.skills_registry.analyses as Record<string, { name: string; summary: string }>)[skill.slug]

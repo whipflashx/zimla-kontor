@@ -114,7 +114,7 @@ function Create({ companyId, companyName, backHref, edit }: { companyId: string;
     focusStep.current = null
   }, [steps])
   const [text, setText] = useState(() => (edit && edit.kind !== 'workflow' ? ownItemText(edit.body, edit.description) : ''))
-  // What the flow will carry: Accounted's default for own flows (minus any taken away) and what was added.
+  // What the flow will carry: Zimla Kontor's default for own flows (minus any taken away) and what was added.
   const [knowledge, setKnowledge] = useState<string[]>([])
   const [removedDefaults, setRemovedDefaults] = useState<string[]>([])
   const [view, setView] = useState<'main' | 'knowledge'>('main')

@@ -204,14 +204,14 @@ const SkattekontoBokforBatchSchema = z.object({
  *   1. Skatteverket's CCG/org-flow docs (token endpoint URL, mechanism
  *      mTLS vs private_key_jwt, scope names, whether APIGW headers persist,
  *      whether resource calls need the client cert).
- *   2. Organisationscertifikat from Expisoft (test + prod) for Accounted's
+ *   2. Organisationscertifikat from Expisoft (test + prod) for Zimla Kontor's
  *      org number, base64-wrapped into SKATTEVERKET_SYSTEM_CERT_PEM_B64 /
  *      _KEY_PEM_B64.
  *   3. Bilateral avtal per API for the org flow (skattekonto read, AGI read,
  *      momsdeklaration ombud) + APIGW subscriptions for the system client.
  *   4. Set SKATTEVERKET_SYSTEM_OAUTH_TOKEN_URL, _SCOPES, _CLIENT_ID,
  *      _AUTH_MECHANISM per the docs; SKATTEVERKET_OMBUD_ORG_NUMBER =
- *      Accounted's org number (shown to users in the grant instructions).
+ *      Zimla Kontor's org number (shown to users in the grant instructions).
  *   5. First live call against Ombudshantering v2 in the test service
  *      (scope `obr` was added to application id arcimtechnologyab_gnubok_1
  *      on 2026-09-01): confirm the list envelope, read the rollbeteckning
@@ -243,7 +243,7 @@ const AGI_UNFILED_STATUSES: readonly string[] = ['pending_signature', 'generated
  * string is for API/MCP callers of the same route.
  */
 const AGI_KVITTENS_UNAVAILABLE_MESSAGE =
-  'Accounted kan just nu inte hämta kvittensen från Skatteverket. Inlämningen ' +
+  'Zimla Kontor kan just nu inte hämta kvittensen från Skatteverket. Inlämningen ' +
   'påverkas inte: kontrollera i Skatteverkets e-tjänst Arbetsgivardeklaration ' +
   'att perioden är signerad och inlämnad. Kvittensen kan hämtas hit senare.'
 
@@ -271,7 +271,7 @@ async function contestedOrgNumberResponse(orgNumber: string): Promise<NextRespon
   return NextResponse.json(
     {
       error:
-        'Organisationsnumret används av fler än ett företag i Accounted. ' +
+        'Organisationsnumret används av fler än ett företag i Zimla Kontor. ' +
         'Kontakta support för att aktivera ombudsanslutningen.',
       code: 'ORG_NUMBER_CONTESTED',
     },
@@ -827,7 +827,7 @@ export const skatteverketExtension: Extension = {
         const tokens = await getTokens(ctx.supabase, ctx.userId, ctx.companyId)
         const environment = getSkatteverketEnvironment()
         const disabled = (process.env.SKATTEVERKET_DISABLED ?? '').toLowerCase() === 'true'
-        // Reads run on Accounted's ombud grant: the personal session below
+        // Reads run on Zimla Kontor's ombud grant: the personal session below
         // only matters for signing, so the reconnect prompts stand down
         // (skvStatusNeedsReconnect). `connected` keeps meaning "this user
         // has a BankID connection", which the submit panels still need.
@@ -885,7 +885,7 @@ export const skatteverketExtension: Extension = {
     // ══════════════════════════════════════════════════════════════
     // System connection (ombud + organization certificate)
     //
-    // The hybrid auth model's per-company side: the user grants Accounted's
+    // The hybrid auth model's per-company side: the user grants Zimla Kontor's
     // org number a behorighet at Skatteverket's Ombud och behorigheter
     // e-service (one-time BankID signature), we verify it with a probe on
     // SYSTEM credentials, and background reads stop depending on the
@@ -999,9 +999,9 @@ export const skatteverketExtension: Extension = {
       },
     },
 
-    // ── System connection: deep link to appoint Accounted as ombud ──
+    // ── System connection: deep link to appoint Zimla Kontor as ombud ──
     // Ombudshantering v2 mints a link into Skatteverket's e-service with
-    // Accounted pre-filled as ombud and both roles pre-selected; the company
+    // Zimla Kontor pre-filled as ombud and both roles pre-selected; the company
     // only signs with BankID there. Runs on the system identity (the link's
     // ombud is whoever holds the token), so it needs the same configuration
     // as verify.

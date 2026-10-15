@@ -10,7 +10,7 @@ import { buildSystemdokumentation, loadSystemdokumentationFacts, type Systemdoku
 import { SUPPLIER_INVOICE_ROUNDING_RULES, VOUCHER_SERIES_RULES } from '../system-rules'
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted', appUrl: 'https://app.accounted.se' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.accounted.se' }),
 }))
 
 function facts(overrides: Partial<SystemdokumentationFacts> = {}): SystemdokumentationFacts {
@@ -62,7 +62,7 @@ function facts(overrides: Partial<SystemdokumentationFacts> = {}): Systemdokumen
       ['u-owner', 'anna@example.se'],
       ['u-member', 'Bo Bokförare'],
     ]),
-    env: { appName: 'Accounted', appUrl: 'https://app.accounted.se', hosted: true, mfaRequired: true, appVersion: 'abc1234', generatedAt: '2026-09-25T10:00:00.000Z' },
+    env: { appName: 'Zimla Kontor', appUrl: 'https://app.accounted.se', hosted: true, mfaRequired: true, appVersion: 'abc1234', generatedAt: '2026-09-25T10:00:00.000Z' },
     ...overrides,
   }
 }
@@ -79,7 +79,7 @@ describe('buildSystemdokumentation', () => {
       { account_class: 3, count: 1 },
     ])
     expect(r.app_version).toBe('abc1234')
-    expect(r.system).toEqual({ name: 'Accounted', url: 'https://app.accounted.se', hosted: true })
+    expect(r.system).toEqual({ name: 'Zimla Kontor', url: 'https://app.accounted.se', hosted: true })
   })
 
   it('resolves the series per source type through the company map and names custom letters with the company label', () => {
@@ -228,7 +228,7 @@ describe('loadSystemdokumentationFacts', () => {
     expect(service.calls.find((c) => c.table === 'api_keys' && c.method === 'eq')?.args).toEqual(['company_id', 'company-1'])
     expect(resolveUserLabels).toHaveBeenCalledWith(['u1'])
     expect(f!.labels.get('u1')).toBe('anna@example.se')
-    expect(f!.env).toMatchObject({ appVersion: 'v1', generatedAt: '2026-09-25T10:00:00.000Z', appName: 'Accounted' })
+    expect(f!.env).toMatchObject({ appVersion: 'v1', generatedAt: '2026-09-25T10:00:00.000Z', appName: 'Zimla Kontor' })
     // Every company-scoped read filters by company_id (defense in depth beside RLS).
     for (const table of ['chart_of_accounts', 'voucher_sequences', 'cash_accounts', 'company_members', 'stripe_connections', 'extension_data']) {
       expect(db.calls.some((c) => c.table === table && c.method === 'eq' && c.args[0] === 'company_id' && c.args[1] === 'company-1')).toBe(true)

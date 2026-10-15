@@ -17,7 +17,7 @@ export const SIE_DROP_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SIE-import - Accounted</title>
+<title>SIE-import - Zimla Kontor</title>
 <style>
   :root {
     --bg: #fafafa;
@@ -319,7 +319,7 @@ export const SIE_DROP_HTML = `<!DOCTYPE html>
         note('Importen är förberedd. Bokförda verifikat kan inte raderas, endast rättas med storno. Klicka för att bokföra, eller säg till i chatten.');
       } else {
         el('import').textContent = 'Import förberedd';
-        note('Importen är förberedd och väntar på godkännande i chatten eller i Accounted.');
+        note('Importen är förberedd och väntar på godkännande i chatten eller i Zimla Kontor.');
       }
       sendNotification('ui/updateContext', {
         content: 'SIE-importen av ' + fileState.name + ' är stagead' + (sc && sc.operation_id ? ' (operation ' + sc.operation_id + ')' : '') + ' och väntar på godkännande i importkortet.'

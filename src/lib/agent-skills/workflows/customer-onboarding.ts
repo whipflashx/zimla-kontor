@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Customer Onboarding: Accounted
+const body = `# Customer Onboarding: Zimla Kontor
 
 Adding a customer correctly the first time avoids a long tail of wrong-VAT
 invoices. This skill covers the decision tree for picking \`customer_type\`,
@@ -31,7 +31,7 @@ later: much cheaper to ask the customer once at onboarding.
 
 **Special cases:**
 
-- **B2G (Swedish municipality/agency)**: still \`swedish_business\`. Public-sector buyers require Peppol e-invoices. Accounted sends Peppol BIS Billing 3 invoices from the invoice page in the dashboard, gated per company: request access under Inställningar > Kopplingar > E-faktura via Peppol (Settings > Connections > E-invoicing via Peppol), Accounted's operators enable it, and a grant may carry a send cap that support raises. Restrictions: senders with an organisationsnummer (every legal form except enskild firma, whose org number is the owner's personnummer), standard invoices only (no credit notes), a buyer whose org number is not a personnummer (an enskild firma customer is refused until GLN identifiers are supported), SEK invoices with taxable Swedish VAT at 6, 12 or 25 % only (no reverse charge, no ROT/RUT deductions), and Er referens set. An agent checks \`gnubok_get_invoice_peppol_readiness\` and stages \`gnubok_send_invoice_peppol\` (a person approves); the user can also send from the dashboard. A successful dashboard Peppol send issues the invoice itself, so do not mark it as sent afterwards; if the dashboard reports that the invoice was sent via Peppol but could not be marked as sent, complete the issuance with \`gnubok_mark_invoice_as_sent\` on the still-draft invoice (if it already shows as sent, the verifikat exists and only its link to the invoice needs repair: do not mark it as sent again, leave the repair to support). If Peppol access is not granted, or the company is an enskild firma, deliver the invoice through an external e-invoice provider, then use \`gnubok_mark_invoice_as_sent\` to record delivery.
+- **B2G (Swedish municipality/agency)**: still \`swedish_business\`. Public-sector buyers require Peppol e-invoices. Zimla Kontor sends Peppol BIS Billing 3 invoices from the invoice page in the dashboard, gated per company: request access under Inställningar > Kopplingar > E-faktura via Peppol (Settings > Connections > E-invoicing via Peppol), Zimla Kontor's operators enable it, and a grant may carry a send cap that support raises. Restrictions: senders with an organisationsnummer (every legal form except enskild firma, whose org number is the owner's personnummer), standard invoices only (no credit notes), a buyer whose org number is not a personnummer (an enskild firma customer is refused until GLN identifiers are supported), SEK invoices with taxable Swedish VAT at 6, 12 or 25 % only (no reverse charge, no ROT/RUT deductions), and Er referens set. An agent checks \`gnubok_get_invoice_peppol_readiness\` and stages \`gnubok_send_invoice_peppol\` (a person approves); the user can also send from the dashboard. A successful dashboard Peppol send issues the invoice itself, so do not mark it as sent afterwards; if the dashboard reports that the invoice was sent via Peppol but could not be marked as sent, complete the issuance with \`gnubok_mark_invoice_as_sent\` on the still-draft invoice (if it already shows as sent, the verifikat exists and only its link to the invoice needs repair: do not mark it as sent again, leave the repair to support). If Peppol access is not granted, or the company is an enskild firma, deliver the invoice through an external e-invoice provider, then use \`gnubok_mark_invoice_as_sent\` to record delivery.
 - **Consumer customer in another EU country (B2C distance sale)**: \`eu_business\` does NOT apply. Charge Swedish VAT (25/12/6 %) below the OSS threshold; above the threshold the company must register for OSS. This is rare for sole traders: flag the user if turnover suggests they're approaching the threshold.
 
 ## Workflow
@@ -56,12 +56,12 @@ the VAT number is invalid (or unverifiable), reverse charge does NOT apply:
 you must charge Swedish VAT instead. The wrong call here means you under-collect
 VAT and Skatteverket charges interest + penalty later.
 
-Accounted's \`gnubok_create_customer\` runs VIES automatically when \`vat_number\`
+Zimla Kontor's \`gnubok_create_customer\` runs VIES automatically when \`vat_number\`
 is provided. The result is stored in \`vat_number_validated\` on the customer.
 Subsequent invoices read this field via \`getPermittedVatRates\` to determine
 which VAT rates are legal.
 
-If VIES is temporarily down (intermittent), Accounted marks the customer as
+If VIES is temporarily down (intermittent), Zimla Kontor marks the customer as
 \`vat_number_validated = false\` and you'll see standard 25 % rates instead
 of reverse charge. Re-validate by updating the customer once VIES is back.
 
@@ -84,7 +84,7 @@ appears in \`gnubok_list_customers\` and can be invoiced via \`gnubok_create_inv
 \`gnubok_list_customers\`: confirm the customer appears, customer_type is right.
 Read \`vat_number_validated\` (for EU); if false, double-check the VAT number.
 
-When you eventually call \`gnubok_create_invoice\`, Accounted uses the
+When you eventually call \`gnubok_create_invoice\`, Zimla Kontor uses the
 \`getPermittedVatRates\` helper to constrain the legal rates per customer type.
 The accepted set is 0/25/12/6 % for every customer type, so "VAT rate X% is not
 allowed for customer type Y" means X is not a Swedish VAT rate at all: fix the
@@ -92,7 +92,7 @@ rate, and check the customer_type while you are there.
 
 ## Common errors
 
-- *A validated \`eu_business\` invoiced at 25 %*: not refused, but almost always wrong. Reverse charge is the DEFAULT for a validated EU VAT number: leave \`vat_rate\` off (or 0) and Accounted adds the "Omvänd betalningsskyldighet" notation automatically. A Swedish rate is lawful here only for a supply taxed where it is performed (hotel/restaurang 12 %, persontransport and event admission 6 %, fastighetstjänst and korttidsuthyrning 25 %); read the \`Accounted://settings/vat-treatments\` resource before using one.
+- *A validated \`eu_business\` invoiced at 25 %*: not refused, but almost always wrong. Reverse charge is the DEFAULT for a validated EU VAT number: leave \`vat_rate\` off (or 0) and Zimla Kontor adds the "Omvänd betalningsskyldighet" notation automatically. A Swedish rate is lawful here only for a supply taxed where it is performed (hotel/restaurang 12 %, persontransport and event admission 6 %, fastighetstjänst and korttidsuthyrning 25 %); read the \`Accounted://settings/vat-treatments\` resource before using one.
 - *A \`swedish_business\` invoiced at 0 %*: also accepted (momsfritt supplies exist), but the normal domestic rate is 25/12/6 %. Do not use 0 % to avoid picking a rate.
 - *"Customer not found"* on \`gnubok_create_invoice\`: the customer wasn't created (or its pending_operation wasn't approved). Run \`gnubok_list_customers\` to confirm.
 

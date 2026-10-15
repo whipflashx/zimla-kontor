@@ -41,7 +41,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * One rule (UI v2 PR 5): Om / Gör as pills, the sentence Accounted reads
+ * One rule (UI v2 PR 5): Om / Gör as pills, the sentence Zimla Kontor reads
  * the rule as, this year's matches, and the side with origin, trust and
  * links. One primary action: pause or resume. The auto step is shown on the
  * ladder and explained; it becomes reachable with the autopilot tier.

@@ -154,7 +154,7 @@ export async function searchCompaniesForLookup(query: string): Promise<CompanySe
 }
 
 /**
- * Lens `registrationNumber` → Accounted's 10-digit org number, or null when
+ * Lens `registrationNumber` → Zimla Kontor's 10-digit org number, or null when
  * the document cannot become a valid one.
  *
  * The typed-orgnr path never stores Lens's number (it keeps what the user

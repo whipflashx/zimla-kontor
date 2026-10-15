@@ -6,7 +6,7 @@ import { createQueuedMockSupabase } from '@/tests/helpers'
  * create_provider_migration_job requires (consent org number, or the
  * provider's tenant id) for consents connected before the OAuth exchange
  * recorded it. The identity always comes from what the credentials open,
- * behind the same mismatch guard as the exchange, never from the Accounted
+ * behind the same mismatch guard as the exchange, never from the Zimla Kontor
  * company's own org number.
  */
 
@@ -79,7 +79,7 @@ describe('ensureConsentSourceIdentity', () => {
     expect(db.findCall('provider_consents', 'or')?.[0]).toBe('org_number.is.null,org_number.eq.')
   })
 
-  it('fills a Visma consent from CorporateIdentityNumber even when the Accounted company has no org number', async () => {
+  it('fills a Visma consent from CorporateIdentityNumber even when the Zimla Kontor company has no org number', async () => {
     const db = useDb([
       { data: { provider: 'visma', org_number: '' } },
       { data: { provider_company_id: '' } },

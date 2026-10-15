@@ -41,7 +41,7 @@ describe('branding service', () => {
   it('returns accounted defaults when nothing is overridden', async () => {
     const { getBranding } = await import('../service')
     const b = getBranding()
-    expect(b.appName).toBe('Accounted')
+    expect(b.appName).toBe('Zimla Kontor')
     expect(b.appDescription).toBe('Ekonomihantering')
     expect(b.legalEntity).toBe('Arcim Technology AB')
     expect(b.supportEmail).toBe('support@gnubok.se')
@@ -135,7 +135,7 @@ describe('branding service', () => {
   it('empty string env var does not override', async () => {
     process.env.NEXT_PUBLIC_BRANDING_APP_NAME = ''
     const { getBranding } = await import('../service')
-    expect(getBranding().appName).toBe('Accounted')
+    expect(getBranding().appName).toBe('Zimla Kontor')
   })
 
   it('clearing extension override returns to env/default resolution', async () => {
@@ -143,6 +143,6 @@ describe('branding service', () => {
     registerBrandingService({ appName: 'Holdio' })
     expect(getBranding().appName).toBe('Holdio')
     registerBrandingService({})
-    expect(getBranding().appName).toBe('Accounted')
+    expect(getBranding().appName).toBe('Zimla Kontor')
   })
 })

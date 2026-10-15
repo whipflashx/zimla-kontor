@@ -36,7 +36,7 @@ function Row({ label, value, note }: { label: string; value: React.ReactNode; no
 
 /**
  * Moment 3: the dossier. Money and booking knowledge come from the ledger;
- * "Vad Accounted vet" lists every fact with its source; promotion and
+ * "Vad Zimla Kontor vet" lists every fact with its source; promotion and
  * merge are one action each and always confirm up front.
  */
 const DECISION_KINDS = new Set(['confirm', 'merge', 'split', 'rename', 'role', 'dismiss', 'pin', 'ignore', 'label', 'undo'])

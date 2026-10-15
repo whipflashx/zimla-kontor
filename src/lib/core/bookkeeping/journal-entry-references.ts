@@ -264,7 +264,7 @@ export async function getJournalEntryUnderlagReferences(
  * delbetalning, or "matcha mot befintligt verifikat").
  *
  * An entry that appears in the result is backed by that invoice under BFL
- * 5 kap 7 § (hänvisning till underlag): the invoice Accounted issued is the
+ * 5 kap 7 § (hänvisning till underlag): the invoice Zimla Kontor issued is the
  * verifikation for the sale, and the payment row identifies the inbetalning.
  * This is the TS mirror of the customer arm in the verifikat_without_documents
  * / transactions_without_documents RPCs (migration 20260906135702, #2298):

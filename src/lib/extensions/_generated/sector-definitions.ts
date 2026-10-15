@@ -81,7 +81,7 @@ export const EXTENSION_DEFINITIONS: Record<string, ExtensionDefinition[]> = {
           "icon": "Terminal",
           "dataPattern": "manual",
           "description": "Gör bokföring via Claude, Cursor eller annan MCP-klient",
-          "longDescription": "Exponerar Accounteds bokföringsmotor som MCP-verktyg (Model Context Protocol). Koppla din MCP-klient med en API-nyckel och gör bokföring genom konversation: visa okategoriserade transaktioner, bokför dem, skapa fakturor."
+          "longDescription": "Exponerar Zimla Kontors bokföringsmotor som MCP-verktyg (Model Context Protocol). Koppla din MCP-klient med en API-nyckel och gör bokföring genom konversation: visa okategoriserade transaktioner, bokför dem, skapa fakturor."
     },
     {
           "slug": "cloud-backup",
@@ -91,7 +91,7 @@ export const EXTENSION_DEFINITIONS: Record<string, ExtensionDefinition[]> = {
           "icon": "Cloud",
           "dataPattern": "manual",
           "description": "Synka säkerhetsbackup till din egen molnlagring",
-          "longDescription": "Koppla ditt Google Drive- eller Dropbox-konto och ladda upp en fullständig säkerhetsbackup med ett klick. Accounted skapar en ZIP med SIE-filer, kvitton och behandlingshistorik och laddar upp till en egen mapp i din molnlagring. Du kan koppla båda samtidigt, med separata scheman. Perfekt för att uppfylla egna krav på redundans.",
+          "longDescription": "Koppla ditt Google Drive- eller Dropbox-konto och ladda upp en fullständig säkerhetsbackup med ett klick. Zimla Kontor skapar en ZIP med SIE-filer, kvitton och behandlingshistorik och laddar upp till en egen mapp i din molnlagring. Du kan koppla båda samtidigt, med separata scheman. Perfekt för att uppfylla egna krav på redundans.",
           "hasOwnData": true,
           "subscriptionNotice": "Kräver ett Google- eller Dropbox-konto. Uppladdningar sker direkt till din egen molnlagring: ingen data lagras hos tredje part utöver den tjänst du väljer."
     },
@@ -153,7 +153,7 @@ export const EXTENSION_DEFINITIONS: Record<string, ExtensionDefinition[]> = {
           "category": "import",
           "icon": "MessageCircle",
           "dataPattern": "both",
-          "description": "Skicka kvitton som foto eller PDF till Accounteds WhatsApp-nummer: de landar i Underlag med avlästa fält",
+          "description": "Skicka kvitton som foto eller PDF till Zimla Kontors WhatsApp-nummer: de landar i Underlag med avlästa fält",
           "longDescription": "Koppla ditt mobilnummer med en engångskod och skicka sedan kvitton direkt i WhatsApp. Varje kvitto laddas upp till dokumentarkivet, fält som belopp och datum läses av med AI, och du får en bekräftelse i chatten. Bokföringen sker som vanligt i appen.",
           "readsCoreTables": [
                 "company_members",

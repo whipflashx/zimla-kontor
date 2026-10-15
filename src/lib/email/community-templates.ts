@@ -5,7 +5,7 @@ import { escapeHtml, sanitizeSubjectLine } from './user-text'
  * Community sharing emails. "Publicerad" goes to the author once the item's
  * page is live on accounted.se, with one-click shares to LinkedIn and X (the
  * page has its own share card) and a link to make a post image with their
- * photo (the page's #dela box). "Att granska" goes to Accounted's reviewers
+ * photo (the page's #dela box). "Att granska" goes to Zimla Kontor's reviewers
  * when an item is shared. Titles and handles are written by users: escaped.
  * Same calm layout as the other notices, signed by the app, the destination
  * of every button shown in plain text.

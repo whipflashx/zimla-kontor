@@ -66,17 +66,17 @@ export type TemplateId = (typeof TEMPLATE)[keyof typeof TEMPLATE]
 
 const SV = {
   m1Unlinked: () =>
-    'Hej! Det här är *Accounteds dokumentmottagning*, en automatisk AI-tjänst.\n\n' +
-    'För att koppla ditt nummer: öppna Accounted, gå till *Inställningar -> WhatsApp* och skicka den 6-siffriga koden här.\n\n' +
+    'Hej! Det här är *Zimla Kontors dokumentmottagning*, en automatisk AI-tjänst.\n\n' +
+    'För att koppla ditt nummer: öppna Zimla Kontor, gå till *Inställningar -> WhatsApp* och skicka den 6-siffriga koden här.\n\n' +
     'Skriv *hjälp* för att nå en människa.',
 
   m2BadCode: () =>
-    'Koden stämmer inte eller har gått ut. Hämta en ny under *Inställningar -> WhatsApp* i Accounted och skicka den här inom 10 minuter.',
+    'Koden stämmer inte eller har gått ut. Hämta en ny under *Inställningar -> WhatsApp* i Zimla Kontor och skicka den här inom 10 minuter.',
 
   m3Linked: ({ companyName, companyCount = 1 }: LinkedTemplateArgs) => {
     const intro = companyName
       ? `Klart! Ditt nummer är kopplat till *${companyName}*.`
-      : 'Klart! Ditt nummer är kopplat till *Accounted*.'
+      : 'Klart! Ditt nummer är kopplat till *Zimla Kontor*.'
     const tips =
       'Skicka kvitton, fakturor, avtal och annan post hit som foto eller PDF så lägger jag dem rätt i Accounted: kvitton och fakturor i *Underlag*, resten i *Arkiv*. ' +
       'Två tips: skicka som _dokument_ (gem-ikonen) för bästa skärpa, och en fil per dokument. Flersidiga dokument skickas som PDF.'
@@ -87,7 +87,7 @@ const SV = {
     // run together with the outro it read as a single sentence.
     const multi =
       companyCount > 1
-        ? `Du är med i ${companyCount} företag i Accounted. Välj antingen ett standardföretag i panelen, ` +
+        ? `Du är med i ${companyCount} företag i Zimla Kontor. Välj antingen ett standardföretag i panelen, ` +
           'eller skicka ett kvitto i taget så frågar jag vilket företag det gäller direkt efter varje kvitto.\n\n'
         : ''
     return `${intro}\n\n${tips}\n\n${multi}${outro}`
@@ -107,7 +107,7 @@ const SV = {
   m5BurstAck: ({ lines }: { lines: string[] }) =>
     `Fick *${lines.length}* kvitton:\n` +
     lines.map((line, i) => `${i + 1}. ${line}`).join('\n') +
-    '\nAlla ligger i Underlag i Accounted.',
+    '\nAlla ligger i Underlag i Zimla Kontor.',
 
   // The receipt is not ingested yet when this is asked (the item is created
   // only after the company answer), so merchant/amount are unknown here.
@@ -170,8 +170,8 @@ const SV = {
   // the binding. Actually disconnecting is the settings panel's "Koppla från",
   // and the panel shows the paused state as "Pausad": the copy must match.
   m11Stop: () =>
-    'Okej, jag pausar och slutar svara här. Numret är kvar kopplat men jag tar inte emot något mer. Dina underlag i Accounted påverkas inte.\n\n' +
-    'Skicka *start* när du vill aktivera igen, eller koppla från numret helt under *Inställningar -> WhatsApp* i Accounted.',
+    'Okej, jag pausar och slutar svara här. Numret är kvar kopplat men jag tar inte emot något mer. Dina underlag i Zimla Kontor påverkas inte.\n\n' +
+    'Skicka *start* när du vill aktivera igen, eller koppla från numret helt under *Inställningar -> WhatsApp* i Zimla Kontor.',
 
   m12Start: () => 'Välkommen tillbaka! Ditt nummer är aktivt igen, skicka kvitton när du vill.',
 
@@ -204,7 +204,7 @@ const SV = {
   // nothing changes until they act in the app. Honest and actionable beats
   // the old silent parking.
   m19NoCompany: () =>
-    'Jag kunde inte koppla kvittot till något företag. Öppna Accounted och kontrollera WhatsApp-kopplingen under *Inställningar -> WhatsApp*, och skicka sedan kvittot igen.',
+    'Jag kunde inte koppla kvittot till något företag. Öppna Zimla Kontor och kontrollera WhatsApp-kopplingen under *Inställningar -> WhatsApp*, och skicka sedan kvittot igen.',
 
   // Receipts parked behind the company question whose media WhatsApp no
   // longer serves (asked per file, not assumed from an age: #2363 saw a file
@@ -233,17 +233,17 @@ const SV = {
 
 const EN: typeof SV = {
   m1Unlinked: () =>
-    'Hi! This is *Accounted document intake*, an automated AI service.\n\n' +
-    'To link your number: open Accounted, go to *Settings -> WhatsApp* and send the 6-character code here.\n\n' +
+    'Hi! This is *Zimla Kontor document intake*, an automated AI service.\n\n' +
+    'To link your number: open Zimla Kontor, go to *Settings -> WhatsApp* and send the 6-character code here.\n\n' +
     'Type *hjälp* to reach a human.',
 
   m2BadCode: () =>
-    'That code is wrong or has expired. Get a new one under *Settings -> WhatsApp* in Accounted and send it here within 10 minutes.',
+    'That code is wrong or has expired. Get a new one under *Settings -> WhatsApp* in Zimla Kontor and send it here within 10 minutes.',
 
   m3Linked: ({ companyName, companyCount = 1 }: LinkedTemplateArgs) => {
     const intro = companyName
       ? `Done! Your number is linked to *${companyName}*.`
-      : 'Done! Your number is linked to *Accounted*.'
+      : 'Done! Your number is linked to *Zimla Kontor*.'
     const tips =
       'Send receipts, invoices, agreements and other post here as a photo or PDF and I will file them where they belong in Accounted: receipts and invoices under *Underlag*, the rest in *Arkiv*. ' +
       'Two tips: send as a _document_ (the paperclip icon) for full sharpness, and one file per document. Multi-page documents go as PDF.'
@@ -251,7 +251,7 @@ const EN: typeof SV = {
       'I am an AI assistant. Type *hjälp* for human support, *stopp* to disconnect.'
     const multi =
       companyCount > 1
-        ? `You belong to ${companyCount} companies in Accounted. Either pick a default company in the panel, ` +
+        ? `You belong to ${companyCount} companies in Zimla Kontor. Either pick a default company in the panel, ` +
           'or send one receipt at a time and I will ask which company it belongs to right after each one.\n\n'
         : ''
     return `${intro}\n\n${tips}\n\n${multi}${outro}`
@@ -271,7 +271,7 @@ const EN: typeof SV = {
   m5BurstAck: ({ lines }: { lines: string[] }) =>
     `Got *${lines.length}* receipts:\n` +
     lines.map((line, i) => `${i + 1}. ${line}`).join('\n') +
-    '\nAll of them are in Underlag in Accounted.',
+    '\nAll of them are in Underlag in Zimla Kontor.',
 
   m6CompanyQuestion: ({ count = 1 }: { count?: number }) =>
     count > 1
@@ -327,8 +327,8 @@ const EN: typeof SV = {
   m10ContextConfirm: () => 'Thanks! Saved as a note on the receipt.',
 
   m11Stop: () =>
-    'Okay, I am pausing and will stop replying here. Your number stays linked but I will not receive anything more. Your documents in Accounted are not affected.\n\n' +
-    'Send *start* whenever you want to activate again, or disconnect the number entirely under *Settings -> WhatsApp* in Accounted.',
+    'Okay, I am pausing and will stop replying here. Your number stays linked but I will not receive anything more. Your documents in Zimla Kontor are not affected.\n\n' +
+    'Send *start* whenever you want to activate again, or disconnect the number entirely under *Settings -> WhatsApp* in Zimla Kontor.',
 
   m12Start: () => 'Welcome back! Your number is active again, send receipts whenever you like.',
 
@@ -355,7 +355,7 @@ const EN: typeof SV = {
     'Something went wrong receiving the file. Try again in a moment, or upload the receipt directly in the app under *Underlag*. Type *hjälp* if it keeps happening.',
 
   m19NoCompany: () =>
-    'I could not assign the receipt to any company. Open Accounted and check the WhatsApp linking under *Settings -> WhatsApp*, then send the receipt again.',
+    'I could not assign the receipt to any company. Open Zimla Kontor and check the WhatsApp linking under *Settings -> WhatsApp*, then send the receipt again.',
 
   m20ReceiptsExpired: ({ count }: { count: number }) =>
     count > 1

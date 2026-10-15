@@ -433,7 +433,7 @@ export async function issueAndBookInvoice(
 /**
  * The tail of an issue that went through: archive the PDF as underlag (so it
  * stays retrievable even if the invoice row is later cancelled), record the
- * delivery when the invoice was delivered outside Accounted's email
+ * delivery when the invoice was delivered outside Zimla Kontor's email
  * (mark-sent, Peppol), and emit invoice.sent. Also how a door finishes an
  * invoice that is issued and booked but whose own delivery failed (the
  * verifikat is never undone), then without the delivery record. Returns the

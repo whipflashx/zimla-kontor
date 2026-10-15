@@ -54,7 +54,7 @@ registerEndpoint({
   description:
     'Returns the rendered payslip (lönespecifikation) as application/pdf, byte-equivalent to the dashboard download. Content-Disposition is attachment with a filename derived from the period and employee name.',
   useWhen:
-    'You need the payslip document itself: archiving, forwarding to the employee outside the Accounted send flow (pass audience=employee), or attaching to an external HR system.',
+    'You need the payslip document itself: archiving, forwarding to the employee outside the Zimla Kontor send flow (pass audience=employee), or attaching to an external HR system.',
   doNotUseFor:
     'The payslip DATA (amounts, line items): use GET /salary-runs/{id}/employees/{employeeId}, which is cheaper and structured. Emailing payslips to employees: POST /salary-runs/{id}/send-payslips sends each a secure link.',
   pitfalls: [

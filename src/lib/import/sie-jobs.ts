@@ -51,7 +51,7 @@ export class SIEJobValidationError extends Error {
   }
 }
 
-/** Accounted's financial reports classify targets by BAS classes 1-8. */
+/** Zimla Kontor's financial reports classify targets by BAS classes 1-8. */
 export function assertSIEReportingAccounts(accounts: Iterable<string>): void {
   const unsupported = [...new Set(accounts)].filter(account => !isValidBASRange(account))
   if (unsupported.length) {

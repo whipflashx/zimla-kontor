@@ -5,10 +5,10 @@ import { communityBodySha } from './community-approval'
 /**
  * What accounted.se may show of the community: the items every company's AI
  * gets (tier 'community', active and exposed), each with the fingerprint of
- * the exact text an Accounted reviewer approved. The website lists a folder of
+ * the exact text an Zimla Kontor reviewer approved. The website lists a folder of
  * erp-mafia/accounted-skills only when its SKILL.md hashes to that fingerprint,
  * so a merge nobody approved, or an edit made on GitHub after the approval, is
- * never shown as "Granskad av Accounted". Slugs and hashes of files that are
+ * never shown as "Granskad av Zimla Kontor". Slugs and hashes of files that are
  * already public: nothing here needs a login.
  */
 export interface ApprovedCommunityItem {

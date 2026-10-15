@@ -1,6 +1,6 @@
 import type { Skill } from '../types'
 
-const body = `# Month-End Close (Månadsavslut): Accounted
+const body = `# Month-End Close (Månadsavslut): Zimla Kontor
 
 The orchestration skill for closing one calendar month: make sure every affärshändelse in the month is booked with its underlag, every account with an outside truth agrees, every voucher gap is explained and, for monthly filers, the momsdeklaration is ready. Then the user locks the month. You coordinate; the detail lives in sibling skills you load by slug with \`gnubok_load_skill\`:
 
@@ -22,10 +22,10 @@ Do not repeat those skills here. Run the step, and when it needs depth, load the
 
 ## Locking, closing and the lock date: know the difference
 
-Accounted has three different things that users all call "stänga". Get this right before you say anything to the user.
+Zimla Kontor has three different things that users all call "stänga". Get this right before you say anything to the user.
 
 1. **Month lock: "Bokföring låst t.o.m."** A company-wide date under Inställningar, Bokföring, Periodlåsning (\`/settings/bookkeeping\`). Nothing dated on or before it can be booked or changed. This is what closing a month means. It covers everything before the date too, so locking through 30 June also locks May. No MCP tool sets it: the user changes it in the app. It has no built-in "all booked" check, so your checklist is the check.
-2. **Fiscal period lock: \`gnubok_lock_period\`.** A fiscal period in Accounted is the whole räkenskapsår, not a month. Locking it freezes the entire year. Never use it for a month-end close. It refuses while any bank transaction in the year is unbooked or untriaged.
+2. **Fiscal period lock: \`gnubok_lock_period\`.** A fiscal period in Zimla Kontor is the whole räkenskapsår, not a month. Locking it freezes the entire year. Never use it for a month-end close. It refuses while any bank transaction in the year is unbooked or untriaged.
 3. **Close: \`gnubok_close_period\`.** Year-end only, irreversible, requires the lock and the bokslut closing entry. Not part of this skill: point to \`year-end-close\` (which uses \`gnubok_run_year_end\`).
 
 Consequence the user must hear before locking: in an open, unlocked month a posted verifikat can still be corrected inside the same verifikat (inline rättelse, with a who/when log). Once the month is behind the lock date the only path is storno plus a new verifikat (BFL 5 kap 5 §), and only after the user moves the date back.
@@ -48,7 +48,7 @@ Resources read the connection's default company only. For a non-default company 
 
 Stop at Step 0 when:
 
-- No fiscal period covers the month: say so, and tell the user to create the räkenskapsår in Accounted first. Do not book anything.
+- No fiscal period covers the month: say so, and tell the user to create the räkenskapsår in Zimla Kontor first. Do not book anything.
 - The covering period is \`closed\`: the month is final. Say that this needs a human (an accountant) if something is wrong in it.
 - The covering period is \`locked\`, or the lock date already covers the month: the month is already locked. Ask what the user wants to achieve; do not suggest unlocking unless they need a correction, and then read "Unlocking" below.
 
@@ -57,7 +57,7 @@ Stop at Step 0 when:
 Ask these in one message, with the facts from Step 0 filled in:
 
 1. Which month, and what "done" means: a check only, or ready for the user to set "Bokföring låst t.o.m." to the last day of the month.
-2. Anything outside the bank feed: cash purchases, purchases on a private card for the company (utlägg), a company card from another bank, invoices sent or received outside Accounted.
+2. Anything outside the bank feed: cash purchases, purchases on a private card for the company (utlägg), a company card from another bank, invoices sent or received outside Zimla Kontor.
 3. For an enskild firma: any private purchases on the business account the user already knows about.
 
 Do not ask for confirmation before reading: reading is always safe.
@@ -98,7 +98,7 @@ Load \`reconcile-month\` and follow it for each bank account and the skattekonto
 
 When information is missing:
 
-- **Stale bank data** (state \`stale\`, or the last sync before the month end): the bank side cannot be trusted. Ask the user to sync the bank in Accounted, or call \`gnubok_sync_bank({ connection_id })\` if you have the connection id. Then re-read.
+- **Stale bank data** (state \`stale\`, or the last sync before the month end): the bank side cannot be trusted. Ask the user to sync the bank in Zimla Kontor, or call \`gnubok_sync_bank({ connection_id })\` if you have the connection id. Then re-read.
 - **No bank connected**: ask for the closing balance on the bank statement for the last day of the month and compare it with the ledger yourself. Say in the report that the reconciliation was manual.
 - **A difference you cannot explain**: do not book a balancing entry. Show the difference, the rows behind it, and stop for that account.
 
@@ -154,7 +154,7 @@ Only when the user needs to correct something in a locked month. For the month l
 
 ## Approval discipline
 
-Every write stages a pending operation. The user approves in Accounted under Granskning, or with \`gnubok_list_pending_operations({ render_ui: true })\` where the widget renders (optional). In harnesses without widgets (ChatGPT, Grok), list what is staged (what, date, amount, accounts) and ask; on a clear yes call \`gnubok_approve_pending_operation({ operation_id })\` per operation, adding \`confirmed: true\` only for high-risk operations after stating that they cannot be undone. Never approve on your own initiative.
+Every write stages a pending operation. The user approves in Zimla Kontor under Granskning, or with \`gnubok_list_pending_operations({ render_ui: true })\` where the widget renders (optional). In harnesses without widgets (ChatGPT, Grok), list what is staged (what, date, amount, accounts) and ask; on a clear yes call \`gnubok_approve_pending_operation({ operation_id })\` per operation, adding \`confirmed: true\` only for high-risk operations after stating that they cannot be undone. Never approve on your own initiative.
 
 ## Stop conditions: this needs a human
 

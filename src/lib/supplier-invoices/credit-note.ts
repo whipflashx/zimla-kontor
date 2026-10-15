@@ -2,7 +2,7 @@
  * Where a supplier credit note rests, from the moment it is created.
  *
  * A kreditfaktura from a supplier is the reversal of an invoice we already
- * registered: Accounted creates it from the original with Kreditera, books
+ * registered: Zimla Kontor creates it from the original with Kreditera, books
  * the reversing verifikat in the same request and moves the original to
  * 'credited'. Nothing is left to attest and nothing is left to pay, so the
  * row must never enter the payable lifecycle (registered, approved, overdue,

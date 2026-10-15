@@ -11,7 +11,7 @@ ensureInitialized()
 export const maxDuration = 60
 
 /**
- * Hourly: what Accounted merged into erp-mafia/accounted-skills community/ is
+ * Hourly: what Zimla Kontor merged into erp-mafia/accounted-skills community/ is
  * published in the app, then each author whose item's page is now live on
  * accounted.se is told so ("Din instruktion är publicerad").
  */

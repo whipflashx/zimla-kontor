@@ -1,5 +1,5 @@
 /**
- * Providers whose underlag (the files behind each verifikat) Accounted imports
+ * Providers whose underlag (the files behind each verifikat) Zimla Kontor imports
  * from the provider's API: Fortnox archive files and Bokio uploads.
  *
  * The one definition for both sides: the migration UI offers the import only

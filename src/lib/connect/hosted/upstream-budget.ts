@@ -16,7 +16,7 @@ import type { ConnectorService } from './ledger'
  * per-minute quota.
  */
 
-/** Peppol is brokered by the Accounted Connect service, not by a proxy in this repo. */
+/** Peppol is brokered by the Zimla Kontor Connect service, not by a proxy in this repo. */
 export type UpstreamService = Exclude<ConnectorService, 'peppol'>
 
 interface Budget {

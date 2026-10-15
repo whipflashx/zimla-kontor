@@ -453,7 +453,7 @@ describe('generatePeriodiskSammanstallning', () => {
 describe('invoice links beyond the engine source columns (#2298)', () => {
   it('files a SIE-imported sale matched to its invoice through invoice_payments', async () => {
     // The reported case: the importer wrote debit 1930 / credit 3308 with
-    // source_type 'import', the user created the invoice in Accounted and
+    // source_type 'import', the user created the invoice in Zimla Kontor and
     // matched it to the imported verifikat (link_invoice_to_voucher). The link
     // lives on invoice_payments only; the entry keeps its source columns.
     results = [

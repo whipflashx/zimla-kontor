@@ -14,7 +14,7 @@ const registered = new Set([
 ])
 
 describe('MCP tool namespaces', () => {
-  it('keeps the legacy namespace unless Accounted is explicitly requested', () => {
+  it('keeps the legacy namespace unless Zimla Kontor is explicitly requested', () => {
     expect(resolveMcpToolNamespace(new Request('https://example.test/mcp'))).toBe('gnubok')
     expect(
       resolveMcpToolNamespace(
@@ -28,7 +28,7 @@ describe('MCP tool namespaces', () => {
     ).toBe('accounted')
   })
 
-  it('maps Accounted aliases to canonical tool names', () => {
+  it('maps Zimla Kontor aliases to canonical tool names', () => {
     expect(toCanonicalToolName('accounted_list_companies')).toBe(
       'gnubok_list_companies'
     )
@@ -43,7 +43,7 @@ describe('MCP tool namespaces', () => {
     )
   })
 
-  it('canonicalizes Accounted references in search queries', () => {
+  it('canonicalizes Zimla Kontor references in search queries', () => {
     expect(
       canonicalizeToolReferencesInText(
         'Find accounted_list_companies and accounted_search_tools'

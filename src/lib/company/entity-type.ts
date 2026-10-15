@@ -5,7 +5,7 @@ import { LEGAL_FORMS, PLANNED_LEGAL_FORMS } from '@/lib/company/forms'
 import type { LegalFormProfile, PlannedLegalForm } from '@/lib/company/forms'
 
 /**
- * The one place that knows which legal forms Accounted books for, and the
+ * The one place that knows which legal forms Zimla Kontor books for, and the
  * readers every call site uses to ask what a form can do.
  *
  * The facts themselves live in one profile per form under

@@ -3,7 +3,7 @@ import { isEntityTypeCreatable, plannedLegalForms } from '@/lib/company/entity-t
 import type { PlannedLegalForm } from '@/lib/company/forms'
 
 /**
- * Explicit allow-lists for TIC/Bolagsverket `legalEntityType` → Accounted
+ * Explicit allow-lists for TIC/Bolagsverket `legalEntityType` → Zimla Kontor
  * EntityType. Strict (not substring) matching avoids misclassifications like
  * "Enskild stiftelse" → enskild_firma, which would provision with K1/
  * kontantmetoden defaults: an ML/BFL correctness risk.

@@ -46,7 +46,7 @@ export const PATCH = withRouteContext<Params>('skills.update', async (request, {
   if (error) throw error
   if (!data) return failure(409, 'CONFLICT', 'Skillen ändrades eller behörighet saknas. Ladda om.', 'Skill changed or permission is missing. Reload.')
   if (input.action === 'submit') {
-    // Accounted's reviewers hear about it; the share is saved either way. The
+    // Zimla Kontor's reviewers hear about it; the share is saved either way. The
     // link is always the canonical app: the request's host is not trusted in an email.
     const reviewUrl = `${getCanonicalAppOrigin()}/skills/granskning`
     const submission = { title: row.name ?? '', handle: input.author_handle, kind: input.kind ?? row.kind ?? 'workflow' }

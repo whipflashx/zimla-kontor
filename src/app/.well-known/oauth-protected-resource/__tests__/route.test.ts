@@ -22,7 +22,7 @@ describe('MCP protected-resource discovery', () => {
     expect(body.authorization_servers).toEqual(['https://app.gnubok.se'])
   })
 
-  it('advertises the exact Accounted namespace resource when requested', async () => {
+  it('advertises the exact Zimla Kontor namespace resource when requested', async () => {
     vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.accounted.se')
 
     const response = await GET(

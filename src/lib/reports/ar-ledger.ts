@@ -75,7 +75,7 @@ export interface ARLedgerReport {
 export const AR_LEDGER_STATUSES = ['sent', 'overdue', 'partially_paid', 'credited'] as const
 
 /**
- * A kreditfaktura the provider migration imported as settled. Accounted issues
+ * A kreditfaktura the provider migration imported as settled. Zimla Kontor issues
  * its own credit notes as 'sent' (issue-credit-note.ts) and reserves
  * 'credited' for the invoice a credit note reverses, which is why
  * AR_LEDGER_STATUSES keeps that status. The migration gives every imported

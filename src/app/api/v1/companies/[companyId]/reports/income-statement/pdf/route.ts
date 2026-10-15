@@ -39,7 +39,7 @@ registerEndpoint({
   description:
     'Renders the resultaträkning as application/pdf, byte-equivalent to the dashboard export. Optional `from_date` / `to_date` (YYYY-MM-DD, inside the fiscal period) narrow the report to a custom range. The filename carries the effective date range and an "utkast" suffix (the document is a working report, not a signed årsredovisning).',
   useWhen:
-    'You need a presentable PDF of the profit/loss for a period or partial period: bank requests, board packs, or sharing outside Accounted.',
+    'You need a presentable PDF of the profit/loss for a period or partial period: bank requests, board packs, or sharing outside Zimla Kontor.',
   doNotUseFor:
     'Machine-readable figures (use the JSON endpoint without /pdf). The formal K2/K3 årsredovisning document (use the year-end flow).',
   pitfalls: [

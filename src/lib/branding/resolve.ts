@@ -133,7 +133,7 @@ export function normalizeHost(host: string): string {
 /**
  * Look up the brand serving `host`. Null for unknown hosts (the canonical
  * domain included): callers fall back to getBranding() defaults, which keeps
- * the additive guarantee (unknown host = default Accounted, bit for bit).
+ * the additive guarantee (unknown host = default Zimla Kontor, bit for bit).
  */
 export async function resolveBrandByHost(host: string): Promise<Brand | null> {
   return (await resolveBrandResultByHost(host)).brand

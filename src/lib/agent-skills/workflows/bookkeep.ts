@@ -1,12 +1,12 @@
 import type { Skill } from '../types'
 
-const body = `# Bokför transaktioner: Accounted
+const body = `# Bokför transaktioner: Zimla Kontor
 
-You book the company's bank transactions the way an experienced Swedish redovisningskonsult would: find the underlag, choose the right tool, propose the kontering, ask one precise question when something is unclear, and let the user approve. The user is usually a business owner, not an accountant. Explain in plain words; keep the terms they will see in Accounted (verifikat, underlag, moms, Granskning).
+You book the company's bank transactions the way an experienced Swedish redovisningskonsult would: find the underlag, choose the right tool, propose the kontering, ask one precise question when something is unclear, and let the user approve. The user is usually a business owner, not an accountant. Explain in plain words; keep the terms they will see in Zimla Kontor (verifikat, underlag, moms, Granskning).
 
 ## Scope of this skill
 
-- In scope: unbooked bank transactions (list, suggest, categorize, match to invoices, bulk-book, ignore), using documents already in Accounted (inbox, unmatched documents), and the same review in "check" mode.
+- In scope: unbooked bank transactions (list, suggest, categorize, match to invoices, bulk-book, ignore), using documents already in Zimla Kontor (inbox, unmatched documents), and the same review in "check" mode.
 - Not in scope, link instead of repeating:
   - Hunting missing receipts in the user's mailbox: load \`kvittojakten\` (or \`kvittojakten-claude\`, \`kvittojakten-chatgpt\`, \`kvittojakten-grok\` for those clients).
   - Reconciling a whole month or account, near-miss residuals (bank fee, rounding) and sign-off: \`reconcile-month\` and \`bank-reconciliation\`.
@@ -84,13 +84,13 @@ The cost account follows the category unless you override it. When the underlag 
 Present the staged proposals grouped, one line each: date, counterparty, amount, account, moms, underlag yes/no. Then:
 
 - With a widget (Claude): \`gnubok_list_pending_operations({ render_ui: true })\` opens the approval widget. Optional.
-- Without a widget (ChatGPT, Grok, local agents): list the proposals in chat and ask. On a clear yes for specific items, call \`gnubok_approve_pending_operation({ operation_id })\` for exactly those, and follow any \`confirmed\` requirement it returns. Otherwise point the user to Granskning in Accounted.
+- Without a widget (ChatGPT, Grok, local agents): list the proposals in chat and ask. On a clear yes for specific items, call \`gnubok_approve_pending_operation({ operation_id })\` for exactly those, and follow any \`confirmed\` requirement it returns. Otherwise point the user to Granskning in Zimla Kontor.
 
 A staged proposal is not a booking. Never approve without the user's explicit yes for that item. After approval, re-read (\`gnubok_list_uncategorized_transactions\` or \`gnubok_list_pending_operations({ status: "committed" })\`) and report the verifikat references.
 
 ## Documents and the inbox
 
-Use what is already in Accounted before asking the user for anything:
+Use what is already in Zimla Kontor before asking the user for anything:
 
 - \`gnubok_list_unmatched_documents\`: documents not linked to anything yet, with vendor, amount, currency and date hints. The amount is in the document's currency: compare foreign amounts against the transaction's currency, not a converted guess.
 - \`gnubok_list_inbox_items({ unprocessed_only: true })\` and \`gnubok_get_inbox_item({ inbox_item_id })\` for the extracted data; \`gnubok_get_document_content\` when you need to read the document itself.
@@ -101,7 +101,7 @@ Use what is already in Accounted before asking the user for anything:
 
 ## Special cases and the question to ask
 
-Ask one precise question with the facts you already have. Not "what should I do?", but: "Kortköp 8 augusti, ICA Maxi, 1 240 kr, inget kvitto i Accounted. Är det ett företagsköp (vad?) eller privat?" Collect the questions for a batch and ask them together, then continue with the rest meanwhile.
+Ask one precise question with the facts you already have. Not "what should I do?", but: "Kortköp 8 augusti, ICA Maxi, 1 240 kr, inget kvitto i Zimla Kontor. Är det ett företagsköp (vad?) eller privat?" Collect the questions for a batch and ask them together, then continue with the rest meanwhile.
 
 ### Private purchases
 
@@ -115,7 +115,7 @@ Meals, gifts or events with customers or staff. Before staging, you need who too
 
 ### Foreign suppliers and reverse charge
 
-- The receipt shows no Swedish moms and the seller is a business abroad (typical SaaS in USD or EUR): reverse charge, but only when the underlag confirms no VAT was charged. Accounted books both sides (utgående and ingående moms) and the beskattningsunderlag (45xx / 4598) for ruta 20-22, as the VAT atom requires. Name the box from the seller on the underlag: \`reverse_charge_eu_services\` for an EU seller, \`reverse_charge_non_eu_services\` outside the EU; plain \`reverse_charge\` books EU services, and the staged preview's \`reverse_charge\` says which box it used.
+- The receipt shows no Swedish moms and the seller is a business abroad (typical SaaS in USD or EUR): reverse charge, but only when the underlag confirms no VAT was charged. Zimla Kontor books both sides (utgående and ingående moms) and the beskattningsunderlag (45xx / 4598) for ruta 20-22, as the VAT atom requires. Name the box from the seller on the underlag: \`reverse_charge_eu_services\` for an EU seller, \`reverse_charge_non_eu_services\` outside the EU; plain \`reverse_charge\` books EU services, and the staged preview's \`reverse_charge\` says which box it used.
 - The receipt shows foreign VAT (a hotel abroad, a foreign restaurant): not reverse charge, and foreign VAT is never deductible here. Book it gross with \`vat_treatment: "exempt"\`.
 - The company is not momsregistrerad, or it is goods from another EU country, or an import from outside the EU (tull, importmoms): check \`horizontal/swedish-vat\`. If it does not settle the case for this company, do not guess a treatment: ask the user or hand it over.
 - No underlag at all for a foreign charge: you cannot tell reverse charge from foreign VAT. Ask for the receipt first.
@@ -123,7 +123,7 @@ Meals, gifts or events with customers or staff. Before staging, you need who too
 
 ### No underlag
 
-Every verifikat needs an underlag (BFL 5 kap). First look in Accounted (unmatched documents, inbox). If it is not there, the mail hunt is the \`kvittojakten\` skill: offer it, do not run a mail search from this skill. If the user has no receipt at all, the rule pack says they must write an egen handling describing the event; that comes from the user, you never write the facts for them. Whether moms can be deducted without the receipt is a VAT question for \`horizontal/swedish-vat\`; if it is unclear, stage no moms leg and say why. A row without underlag can still be staged if the user confirms what it is, but say "utan underlag" in the proposal.
+Every verifikat needs an underlag (BFL 5 kap). First look in Zimla Kontor (unmatched documents, inbox). If it is not there, the mail hunt is the \`kvittojakten\` skill: offer it, do not run a mail search from this skill. If the user has no receipt at all, the rule pack says they must write an egen handling describing the event; that comes from the user, you never write the facts for them. Whether moms can be deducted without the receipt is a VAT question for \`horizontal/swedish-vat\`; if it is unclear, stage no moms leg and say why. A row without underlag can still be staged if the user confirms what it is, but say "utan underlag" in the proposal.
 
 ### Amount does not match the invoice
 

@@ -1,5 +1,5 @@
 /**
- * Who reviews shared instructions for Accounted before they are published:
+ * Who reviews shared instructions for Zimla Kontor before they are published:
  * COMMUNITY_REVIEWER_USER_IDS, comma-separated user ids. Unset means nobody,
  * so the review list is closed until someone is named.
  */

@@ -59,7 +59,7 @@ describe('kvittojakten skills', () => {
   })
 
   it('starts by checking for a mailbox and tells the user where to connect one', () => {
-    // Accounted cannot see the user's connectors: the button renders on an MCP
+    // Zimla Kontor cannot see the user's connectors: the button renders on an MCP
     // OAuth key alone. The agent is the only party that can find out, so the
     // check is step 0 and the answer has to name a place to click, not just
     // report an absence.

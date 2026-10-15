@@ -8,7 +8,7 @@ const log = createLogger('worklist/missing-underlag')
  * What the "Verifikat utan underlag" row can say about the work behind it.
  *
  * The errand is derived, never stored: which of a handful of places a receipt
- * has to be fetched from follows from the purchase descriptor, so Accounted
+ * has to be fetched from follows from the purchase descriptor, so Zimla Kontor
  * can say it without an agent having run and without a note written back from
  * a chat the user has already closed. The agent's per-item sentence and this
  * summary come out of the same classifier (lib/receipt-hunt/agent-worklist),

@@ -13,7 +13,7 @@ describe('community-repo', () => {
     expect(communitySlug('  !!  ')).toBe('instruktion')
   })
 
-  it('never names a community folder like one of Accounted\'s own packs (swedish-*)', () => {
+  it('never names a community folder like one of Zimla Kontor\'s own packs (swedish-*)', () => {
     expect(communitySlug('Swedish VAT')).toBe('community-swedish-vat')
     expect(communitySlug('Swedish')).toBe('swedish')
     expect(communitySlug(`Swedish ${'x'.repeat(80)}`)).toHaveLength(60)

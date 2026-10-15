@@ -4,7 +4,7 @@ import { readyTileOf } from '@/lib/invoices/rot-rut-overview'
 /**
  * The "Redo att begäras" tile counts only what a begäran row will take off
  * the list: ROT and RUT. Grön teknik is requested in Skatteverkets e-tjänst,
- * which Accounted cannot see, so it is shown apart and never as "ready".
+ * which Zimla Kontor cannot see, so it is shown apart and never as "ready".
  */
 describe('readyTileOf', () => {
   it('leaves grön teknik out of the ready count', () => {

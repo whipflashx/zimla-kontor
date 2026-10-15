@@ -39,7 +39,7 @@ interface NewUserChecklistProps {
   hasBankConnected?: boolean
   hasSkatteverketConnected?: boolean
   /**
-   * Accounted can be the company's ombud (system auth on): the Skatteverket
+   * Zimla Kontor can be the company's ombud (system auth on): the Skatteverket
    * step appoints it instead of starting an hourly BankID session.
    */
   skvOmbudEnabled?: boolean

@@ -1031,7 +1031,7 @@ describe('generateFullArchive', () => {
       ])
     })
 
-    // The archive is what a company leaving Accounted keeps as its BFL
+    // The archive is what a company leaving Zimla Kontor keeps as its BFL
     // 7-year record. A representation answer given in chat is documented in
     // full only in invoice_inbox_items.channel_context: the verifikat line
     // caps at 220 chars and drops whole names ("… och N till"), while

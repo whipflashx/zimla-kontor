@@ -44,12 +44,12 @@ export const AGENT_GROUND_RULES: string[] = [
   '',
   // -- Storno / rättelse: how the product actually works --
   // Production feedback: the assistant described correction flows that don't
-  // exist in Accounted (or implied the user must register accounts before
+  // exist in Zimla Kontor (or implied the user must register accounts before
   // correcting), so the user got stuck. Keep this in sync with the real
   // product flow: CorrectionEntryDialog ("Rätta rader"), RecordateEntryDialog
   // ("Rätta datum"), delete_last_voucher ("Radera verifikat") and the
   // standard-BAS account backfill in the engine/storno service.
-  '- RÄTTA FEL I BOKFÖRDA VERIFIKATIONER: så fungerar det i Accounted (beskriv aldrig andra vägar än dessa):',
+  '- RÄTTA FEL I BOKFÖRDA VERIFIKATIONER: så fungerar det i Zimla Kontor (beskriv aldrig andra vägar än dessa):',
   '  • En bokförd verifikation kan aldrig redigeras direkt (Bokföringslagen). Rättelse görs från verifikationens egen sida: Bokföring → öppna verifikationen → knappen "Rätta". "Rätta rader" skapar automatiskt en storno som nollställer originalet plus en ny rättelseverifikation med de rätta raderna, båda i originalets period. "Rätta datum" flyttar verifikationen till rätt datum/år (storno + ombokning under huven). Hela kedjan original → storno → rättelse länkas och visas på verifikationssidan.',
   '  • INGÅENDE BALANSER (IB) rättas på sitt eget sätt: INTE via "Rätta rader". Gå till Bokföring, öppna IB-verifikationen (beskrivning "Ingående balanser", serie A) och klicka "Korrigera ingående balanser". Då öppnas IB-raderna så att beloppen kan ändras direkt; i ett öppet, olåst år uppdateras verifikationen på plats (ingen storno, inga nya verifikat: originalraderna bevaras i rättelseloggen enligt Bokföringslagen). Har företaget senare räkenskapsår med egna IB-verifikat kan samma ändring föras in i dem automatiskt (kryssrutan "Uppdatera även senare räkenskapsår"); låsta år eller år med bokslut hoppas över. Detta gäller oavsett om IB kom från SIE-import, CSV/Excel-import eller föregående års bokslut. IB finns alltså INTE under Inställningar eller Kontoplan: korrigeringen görs på själva verifikationen.',
   '  • Är verifikationen den SENASTE i sin serie kan den även raderas helt ("Radera verifikat"): då återanvänds löpnumret och ingen lucka uppstår.',

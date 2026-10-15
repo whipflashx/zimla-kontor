@@ -1,7 +1,7 @@
 /**
  * One-time link codes + phone-link lifecycle.
  *
- * The code proves control of an Accounted account (minted in an authenticated
+ * The code proves control of an Zimla Kontor account (minted in an authenticated
  * settings panel) and sending it proves possession of the phone; the webhook
  * binds the two. Invite-token pattern (lib/auth/invite-tokens.ts): the raw
  * code exists only in the user's chat, the DB stores a hash. That hash is

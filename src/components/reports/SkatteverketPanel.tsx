@@ -727,7 +727,7 @@ function SkatteverketPanelInner({
   // Not connected. The momsdeklaration is already complete and can be filed
   // manually at skatteverket.se with no connection (the "Lämna in" card above
   // owns that path). Connecting is an optional convenience for submitting
-  // directly from Accounted, so frame it that way.
+  // directly from Zimla Kontor, so frame it that way.
   if (!status?.connected) {
     return (
       <section>

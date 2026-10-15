@@ -3,7 +3,7 @@
  * Claude. Claude schedules recurring Cowork tasks that run in its cloud with
  * the user's connectors, even when the computer is off, on the paid plans
  * (support.claude.com, "Schedule recurring tasks in Claude Cowork"). They can
- * be created on claude.ai and in Claude Desktop. Accounted only writes the
+ * be created on claude.ai and in Claude Desktop. Zimla Kontor only writes the
  * request; Claude asks the user to confirm the schedule.
  *
  * Two ways in: Claude on the web (the request is copied and
@@ -71,7 +71,7 @@ export function routineWhen({ cadence, day, time }: RoutineChoice, t: RoutineTra
  * The request Claude gets: schedule `run` for the company at the chosen time.
  * Nobody is there while it runs, so it runs unattended, never approves its
  * own proposals (an analysis proposes nothing at all), and runs once at once
- * while the user is there to allow Accounted's tools.
+ * while the user is there to allow Zimla Kontor's tools.
  */
 export function routinePrompt({ choice, run, readOnly, company }: RoutineRequest, t: RoutineTranslate): string {
   const text = t(readOnly ? 'routine_prompt_analysis' : 'routine_prompt', {

@@ -25,7 +25,7 @@ import {
   Users,
 } from 'lucide-react'
 
-// Community invite (Accounted's Discord). Deliberately a constant, not
+// Community invite (Zimla Kontor's Discord). Deliberately a constant, not
 // branding config: self-hosted rebrands can hide or swap it when someone
 // actually asks for that. Must be a never-expiring invite: the previous one
 // expired and left logged-in users with a dead link.

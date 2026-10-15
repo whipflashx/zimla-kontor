@@ -16,7 +16,7 @@ vi.mock('@/lib/supabase/server', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted', appUrl: 'https://app.test' }),
+  getBranding: () => ({ appName: 'Zimla Kontor', appUrl: 'https://app.test' }),
 }))
 
 vi.mock('../crypto', () => ({

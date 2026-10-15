@@ -174,7 +174,7 @@ registerEndpoint({
   path: '/api/v1/companies/:companyId/webhooks',
   summary: 'Register a webhook subscription.',
   description:
-    'Creates a webhook subscription for one event type. The response includes a freshly generated HMAC signing secret, returned EXACTLY ONCE: store it on the receiver side immediately. The webhook is pinned to the current API version on creation; payload shapes for this webhook will not change until you explicitly upgrade. The webhook starts with verification_status \'pending\': no event is delivered until the URL passes the ownership handshake. Accounted POSTs a signed webhook.verification event whose data.object.challenge your endpoint must return as {"challenge": "<value>"} with a 2xx within 10 seconds; call POST /webhooks/{id}/verify once your receiver answers it, or let the automatic attempts (after 1m, 5m, 30m, 2h, 12h, then daily, 8 in all) pick it up.',
+    'Creates a webhook subscription for one event type. The response includes a freshly generated HMAC signing secret, returned EXACTLY ONCE: store it on the receiver side immediately. The webhook is pinned to the current API version on creation; payload shapes for this webhook will not change until you explicitly upgrade. The webhook starts with verification_status \'pending\': no event is delivered until the URL passes the ownership handshake. Zimla Kontor POSTs a signed webhook.verification event whose data.object.challenge your endpoint must return as {"challenge": "<value>"} with a 2xx within 10 seconds; call POST /webhooks/{id}/verify once your receiver answers it, or let the automatic attempts (after 1m, 5m, 30m, 2h, 12h, then daily, 8 in all) pick it up.',
   useWhen:
     'You are wiring a downstream integration that needs push notifications instead of polling.',
   doNotUseFor:
@@ -351,7 +351,7 @@ export const POST = withApiV1<{ params: Promise<{ companyId: string }> }>(
     }
 
     // Secret returned exactly once. Caller must persist it on the receiver
-    // side: Accounted will not surface it on any subsequent endpoint.
+    // side: Zimla Kontor will not surface it on any subsequent endpoint.
     // Cache-Control: no-store mirrors the rotate-secret response (A.8.12 /
     // Art.25) so no intermediary (CDN / proxy / gateway log / browser
     // cache) persists the secret beyond the direct response chain.

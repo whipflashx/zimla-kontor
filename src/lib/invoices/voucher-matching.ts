@@ -816,7 +816,7 @@ export async function linkInvoiceToVoucher(
 
   // The invoice's archived PDF is the underlag for the linked booking. Under
   // kontantmetoden nothing else ever anchors it (there is no registration
-  // verifikat), so without this the user re-uploads a file Accounted already
+  // verifikat), so without this the user re-uploads a file Zimla Kontor already
   // holds. Idempotent and never throws: the link has already committed.
   await anchorCustomerInvoiceDocument(supabase, companyId, params.invoiceId)
 

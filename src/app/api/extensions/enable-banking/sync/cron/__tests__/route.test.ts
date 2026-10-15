@@ -56,7 +56,7 @@ vi.mock('@/lib/email/service', () => ({
 }))
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted' }),
+  getBranding: () => ({ appName: 'Zimla Kontor' }),
 }))
 
 import {

@@ -211,7 +211,7 @@ export async function buildArsredovisningData(
       'Jämförelsesiffror kunde inte hämtas för föregående räkenskapsår, balans- och resultaträkningen visas utan jämförelseår. Kontrollera det föregående årets bokföring.',
     )
   }
-  // A previous year that exists but holds no bookkeeping in Accounted (the
+  // A previous year that exists but holds no bookkeeping in Zimla Kontor (the
   // year was done in another system and klarmarkerad here) yields an all-zero
   // comparison column, not a missing one. ÅRL 3 kap. 5 § requires the prior
   // year's amount for every post, so say so instead of printing 0 kr silently
@@ -223,7 +223,7 @@ export async function buildArsredovisningData(
     previousTb.preClosing.length === 0
   ) {
     statementWarnings.push(
-      `Föregående räkenskapsår (${prevPeriodRow.name}) saknar bokföring i Accounted, så jämförelsesiffrorna visar 0 kr. ÅRL 3 kap. 5 § kräver föregående års belopp för varje post. Bokför eller SIE-importera året innan årsredovisningen lämnas in; ett klarmarkerat år öppnas igen under Inställningar > Bokföring > Räkenskapsår.`,
+      `Föregående räkenskapsår (${prevPeriodRow.name}) saknar bokföring i Zimla Kontor, så jämförelsesiffrorna visar 0 kr. ÅRL 3 kap. 5 § kräver föregående års belopp för varje post. Bokför eller SIE-importera året innan årsredovisningen lämnas in; ett klarmarkerat år öppnas igen under Inställningar > Bokföring > Räkenskapsår.`,
     )
   }
   const isForening = entityType === 'ekonomisk_forening'

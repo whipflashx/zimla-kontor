@@ -62,7 +62,7 @@ export interface InvoicePdfDelivery {
 export type InvoicePdfRerenderReason =
   /** Never sent. The re-render is the only document there has ever been. */
   | 'not_sent_yet'
-  /** Latest completed delivery was a manual mark: Accounted never held that file. */
+  /** Latest completed delivery was a manual mark: Zimla Kontor never held that file. */
   | 'sent_outside_accounted'
   /** Sent, but no archived delivery exists (invoice predates delivery history). */
   | 'no_archived_copy'

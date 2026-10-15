@@ -41,7 +41,7 @@ export function hasOwnPeppolCredentials(): boolean {
 /**
  * Whether this instance provides the given connector capability from its own
  * credentials. org_lookup and migration have no own-credentials form: they
- * run exclusively on services Accounted operates.
+ * run exclusively on services Zimla Kontor operates.
  */
 export function hasOwnCredentialsFor(key: CapabilityKey): boolean {
   if (key === CAPABILITY.bank_sync) return hasOwnEnableBankingCredentials()

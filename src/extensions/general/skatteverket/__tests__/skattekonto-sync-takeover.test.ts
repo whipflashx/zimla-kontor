@@ -220,7 +220,7 @@ describe('syncSkattekonto: fiscal-year lower bound on the fetch', () => {
     enqueue({ data: [] }) // fiscal_periods: none
 
     // ctx.userId is whoever the cron put in the context; the audit rows must
-    // not name them for a call made on Accounted's own credentials.
+    // not name them for a call made on Zimla Kontor's own credentials.
     await syncSkattekonto(makeCtx(), { mode: 'system' })
 
     const systemActor = { companyId: 'company-1', userId: null }

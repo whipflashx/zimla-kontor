@@ -89,7 +89,7 @@ const RAILS: Array<{ re: RegExp; rail: string }> = [
   { re: /^(?:IZ|ZETTLE)[\s*_]*(.+)$/i, rail: 'Zettle' },
   { re: /^SUMUP\s*\*\s*(.+)$/i, rail: 'SumUp' },
   { re: /^NYX\s*\*\s*(.+)$/i, rail: 'Svenska Betalsystem' },
-  // Accounted's own Stripe descriptions: the payment names the payer.
+  // Zimla Kontor's own Stripe descriptions: the payment names the payer.
   { re: /^Stripe-betalning\s+(.+)$/i, rail: 'Stripe' },
 ]
 

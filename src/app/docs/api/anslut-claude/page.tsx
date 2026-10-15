@@ -6,7 +6,7 @@ import { ANSLUT_CLAUDE_MD } from '@/lib/docs/content/anslut-claude'
 export const metadata: Metadata = {
   title: 'Anslut Claude · accounted API',
   description:
-    'Koppla Accounted till Claude (claude.ai, Claude Desktop, Claude Code) via MCP-servern: OAuth 2.1-connector, Claude Code-plugin eller npx accounted-mcp.',
+    'Koppla Zimla Kontor till Claude (claude.ai, Claude Desktop, Claude Code) via MCP-servern: OAuth 2.1-connector, Claude Code-plugin eller npx accounted-mcp.',
 }
 
 export default function DocsApiAnslutClaudePage() {

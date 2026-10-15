@@ -44,18 +44,18 @@ describe('routine request', () => {
   it('pins the whole Swedish request for a flow', () => {
     expect(routinePrompt({ choice: weekly, run, readOnly: false, company }, translator('sv'))).toBe(
       'Skapa en schemalagd uppgift som körs varje måndag kl 07:00 svensk tid (Europe/Stockholm). '
-      + `Den gäller bolaget Exempel AB (company_id ${company.id}): skicka company_id "${company.id}" på varje anrop till Accounted. `
+      + `Den gäller bolaget Exempel AB (company_id ${company.id}): skicka company_id "${company.id}" på varje anrop till Zimla Kontor. `
       + 'Varje gång den körs: Hitta kvittona som saknas. '
       + 'Ingen är med när den körs, så skicka "unattended": true när du anropar get_task och ställ inga frågor. '
-      + 'Lägg förslag för godkännande i Accounted. Godkänn aldrig förslag själv, det gör jag i Accounted. '
+      + 'Lägg förslag för godkännande i Zimla Kontor. Godkänn aldrig förslag själv, det gör jag i Zimla Kontor. '
       + 'Avsluta med en kort sammanfattning av vad som väntar på mig. '
-      + 'Kör uppgiften en gång direkt nu medan jag är här, så att jag ser att den når Accounted och kan tillåta verktygen.',
+      + 'Kör uppgiften en gång direkt nu medan jag är här, så att jag ser att den når Zimla Kontor och kan tillåta verktygen.',
     )
   })
 
   it('gives an analysis a read-only request that proposes nothing', () => {
     const prompt = routinePrompt({ choice: weekly, run: 'Kör "Kassaprognos 30 dagar".', readOnly: true, company }, translator('sv'))
-    expect(prompt).toContain('ändra ingenting i Accounted och lägg inga förslag')
+    expect(prompt).toContain('ändra ingenting i Zimla Kontor och lägg inga förslag')
     expect(prompt).not.toContain('Lägg förslag för godkännande')
     expect(prompt).toContain('Kör "Kassaprognos 30 dagar".')
   })
@@ -81,9 +81,9 @@ describe('routine request', () => {
 
   it('reads as one plain sentence on the page, without the machine text', () => {
     const sv = routineSummary({ choice: weekly, readOnly: false, company }, 'Månadsavslut', translator('sv'))
-    expect(sv).toBe('Claude kör "Månadsavslut" för Exempel AB varje måndag kl 07:00 svensk tid och lägger förslag som du godkänner i Accounted. Första gången kör Claude den direkt, medan du är kvar.')
+    expect(sv).toBe('Claude kör "Månadsavslut" för Exempel AB varje måndag kl 07:00 svensk tid och lägger förslag som du godkänner i Zimla Kontor. Första gången kör Claude den direkt, medan du är kvar.')
     const analysis = routineSummary({ choice: weekly, readOnly: true, company }, 'Kassaprognos', translator('en'))
-    expect(analysis).toContain('Nothing changes in Accounted.')
+    expect(analysis).toContain('Nothing changes in Zimla Kontor.')
     for (const text of [sv, analysis]) {
       expect(text).not.toContain('get_task')
       expect(text).not.toContain(company.id)

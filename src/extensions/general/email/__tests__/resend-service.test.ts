@@ -16,7 +16,7 @@ import {
 } from '@/extensions/general/email/lib/resend-service'
 
 vi.mock('@/lib/branding/service', () => ({
-  getBranding: () => ({ appName: 'Accounted' }),
+  getBranding: () => ({ appName: 'Zimla Kontor' }),
 }))
 
 const { sendMock } = vi.hoisted(() => {
@@ -46,7 +46,7 @@ describe('buildFromHeader', () => {
   })
 
   it('renders the bare app sender without a company name', () => {
-    expect(buildFromHeader({})).toBe('Accounted <noreply@platform.example>')
+    expect(buildFromHeader({})).toBe('Zimla Kontor <noreply@platform.example>')
   })
 
   it('renders an explicit sender as "<name> <address>"', () => {

@@ -47,7 +47,7 @@ export function getSenderForBrand(brand: Brand | null): BrandSender {
       brand,
     }
   }
-  // Unverified/pending/failed sender domain: "via Accounted" fallback.
+  // Unverified/pending/failed sender domain: "via Zimla Kontor" fallback.
   return {
     fromName: brand.appName,
     fromAddress: null,

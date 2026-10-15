@@ -876,8 +876,8 @@ function alreadyExplainedRefusal(
     'den här API-nyckeln saknar behörigheten reconciliation:write, så gnubok_reconcile_match går inte att anropa med den'
   const link = !canReconcile
     ? ids.length === 1
-      ? `${linkOne}. Obs: ${missingScope}; användaren kan också koppla raden på sidan Avstämning i Accounted, eller koppla om connectorn så att den nya nyckeln får behörigheten`
-      : `användaren kopplar den på sidan Avstämning i Accounted, eller kopplar om connectorn så att den nya nyckeln får behörigheten (${missingScope})`
+      ? `${linkOne}. Obs: ${missingScope}; användaren kan också koppla raden på sidan Avstämning i Zimla Kontor, eller koppla om connectorn så att den nya nyckeln får behörigheten`
+      : `användaren kopplar den på sidan Avstämning i Zimla Kontor, eller kopplar om connectorn så att den nya nyckeln får behörigheten (${missingScope})`
     : ids.length === 1
       ? `${linkOne} eller gnubok_reconcile_match (account_key "${accountKey}", pairs [{ external_ids: ["${transactionId}"], journal_entry_ids: ["${ids[0]}"] }])`
       : `gnubok_reconcile_match (account_key "${accountKey}", pairs [{ external_ids: ["${transactionId}"], journal_entry_ids: ${JSON.stringify(ids)}, allocations: [{ journal_entry_id, amount }] per verifikat, summan = radens belopp })`
@@ -899,7 +899,7 @@ function alreadyExplainedRefusal(
         }
       : {
           description:
-            'This key lacks the reconciliation:write scope, and one bank row against several vouchers links only through gnubok_reconcile_match. Ask the user to link the row to the listed vouchers on the Avstämning page in Accounted, or to reconnect the connector so its new key carries reconciliation:write. Do not book the row again.',
+            'This key lacks the reconciliation:write scope, and one bank row against several vouchers links only through gnubok_reconcile_match. Ask the user to link the row to the listed vouchers on the Avstämning page in Zimla Kontor, or to reconnect the connector so its new key carries reconciliation:write. Do not book the row again.',
         }
   return codedRefusal('BATCH_TX_POSSIBLE_DUPLICATE', message, remediation)
 }
@@ -1715,7 +1715,7 @@ interface SkattekontoStageRow {
 }
 
 const SKATTEKONTO_TWIN_TAIL =
-  'A key without the reconciliation:write scope cannot call gnubok_reconcile_match: the user links the row with Koppla on the Skattekonto page in Accounted. Book it anyway (allow_duplicate=true, or allow_duplicate_ids for the batch tool) only when the user confirms the event really happened twice.'
+  'A key without the reconciliation:write scope cannot call gnubok_reconcile_match: the user links the row with Koppla on the Skattekonto page in Zimla Kontor. Book it anyway (allow_duplicate=true, or allow_duplicate_ids for the batch tool) only when the user confirms the event really happened twice.'
 
 /**
  * The event of a skattekonto row is already in the ledger (a verifikat the
@@ -4501,7 +4501,7 @@ const ASSET_WRITE_PROPERTIES = {
   },
   opening_accumulated_depreciation: {
     type: 'number',
-    description: 'Accumulated depreciation for this asset from the previous asset register, SEK, 0 to acquisition_cost - salvage_value. No voucher or automatic reconciliation: manually reconcile register totals with the imported ledger before depreciation or disposal. Manual ledger postings do not lock opening edits; depreciation posted through Accounted\'s asset register or disposal does. Component opening balances are unsupported; keep the component breakdown.',
+    description: 'Accumulated depreciation for this asset from the previous asset register, SEK, 0 to acquisition_cost - salvage_value. No voucher or automatic reconciliation: manually reconcile register totals with the imported ledger before depreciation or disposal. Manual ledger postings do not lock opening edits; depreciation posted through Zimla Kontor\'s asset register or disposal does. Component opening balances are unsupported; keep the component breakdown.',
   },
   opening_depreciation_date: {
     type: ['string', 'null'],
@@ -5884,7 +5884,7 @@ export const tools: McpTool[] = [
         still_to_ask: stillToAsk,
         warnings,
         instructions:
-          'Present the company facts as a short summary for the user to CONFIRM (name, address, F-skatt, VAT status; do not re-ask them). An established company with F-skatt/VAT is the NORMAL case even when the user says "nytt bolag" (new = new to Accounted): never refuse or second-guess the orgnr because the company looks established. Ask ONLY the still_to_ask questions, merge answers into suggested_create_company_input, and call gnubok_create_company (preview, read back incl. the defaulted accounting method, then confirm=true).',
+          'Present the company facts as a short summary for the user to CONFIRM (name, address, F-skatt, VAT status; do not re-ask them). An established company with F-skatt/VAT is the NORMAL case even when the user says "nytt bolag" (new = new to Zimla Kontor): never refuse or second-guess the orgnr because the company looks established. Ask ONLY the still_to_ask questions, merge answers into suggested_create_company_input, and call gnubok_create_company (preview, read back incl. the defaulted accounting method, then confirm=true).',
       }
     },
   },
@@ -6032,7 +6032,7 @@ export const tools: McpTool[] = [
     keywords: ['bankkoppling', 'koppla bank', 'banksynk'],
     title: 'Connect Bank',
     description:
-      'Bank connection status plus the browser connect link (PSD2, BankID; user must be logged in to Accounted). When the user has NAMED their bank, pass it as bank on the FIRST call (a bare call renders a redundant generic card): the link then starts that bank\'s consent directly.',
+      'Bank connection status plus the browser connect link (PSD2, BankID; user must be logged in to Zimla Kontor). When the user has NAMED their bank, pass it as bank on the FIRST call (a bare call renders a redundant generic card): the link then starts that bank\'s consent directly.',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
@@ -6114,7 +6114,7 @@ export const tools: McpTool[] = [
             : (requestedBank
                 ? ''
                 : 'BETTER LINK AVAILABLE: if you know (or can ask) which bank the company uses, call this tool again with bank=<name>; the link then opens that bank\'s consent directly instead of a picker. ') +
-              'On claude.ai/Claude Desktop a connect card with an open-in-browser button is rendered with this result; on other clients give the user the connect_url as a link. They must be logged in to Accounted there. They approve with BankID (consent up to 180 days), then CONFIRM WHICH ACCOUNTS to sync in the dialog that opens; the first transactions arrive within a minute of that save. Banks cap PSD2 history (often ~90 days): older history comes via SIE import, not the bank. When the user is back, call this tool again to verify status=active, then continue straight to gnubok_list_uncategorized_transactions without asking.',
+              'On claude.ai/Claude Desktop a connect card with an open-in-browser button is rendered with this result; on other clients give the user the connect_url as a link. They must be logged in to Zimla Kontor there. They approve with BankID (consent up to 180 days), then CONFIRM WHICH ACCOUNTS to sync in the dialog that opens; the first transactions arrive within a minute of that save. Banks cap PSD2 history (often ~90 days): older history comes via SIE import, not the bank. When the user is back, call this tool again to verify status=active, then continue straight to gnubok_list_uncategorized_transactions without asking.',
       }
     },
   },
@@ -6216,7 +6216,7 @@ export const tools: McpTool[] = [
     keywords: ['skatteverket', 'koppla skatteverket', 'deklarationsombud'],
     title: 'Connect Skatteverket',
     description:
-      'Skatteverket connection status plus the browser link where the user authorises Accounted (BankID as firmatecknare; logged in to Accounted there). Enables skattekonto sync and filing of moms/AGI. Use after gnubok_create_company or when a filing tool reports no connection.',
+      'Skatteverket connection status plus the browser link where the user authorises Zimla Kontor (BankID as firmatecknare; logged in to Zimla Kontor there). Enables skattekonto sync and filing of moms/AGI. Use after gnubok_create_company or when a filing tool reports no connection.',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
@@ -6266,7 +6266,7 @@ export const tools: McpTool[] = [
             ? 'Skatteverket is connected. Skattekonto syncs automatically; momsdeklaration and AGI can be filed from here (each filing stages for approval).'
             : needsReconsent
               ? `The Skatteverket session has expired (the personal login lasts about an hour, so this is normal). Only a person can renew it: give the user the connect_url and ask them to sign in again with BankID, then continue. Do not call Skatteverket tools until they confirm. ${SKV_NEEDS_RECONSENT_MESSAGE}`
-              : 'On claude.ai/Claude Desktop a connect card with an open-in-browser button is rendered with this result; on other clients give the user the connect_url as a link. They must be logged in to Accounted there; Skatteverket asks them to identify with BankID as firmatecknare and approve the access, then they land back in Accounted. Tell them to come back here when done.',
+              : 'On claude.ai/Claude Desktop a connect card with an open-in-browser button is rendered with this result; on other clients give the user the connect_url as a link. They must be logged in to Zimla Kontor there; Skatteverket asks them to identify with BankID as firmatecknare and approve the access, then they land back in Zimla Kontor. Tell them to come back here when done.',
       }
     },
   },
@@ -6480,7 +6480,7 @@ export const tools: McpTool[] = [
           summary: s.summary,
           tags: s.tags,
           tier: s.tier,
-          // Whether an own item (or an Accounted analysis) is a job to run, rules
+          // Whether an own item (or an Zimla Kontor analysis) is a job to run, rules
           // to follow or an analysis to build: the tier alone says only "own".
           ...(s.itemKind ? { item_kind: s.itemKind } : {}),
         })),
@@ -8833,7 +8833,7 @@ export const tools: McpTool[] = [
       const total = count ?? offset + invoices.length + (hasMore ? 1 : 0)
 
       // Register-coverage disclosure: the register only holds invoices
-      // created in Accounted. Migrated/backfilled invoice history lives as
+      // created in Zimla Kontor. Migrated/backfilled invoice history lives as
       // journal entries, so without this field an agent reads a silently
       // incomplete list as complete. First page only: continuation pages of
       // the same listing don't need the disclosure re-queried. Non-fatal:
@@ -19181,7 +19181,7 @@ export const tools: McpTool[] = [
             additionalProperties: false,
             properties: {
               employee_id: { type: 'string', description: 'UUID of the employee' },
-              cutover_date: { type: 'string', description: 'YYYY-MM-01, first month run in Accounted' },
+              cutover_date: { type: 'string', description: 'YYYY-MM-01, first month run in Zimla Kontor' },
               ytd_gross: { type: 'number' },
               ytd_tax: { type: 'number' },
               ytd_net: { type: ['number', 'null'], description: 'null = unknown' },
@@ -23502,7 +23502,7 @@ export const tools: McpTool[] = [
       // If the original touches output/input VAT accounts (2610-2670), a storno
       // is correct ONLY if the moms period covering entry_date has not yet been
       // filed with Skatteverket. For filed periods the legal path is an
-      // omprövning (rättelse-omprövning per ML 2023:200, SFL 22 kap). Accounted
+      // omprövning (rättelse-omprövning per ML 2023:200, SFL 22 kap). Zimla Kontor
       // doesn't track per-VAT-period filing status today, so we surface a
       // soft warning rather than block: the human approver decides.
       const vatAccounts = originalLines
@@ -24285,7 +24285,7 @@ export const tools: McpTool[] = [
     outputSchema: paginatedSchema('operations', { type: 'object' }, {
       can_approve: {
         type: 'boolean',
-        description: 'Whether this key can approve or reject (pending_operations:approve). false: the user reviews in Accounted under Att göra > Agentförslag (/pending).',
+        description: 'Whether this key can approve or reject (pending_operations:approve). false: the user reviews in Zimla Kontor under Att göra > Agentförslag (/pending).',
       },
     }),
     annotations: ANNOTATIONS_READ_ONLY,
@@ -24667,7 +24667,7 @@ export const tools: McpTool[] = [
     name: 'gnubok_set_inbox_extracted_data',
     keywords: ['inkorg', 'underlag', 'tolka kvitto'],
     title: 'Set Inbox Extracted Data',
-    description: 'Replace extracted_data on an inbox item with agent-supplied fields. Use when your pipeline parses the document better than Accounted\'s OCR. Follow with gnubok_create_supplier_invoice_from_inbox to stage.',
+    description: 'Replace extracted_data on an inbox item with agent-supplied fields. Use when your pipeline parses the document better than Zimla Kontor\'s OCR. Follow with gnubok_create_supplier_invoice_from_inbox to stage.',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
@@ -25453,12 +25453,12 @@ const SERVER_INFO_BY_NAMESPACE = {
   gnubok: {
     // Stable legacy identity for every existing connection.
     name: 'gnubok',
-    title: 'Accounted',
+    title: 'Zimla Kontor',
     version: SERVER_VERSION,
   },
   accounted: {
     name: 'accounted',
-    title: 'Accounted',
+    title: 'Zimla Kontor',
     version: SERVER_VERSION,
   },
 } as const
@@ -26035,7 +26035,7 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
   // followed metric. It is NOT used for auth.
   const rawSessionId = request.headers.get('mcp-session-id')
   const sessionId = rawSessionId && /^[A-Za-z0-9_-]{1,128}$/.test(rawSessionId) ? rawSessionId : null
-  // Distribution-channel marker: the Accounted bridge sends
+  // Distribution-channel marker: the Zimla Kontor bridge sends
   // `X-Accounted-Client`; the legacy bridge keeps `X-Gnubok-Client`. Both are
   // telemetry-only and share the same validation and storage path.
   const rawClient =
@@ -26201,7 +26201,7 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
             '',
             ...(isAnonymous
               ? [
-                  'NOT CONNECTED YET. Without an account you can call gnubok_search_tools, gnubok_list_skills and gnubok_load_skill. Every other tool needs the user to connect their Accounted account: calling one returns an authentication challenge that your client shows as a Connect prompt. A user who has no account creates one right there (BankID or e-mail, about a minute), and the call is then retried automatically. To set up bookkeeping for a company that is not in Accounted yet, load the "onboarding" skill (gnubok_load_skill) and follow it: gnubok_create_company is the first protected call and triggers the connect step.',
+                  'NOT CONNECTED YET. Without an account you can call gnubok_search_tools, gnubok_list_skills and gnubok_load_skill. Every other tool needs the user to connect their Zimla Kontor account: calling one returns an authentication challenge that your client shows as a Connect prompt. A user who has no account creates one right there (BankID or e-mail, about a minute), and the call is then retried automatically. To set up bookkeeping for a company that is not in Zimla Kontor yet, load the "onboarding" skill (gnubok_load_skill) and follow it: gnubok_create_company is the first protected call and triggers the connect step.',
                   '',
                 ]
               : []),
@@ -26228,14 +26228,14 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
             '• Before categorizing or creating vouchers, consult ledger_context in gnubok_get_agent_briefing (full picture: the Accounted://ledger/context resource): it shows how THIS company has booked each counterparty and supplier (dominant account, VAT treatment, evidence = historical frequency). Prefer these observed patterns over guesses; explicit mapping rules outrank them. Frequency is not permission to auto-post: still stage for approval.',
             canApprove
               ? '• Categorize transactions: gnubok_list_uncategorized_transactions → gnubok_suggest_categories → gnubok_categorize_transaction (stages) → gnubok_approve_pending_operation (after user confirms in chat).'
-              : '• Categorize transactions: gnubok_list_uncategorized_transactions → gnubok_suggest_categories → gnubok_categorize_transaction (stages) → the user approves the proposals in Accounted under Att göra › Agentförslag.',
+              : '• Categorize transactions: gnubok_list_uncategorized_transactions → gnubok_suggest_categories → gnubok_categorize_transaction (stages) → the user approves the proposals in Zimla Kontor under Att göra › Agentförslag.',
             '• Applying income to invoices: pick by what you have: a specific bank transaction + a known invoice → gnubok_match_transaction_to_invoice; an invoice you know is paid but no specific bank line → gnubok_mark_invoice_as_paid; a whole period of unmatched income to reconcile → gnubok_auto_match_period (dry_run first). All stage for approval. Unsure which match/link tool fits, or whether to credit 1510 (faktureringsmetoden) vs debit 19xx (kontantmetoden)? gnubok_load_skill("bank-reconciliation") has the full decision tree; gnubok_get_agent_briefing returns the company\'s accounting_method.',
             '• Invoicing: gnubok_list_customers (or gnubok_create_customer) → gnubok_create_invoice → gnubok_send_invoice or gnubok_mark_invoice_as_sent → gnubok_mark_invoice_as_paid. Refund via gnubok_credit_invoice.',
             '• Suppliers: gnubok_list_suppliers (or gnubok_create_supplier) → gnubok_create_supplier_invoice_from_inbox → gnubok_approve_supplier_invoice. Refund via gnubok_credit_supplier_invoice.',
             '• VAT: gnubok_get_vat_report(period_type, year, period). Ruta49 = VAT to pay (positive) or refund (negative). Pass render_ui=true to open the momsdeklaration review widget (claude.ai / Desktop). gnubok_vat_close_check reports filing-readiness blockers.',
             '• Reporting: gnubok_get_trial_balance / _income_statement / _balance_sheet / _kpi_report, plus _ar_ledger / _supplier_ledger through gnubok_call_tool: all default to the most recent fiscal period. For account roll-ups use gnubok_get_general_ledger; for ad-hoc line queries (free-text, amount/date/source filters) use gnubok_query_journal.',
             '• Trust in figures: gnubok_get_trial_balance, _income_statement, _balance_sheet, _kpi_report and _general_ledger return data_status (company-wide for the range, also on filtered reports). When data_status.preliminary is true, say the figures are preliminary and mention the caveats that bear on the question; do not recite them all. When data_status.unavailable is true, say the completeness of the figures could not be checked.',
-            `• Interactive review UIs (claude.ai / Claude Desktop only): gnubok_get_vat_report(render_ui=true) renders the VAT widget, gnubok_receipt_matcher opens the receipt↔transaction matcher, and gnubok_list_pending_operations(render_ui=true) ${canApprove ? 'opens the approval queue where the user approves/rejects with a click' : 'shows the queue of agent proposals (read-only on this connection: the user approves them in Accounted)'}. All also return structured data; other clients ignore the UI and use the data.`,
+            `• Interactive review UIs (claude.ai / Claude Desktop only): gnubok_get_vat_report(render_ui=true) renders the VAT widget, gnubok_receipt_matcher opens the receipt↔transaction matcher, and gnubok_list_pending_operations(render_ui=true) ${canApprove ? 'opens the approval queue where the user approves/rejects with a click' : 'shows the queue of agent proposals (read-only on this connection: the user approves them in Zimla Kontor)'}. All also return structured data; other clients ignore the UI and use the data.`,
             // #3440: while the cut-off is suspended, the briefing must not send
             // an agent to the staging tool.
             isKontantmetodCutoffSuspended()
@@ -26252,12 +26252,12 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
               : [
                   '• Reviewing agent proposals: gnubok_list_pending_operations shows the queue (each write tool stages a pending_operation, an agent proposal).',
                   '',
-                  'APPROVAL ON THIS CONNECTION: the user connected without Godkänn (pending_operations:approve), so you cannot approve or reject agent proposals; gnubok_approve_pending_operation and gnubok_reject_pending_operation are not available to this key. When you have staged a proposal, tell the user it waits for them in Accounted under Att göra › Agentförslag (/pending), where they approve or reject it. If they want you to approve in chat, they disconnect under Inställningar › API och MCP and connect again with Godkänn ticked: permissions cannot be added to an existing connection.',
+                  'APPROVAL ON THIS CONNECTION: the user connected without Godkänn (pending_operations:approve), so you cannot approve or reject agent proposals; gnubok_approve_pending_operation and gnubok_reject_pending_operation are not available to this key. When you have staged a proposal, tell the user it waits for them in Zimla Kontor under Att göra › Agentförslag (/pending), where they approve or reject it. If they want you to approve in chat, they disconnect under Inställningar › API och MCP and connect again with Godkänn ticked: permissions cannot be added to an existing connection.',
                 ]),
             'Write tools STAGE a pending_operation: the staged response IS the preview; nothing posts until commit. A tool whose tools/list `_meta.requires_approval` is true stages for approval; `_meta.preflight` (when present) names a read-only check to run first (e.g. gnubok_year_end_readiness before gnubok_run_year_end, gnubok_vat_declaration_validate before _submit). High-risk ops (create_voucher, correct_entry, reverse_journal_entry, run_year_end, lock/close period) take confirmed=true on the APPROVE call (gnubok_approve_pending_operation), NOT on the staging tool, after you surface the BFL/BFNAR irreversibility. Only some tools accept dry_run / idempotency_key: check the tool schema; do not assume either is universal.',
             'All amounts are SEK unless currency is specified. All dates ISO YYYY-MM-DD. Account numbers are strings (e.g. "1930").',
             toolNamespace === 'gnubok'
-              ? 'Tool names carry the legacy gnubok_ prefix (a stable identifier kept across the rebrand); the server and app are "Accounted". Same product: the prefix is not a different system.'
+              ? 'Tool names carry the legacy gnubok_ prefix (a stable identifier kept across the rebrand); the server and app are "Zimla Kontor". Same product: the prefix is not a different system.'
               : 'Tool names use the accounted_ prefix. Legacy gnubok_ aliases remain accepted for existing integrations.',
           ].join('\n'), toolNamespace, getCanonicalToolNames())
       // 2026-07-28 MUST: server/discover advertises supported revisions,
@@ -26813,13 +26813,13 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
       }
       // A mark that cannot be read counts as set: when the server cannot tell
       // whether an unattended run is active, commits over MCP wait (a person
-      // can still approve in Accounted), rather than slipping past the guard.
+      // can still approve in Zimla Kontor), rather than slipping past the guard.
       if (tool.annotations?.readOnlyHint === false && !isStagingTool(tool) && await isAnyUnattended(unattendedScopes(sessionId, actor?.id ?? null)).catch((err) => {
         log.warn('Could not read unattended marks; holding the write back', { error: err instanceof Error ? err.message : String(err) })
         return true
       })) {
         const blocked = toToolError(
-          codedError('FORBIDDEN', 'Godkännanden och direkta ändringar görs inte härifrån just nu, eftersom en schemalagd körning utan någon närvarande kan pågå. Förslagen väntar: godkänn dem i Accounted. (Approvals and direct writes are held on this connection while an unattended run may be active; staged proposals wait for a person in Accounted.)'),
+          codedError('FORBIDDEN', 'Godkännanden och direkta ändringar görs inte härifrån just nu, eftersom en schemalagd körning utan någon närvarande kan pågå. Förslagen väntar: godkänn dem i Zimla Kontor. (Approvals and direct writes are held on this connection while an unattended run may be active; staged proposals wait for a person in Zimla Kontor.)'),
           { toolName }
         )
         emitToolCallTelemetry({

@@ -20,7 +20,7 @@ async function readReview(url: string): Promise<ReviewData> {
 }
 
 /**
- * Accounted's review list. Shared own items, as the exact file that would be
+ * Zimla Kontor's review list. Shared own items, as the exact file that would be
  * published: opening one as a pull request (GitHub's editor, filled in, as
  * the reviewer) also approves that exact text, or send it back with a reason
  * the author sees. And merged texts no reviewer approved yet (edited on

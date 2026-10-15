@@ -9,7 +9,7 @@
  * year, and the two have opposite consequences when confused. `lib/api/schemas.ts`
  * already carried both meanings under the same literal.
  *
- * The bound is deliberately loose. Accounted holds historical räkenskapsår from
+ * The bound is deliberately loose. Zimla Kontor holds historical räkenskapsår from
  * SIE imports going back decades and must accept future years for planning, so
  * this validates the shape and a sane range, not a business rule. Whether a
  * given year has an open fiscal period is a database question.

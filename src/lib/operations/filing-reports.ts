@@ -594,7 +594,7 @@ export const reportsKpi = defineOperation({
     summary: 'Business KPIs (nyckeltal) for a fiscal period, as the dashboard shows them.',
     description:
       'Net result, cash position, outstanding and overdue receivables, VAT liability, revenue and expenses, gross margin, expense ratio, average payment days, the monthly trend, the expense composition by BAS class 4-7, the five largest expense accounts and the largest suppliers in SEK. The company\'s KPI preferences (account overrides for cash and VAT) apply. dim_no + dim_code filter the P&L-side figures to one cost centre or project; balance-side figures stay company-wide. Read-only.',
-    useWhen: 'A dashboard or monthly summary needs the same nyckeltal the Accounted overview shows.',
+    useWhen: 'A dashboard or monthly summary needs the same nyckeltal the Zimla Kontor overview shows.',
     doNotUseFor: 'The full income statement or balance sheet (GET /reports/income-statement, /reports/balance-sheet).',
     pitfalls: [
       'With a dimension filter, cashPosition, receivables, vatLiability and topSuppliers are still company-wide: do not present them as the dimension\'s.',

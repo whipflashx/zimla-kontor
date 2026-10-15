@@ -83,9 +83,9 @@ export const skatteverketAgiValidateHuvuduppgift = defineOperation({
     summary: 'Pre-validate an AGI huvuduppgift at Skatteverket without filing anything.',
     description:
       'Sends one arbetsgivardeklaration huvuduppgift (AGI API v1.7 section 7: agRegistreradId, redovisningsPeriod, the totals) to Skatteverket\'s /kontrollera and answers its kontrollsvar: an overall status and each finding. Skatteverket saves nothing; the only local write is the regulator audit row. Uses the calling user\'s own Skatteverket connection. Live call, not cached.',
-    useWhen: 'Checking a hand-built or externally generated huvuduppgift before filing it, e.g. from a payroll system outside Accounted.',
+    useWhen: 'Checking a hand-built or externally generated huvuduppgift before filing it, e.g. from a payroll system outside Zimla Kontor.',
     doNotUseFor:
-      'Filing (POST /salary-runs/{id}/generate-agi, then the BankID-signed submission) or checking a salary run booked in Accounted (the submission flow validates it).',
+      'Filing (POST /salary-runs/{id}/generate-agi, then the BankID-signed submission) or checking a salary run booked in Zimla Kontor (the submission flow validates it).',
     pitfalls: [
       CONNECTION_PITFALL,
       'redovisningsPeriod is YYYYMM and no earlier than 201807; amounts are whole kronor.',
@@ -123,10 +123,10 @@ export const skatteverketAgiValidateIndividuppgift = defineOperation({
       'Sends one individuppgift (AGI API v1.7 section 8: the payee, specifikationsnummer, cash pay, benefits, preliminary tax and flags) to Skatteverket\'s /kontrollera and answers its kontrollsvar. Skatteverket saves nothing; the only local write is the regulator audit row. Uses the calling user\'s own Skatteverket connection. Live call, not cached.',
     useWhen: 'Checking a hand-built or externally generated individuppgift before filing it.',
     doNotUseFor:
-      'Filing, or salary runs booked in Accounted (the AGI submission flow builds and validates their individuppgifter).',
+      'Filing, or salary runs booked in Zimla Kontor (the AGI submission flow builds and validates their individuppgifter).',
     pitfalls: [
       CONNECTION_PITFALL,
-      'betalningsmottagarId is the payee\'s personnummer (12 digits): it is sent to Skatteverket and not stored by Accounted beyond the audit row\'s metadata.',
+      'betalningsmottagarId is the payee\'s personnummer (12 digits): it is sent to Skatteverket and not stored by Zimla Kontor beyond the audit row\'s metadata.',
       'forstaAnstalld and vaxaStod (FK062/FK063) exist only through redovisningsPeriod 202512 and are mutually exclusive. Setting either for 202601 or later answers 400 VALIDATION_ERROR: växa-stöd is now a refund applied for after filing (Lag 2025:1334), and the individuppgift carries the full avgifter.',
       'A payload that breaks the v1.7 schema answers 400 VALIDATION_ERROR before anything reaches Skatteverket.',
     ],

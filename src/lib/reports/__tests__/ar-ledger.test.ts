@@ -772,7 +772,7 @@ describe('generateARLedger: partially paid invoices (feedback seq 817399)', () =
 
 describe('generateARLedger: migrated credit notes', () => {
   // The provider migration imports every kreditfaktura as status 'credited'
-  // with nothing paid or remaining; Accounted's own credit notes are 'sent'.
+  // with nothing paid or remaining; Zimla Kontor's own credit notes are 'sent'.
   const base = {
     customer_id: 'cust-a',
     customer: { id: 'cust-a', name: 'Callidus Tech AB' },

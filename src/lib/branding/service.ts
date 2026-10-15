@@ -6,8 +6,7 @@
  *
  *   defaults  <  env vars  <  extension override
  *
- * If nothing is set, Accounted defaults are returned: production behaviour
- * is unchanged. A whitelabel sets env vars (NEXT_PUBLIC_BRANDING_* for
+ * If nothing is set, Zimla Kontor defaults are returned. A whitelabel sets env vars (NEXT_PUBLIC_BRANDING_* for
  * client-readable, BRANDING_* for server-only) or registers a branding
  * extension via registerBrandingService().
  *
@@ -58,20 +57,17 @@ export interface BrandingConfig {
 }
 
 const DEFAULT_BRANDING: BrandingConfig = {
-  appName: 'Accounted',
-  appDescription: 'Ekonomihantering',
-  legalEntity: 'Arcim Technology AB',
-  // Emails and URLs intentionally keep the gnubok.se hostname: the rebrand is
-  // visual only; we don't churn the support inbox or app domain alongside it.
-  supportEmail: 'support@gnubok.se',
-  privacyEmail: 'privacy@gnubok.se',
-  securityEmail: 'support@accounted.se',
-  authEmailFrom: 'noreply@gnubok.se',
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://app.gnubok.se',
-  // The visible brand mark now renders as text via <BrandWordmark>; this
-  // image path is kept as a fallback for any surface still using <Image>
-  // (e.g. PWA-style metadata that demands a concrete file).
-  logoPath: '/accounted-icon.png',
+  appName: 'Zimla Kontor',
+  appDescription: 'Bokföring, fakturor och lön',
+  legalEntity: 'Zimla AB',
+  supportEmail: 'support@zimla.io',
+  privacyEmail: 'info@zimla.io',
+  securityEmail: 'support@zimla.io',
+  authEmailFrom: 'noreply@zimla.io',
+  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://kontor.zimla.io',
+  // The visible brand mark renders as text via <BrandWordmark>; this image path is the fallback for
+  // surfaces that need a concrete file. Zimlas märke (samma som zimla.io).
+  logoPath: '/zimla-mark.svg',
   faviconPath: '/favicon.ico',
   appleTouchIconPath: '/icons/icon-192.png',
   pwaIconBasePath: '/icons',

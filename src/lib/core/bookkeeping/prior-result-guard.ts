@@ -15,7 +15,7 @@ import type { TrialBalanceRow } from '@/types'
  *
  * Before a close this must be zero. A balance means a prior year's result is
  * still sitting there, typically carried in by imported opening balances that
- * no Accounted year-end ever moved. Closing on top of it adds this year's
+ * no Zimla Kontor year-end ever moved. Closing on top of it adds this year's
  * result to it, and the balance sheet's "Årets resultat" then no longer
  * matches the income statement (PostHog PH 120).
  */

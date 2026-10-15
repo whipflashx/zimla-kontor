@@ -1,6 +1,6 @@
 /**
  * Ingående balanser typed in by hand, for a year with no closed prior year
- * in Accounted (a company that moved from another system without an SIE
+ * in Zimla Kontor (a company that moved from another system without an SIE
  * file): set them once, correct them later. Rules live in
  * lib/import/opening-balance/service.ts, shared with the dashboard's
  * /api/import/opening-balance/execute and /correct routes.
@@ -104,13 +104,13 @@ export const openingBalancesSetManual = defineOperation({
   risk: 'high',
   reversible: false,
   docs: {
-    summary: 'Book a fiscal year\'s ingående balanser (IB) from explicit lines, for a company new to Accounted.',
+    summary: 'Book a fiscal year\'s ingående balanser (IB) from explicit lines, for a company new to Zimla Kontor.',
     description:
       'Posts the IB verifikat (source_type opening_balance, series A, dated the year\'s first day) through the bookkeeping engine and links it to the year, as the dashboard\'s opening balance import does. Lines are balance sheet accounts only (class 1-2), zero rows dropped, at least two left, debit equal to credit. BAS accounts missing from the chart are activated. Refused when the year already has an IB, is closed or locked, or starts on or before the company lock date. Idempotent. Dry-runnable: the dry run previews the verifikat and writes nothing.',
     useWhen:
-      'The company moved from another system without an SIE file and its first year in Accounted needs the balances from the previous system\'s balansräkning.',
+      'The company moved from another system without an SIE file and its first year in Zimla Kontor needs the balances from the previous system\'s balansräkning.',
     doNotUseFor:
-      'Carrying the IB forward from a year closed in Accounted (POST /fiscal-periods/{id}/opening-balances, or the year-end which does it), an SIE migration (POST /imports/sie brings its own IB), or changing an IB already booked (POST /fiscal-periods/{id}/opening-balances/correct).',
+      'Carrying the IB forward from a year closed in Zimla Kontor (POST /fiscal-periods/{id}/opening-balances, or the year-end which does it), an SIE migration (POST /imports/sie brings its own IB), or changing an IB already booked (POST /fiscal-periods/{id}/opening-balances/correct).',
     pitfalls: [
       'A year that already has an IB answers 409 OB_PERIOD_ALREADY_HAS_BALANCES with details.existingEntryId: correct it instead.',
       'Class 3-8 accounts answer 400 OB_PNL_ACCOUNT, class 0 and 9 400 OB_NON_BALANCE_SHEET_ACCOUNT: an IB holds balance sheet accounts only, earlier years\' results sit in equity (20xx).',
@@ -164,7 +164,7 @@ export const openingBalancesSetManual = defineOperation({
     name: 'gnubok_set_opening_balances_manual',
     title: 'Set Opening Balances Manually (Ingående Balans)',
     description:
-      'Stage the first ingående balanser of a year from explicit lines (class 1-2, balanced), for a company new to Accounted without SIE. Refused if the year already has an IB. For a year closed here use gnubok_set_opening_balances.',
+      'Stage the first ingående balanser of a year from explicit lines (class 1-2, balanced), for a company new to Zimla Kontor without SIE. Refused if the year already has an IB. For a year closed here use gnubok_set_opening_balances.',
     keywords: ['ingående balans', 'ingående balanser', 'ib', 'öppningsbalans', 'startbalans', 'flytta från annat system', 'balansräkning förra året'],
     stage: { pendingType: 'set_opening_balances_manual', title: () => 'Bokför ingående balanser' },
   },
@@ -410,7 +410,7 @@ export const openingBalancesSplitPreview = defineOperation({
     doNotUseFor:
       'Changing amounts in the IB (POST /fiscal-periods/{id}/opening-balances/correct) or a year closed after project balances were carried: the year-end already splits the IB per project.',
     pitfalls: [
-      'The basis is the previous year in Accounted as it stands: if that year is still open (source_period_closed false), later bookings there change the split.',
+      'The basis is the previous year in Zimla Kontor as it stands: if that year is still open (source_period_closed false), later bookings there change the split.',
       'A previous year whose own IB was untagged only carries the projects\' movements of that year.',
       'An account whose IB already carries a different project split (an IB imported with SIE #OIB, or split by hand) is skipped with skip_reason existing_split, never overwritten.',
       'unresolved_dimensions lists codes missing from the registry: the apply refuses until they exist.',

@@ -270,7 +270,7 @@ export async function validateYearEndReadiness(
 
   // Check: the "årets resultat" account holds only this year's result. A prior
   // year's result still sitting there (typically carried in by imported opening
-  // balances that no Accounted year-end ever moved) would be added to this
+  // balances that no Zimla Kontor year-end ever moved) would be added to this
   // year's by the closing entry, and the balance sheet's Årets resultat would
   // no longer match the income statement (PostHog PH 120). Only before the
   // close: once a closing entry exists, CLOSING_ENTRY_EXISTS already blocks.

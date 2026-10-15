@@ -7,11 +7,11 @@
  */
 export const CLI_MD = `# Command line (CLI)
 
-> Run Accounted from a terminal. The \`accounted\` command reaches the same tools as the Claude and ChatGPT connectors, with the same permissions and the same approvals: nothing is booked until you approve it.
+> Run Zimla Kontor from a terminal. The \`accounted\` command reaches the same tools as the Claude and ChatGPT connectors, with the same permissions and the same approvals: nothing is booked until you approve it.
 
 _Den här sidan på svenska: [Kommandoraden](/docs/api/kommandorad)._
 
-\`accounted\` is a small command-line client for the Accounted [MCP](https://modelcontextprotocol.io) server. It is made for developers, scripts and AI agents that work in a shell: Claude Code, Codex, Cursor, or anything else that can run a command. Every tool on the server is one \`accounted call\` away, including the specialised ones a chat client only finds by searching, and the answer comes back as JSON.
+\`accounted\` is a small command-line client for the Zimla Kontor [MCP](https://modelcontextprotocol.io) server. It is made for developers, scripts and AI agents that work in a shell: Claude Code, Codex, Cursor, or anything else that can run a command. Every tool on the server is one \`accounted call\` away, including the specialised ones a chat client only finds by searching, and the answer comes back as JSON.
 
 Working in claude.ai, Claude Desktop or ChatGPT instead? Add a connector: see [Connect with Claude](/docs/api/connect-claude).
 
@@ -30,7 +30,7 @@ Requires Node.js 20 or later. \`npx accounted\` also works without installing, b
 accounted login
 \`\`\`
 
-The browser opens the Accounted sign-in; the address is printed in the terminal too, in case no browser opens. Sign in with BankID or e-mail, and the consent page follows. It is the same page the Claude and ChatGPT connectors show: every permission is pre-selected, and you can untick rows under **Behörigheter** or choose **Endast läs** for read-only access. With several companies you also choose, per company, **Läsa och skriva**, **Bara läsa** or **Ingen åtkomst**. Approve, and the terminal says \`Signed in\`.
+The browser opens the Zimla Kontor sign-in; the address is printed in the terminal too, in case no browser opens. Sign in with BankID or e-mail, and the consent page follows. It is the same page the Claude and ChatGPT connectors show: every permission is pre-selected, and you can untick rows under **Behörigheter** or choose **Endast läs** for read-only access. With several companies you also choose, per company, **Läsa och skriva**, **Bara läsa** or **Ingen åtkomst**. Approve, and the terminal says \`Signed in\`.
 
 **Sign in yourself, in your own terminal.** An agent should never sign in for you. In Claude Code you can type \`! accounted login\` at the prompt when the browser runs on the same computer.
 
@@ -134,7 +134,7 @@ The key's permissions decide which tools work, and nothing is saved on disk. Whe
 
 ## Your own server
 
-Running Accounted yourself? Point the CLI at your server with \`--url\` or \`ACCOUNTED_URL\`. Both take the app address or the full MCP URL, the same variable the \`accounted-mcp\` bridge uses. Each server keeps its own sign-in.
+Running Zimla Kontor yourself? Point the CLI at your server with \`--url\` or \`ACCOUNTED_URL\`. Both take the app address or the full MCP URL, the same variable the \`accounted-mcp\` bridge uses. Each server keeps its own sign-in.
 
 ## Windows
 

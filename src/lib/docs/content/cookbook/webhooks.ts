@@ -7,7 +7,7 @@ This is the operational companion to the [Webhooks concept page](/docs/api/webho
 ## What you'll need
 
 - A test API key with \`webhooks:manage\` scope (and \`payroll:read\` if you intend to subscribe to payroll events).
-- A receiver URL that Accounted can POST to. For local development use [smee.io](https://smee.io) or \`ngrok\`: Accounted refuses webhook URLs that resolve to private IPs (SSRF protection), so localhost won't work directly.
+- A receiver URL that Zimla Kontor can POST to. For local development use [smee.io](https://smee.io) or \`ngrok\`: Zimla Kontor refuses webhook URLs that resolve to private IPs (SSRF protection), so localhost won't work directly.
 - HTTPS only: \`http://\` URLs are rejected at registration.
 
 ## 1. Register the webhook
@@ -73,7 +73,7 @@ curl -X POST "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/webhooks/$WEBHO
   -H "Authorization: Bearer gnubok_sk_..."
 \`\`\`
 
-A pass answers \`200\` with \`"verification_status": "verified"\`. A failure answers \`422 WEBHOOK_VERIFICATION_FAILED\` with \`details.reason\` (for example \`challenge_missing\` when the receiver acknowledged with a generic body, or \`http_401\` when it rejected the signature). If you do nothing, Accounted retries on its own after 1m, 5m, 30m, 2h, 12h, then daily, 8 attempts in all. The verify verb needs a live key: test keys cannot run it.
+A pass answers \`200\` with \`"verification_status": "verified"\`. A failure answers \`422 WEBHOOK_VERIFICATION_FAILED\` with \`details.reason\` (for example \`challenge_missing\` when the receiver acknowledged with a generic body, or \`http_401\` when it rejected the signature). If you do nothing, Zimla Kontor retries on its own after 1m, 5m, 30m, 2h, 12h, then daily, 8 attempts in all. The verify verb needs a live key: test keys cannot run it.
 
 ## 4. Send a test event
 
@@ -103,7 +103,7 @@ X-Gnubok-Event: webhook.test
 X-Gnubok-Delivery: f47ac10b-58cc-4372-a567-0e02b2c3d479
 X-Gnubok-Api-Version: 2026-05-12
 
-{"id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","type":"webhook.test","api_version":"2026-05-12","created":1778846400,"data":{"object":{"hello":"from Accounted","tested_at":"2026-05-15T12:00:00Z"}},"previous_attributes":null}
+{"id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","type":"webhook.test","api_version":"2026-05-12","created":1778846400,"data":{"object":{"hello":"from Zimla Kontor","tested_at":"2026-05-15T12:00:00Z"}},"previous_attributes":null}
 \`\`\`
 
 If your receiver returns 2xx, the delivery moves to \`delivered\`. If it returns 4xx (other than 410) or 5xx, it goes to \`failed\` and retries on the schedule \`1m / 5m / 30m / 2h / 12h / 24h / 48h\`.
@@ -169,7 +169,7 @@ async function handleEvent(event) {
 }
 \`\`\`
 
-This pattern: a unique constraint on \`delivery_id\`, an INSERT-on-conflict-do-nothing, and short-circuit when nothing was inserted. Every Accounted delivery passes through that gate at most once even if the dispatcher retries.
+This pattern: a unique constraint on \`delivery_id\`, an INSERT-on-conflict-do-nothing, and short-circuit when nothing was inserted. Every Zimla Kontor delivery passes through that gate at most once even if the dispatcher retries.
 
 ## Replaying a dead delivery
 
@@ -202,7 +202,7 @@ This clears \`disabled_at\` and \`disabled_reason\` but does NOT replay the deli
 
 ## Common pitfalls
 
-- **Re-serialising the body.** \`JSON.parse(rawBody); JSON.stringify(parsed)\` produces different bytes than Accounted sent. Always sign-check against the raw bytes.
+- **Re-serialising the body.** \`JSON.parse(rawBody); JSON.stringify(parsed)\` produces different bytes than Zimla Kontor sent. Always sign-check against the raw bytes.
 - **Forgetting the timestamp window.** Without a \`t\` check, an attacker who captured one signed payload can replay it forever. 5 minutes is the recommended tolerance.
 - **Returning 5xx for application errors.** A 5xx triggers the full retry schedule (~87h, roughly 3.6 days). If a payload is malformed-but-stable, return 200 and queue for internal investigation.
 - **Treating \`failed\` as terminal.** \`failed\` rows will retry; only \`delivered\` and \`dead\` are terminal. Don't alert on \`failed\`: alert when retries exhaust to \`dead\`.

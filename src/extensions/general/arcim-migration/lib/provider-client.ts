@@ -311,7 +311,7 @@ export async function consumeOAuthState(
 ): Promise<{
   consentId: string
   provider: ProviderName
-  /** The Accounted company that owns the consent (read server-side, never from the callback). */
+  /** The Zimla Kontor company that owns the consent (read server-side, never from the callback). */
   companyId: string
   userId: string | null
   origin: string | null
@@ -385,7 +385,7 @@ export async function mintHandoff(
 export async function consumeHandoff(code: string, origin: string): Promise<{
   consentId: string
   provider: ProviderName
-  /** The Accounted company that owns the consent (read server-side, never from the callback). */
+  /** The Zimla Kontor company that owns the consent (read server-side, never from the callback). */
   companyId: string
   userId: string | null
   origin: string
@@ -493,7 +493,7 @@ export async function exchangeAuthToken(
   const expiresAt = new Date(Date.now() + tokenResponse.expires_in * 1000).toISOString()
 
   // The code is spent and the tokens are valid, but nothing so far ties the
-  // provider account they open to the Accounted company this consent belongs
+  // provider account they open to the Zimla Kontor company this consent belongs
   // to: the user (or someone who lured them) may have signed in to a different
   // Fortnox/Visma company. Same guard as Bokio/WINT in submitProviderToken:
   // refuse BEFORE anything is stored, so a foreign ledger never gets imported.
@@ -529,12 +529,12 @@ export async function exchangeAuthToken(
 
 /**
  * Compare the org number of the company the freshly issued token opens with
- * the org number of the Accounted company that owns the consent, and return
+ * the org number of the Zimla Kontor company that owns the consent, and return
  * the provider's (normalised) org number so the caller can persist it as the
  * consent's source identity.
  *
  * Only a confident mismatch blocks (throws ProviderCompanyMismatchError). A
- * missing org number on either side is not evidence of anything: Accounted
+ * missing org number on either side is not evidence of anything: Zimla Kontor
  * allows companies without one, a provider response can omit it, and the
  * company-information call itself can fail for reasons unrelated to identity
  * (scope not granted on this app registration, provider hiccup). Those cases
@@ -573,7 +573,7 @@ async function assertProviderCompanyMatchesConsent(
 
 /**
  * The provider's org number, normalised, after checking it against the
- * Accounted company's own. Throws ProviderCompanyMismatchError on a confident
+ * Zimla Kontor company's own. Throws ProviderCompanyMismatchError on a confident
  * mismatch; null when the provider reported no valid org number.
  */
 async function providerOrgNumberMatchingCompany(
@@ -621,7 +621,7 @@ export type SourceIdentityOutcome = 'present' | 'filled' | 'unavailable'
  * them. This fills the org number in from the provider itself: the same
  * company-information call the exchange makes, with the same mismatch guard,
  * so the identity is always what the credentials actually open and never an
- * assumption copied from the Accounted company.
+ * assumption copied from the Zimla Kontor company.
  *
  * Idempotent: a consent that already has an identity is not touched, and the
  * write only lands on a still-empty column. Provider failures are not fatal
@@ -812,7 +812,7 @@ export async function submitProviderToken(
 
   // Bokio: the pasted integration token is scoped to ONE Bokio company, and the
   // company GUID is typed in by hand. Nothing upstream ties either to the
-  // Accounted company being imported into, so a token/GUID for the user's other
+  // Zimla Kontor company being imported into, so a token/GUID for the user's other
   // company imports that company's customers, suppliers and invoices here with
   // no error at all. Probe the documented company-information endpoint before
   // storing anything: it proves the credentials work and returns the
@@ -893,7 +893,7 @@ export async function submitProviderToken(
     const targetOrgNumber = normalizeOrgNumber(targetCompany?.org_number)
 
     // Only a confident mismatch blocks. A missing org number on either side is
-    // not evidence of anything (Accounted allows companies without one, and a
+    // not evidence of anything (Zimla Kontor allows companies without one, and a
     // Bokio response could omit it), so those fall through to the labelling
     // below: the wizard still shows WHICH Bokio company was linked, which is
     // what lets the user catch it themselves.

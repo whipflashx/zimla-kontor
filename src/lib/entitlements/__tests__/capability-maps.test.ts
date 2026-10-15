@@ -96,7 +96,7 @@ describe('CONNECTOR_CAPABILITIES', () => {
     for (const key of CONNECTOR_CAPABILITIES) expect(all.has(key), key).toBe(true)
     expect(CONNECTOR_CAPABILITIES).toEqual(['bank_sync', 'skatteverket', 'org_lookup', 'migration', 'peppol'])
     // org_lookup and migration stay free on hosted (not PAID) but still need
-    // Accounted's services, hence connector-gated on a self-host.
+    // Zimla Kontor's services, hence connector-gated on a self-host.
     expect(PAID_CAPABILITIES).not.toContain('org_lookup')
     expect(PAID_CAPABILITIES).not.toContain('migration')
     expect(isConnectorCapability('ai')).toBe(false)

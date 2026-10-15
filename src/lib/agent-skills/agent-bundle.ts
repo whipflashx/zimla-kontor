@@ -15,7 +15,7 @@ export type ConnectionStatus = 'connected' | 'missing' | 'in_ai' | 'unknown'
 export interface AgentConnectionState {
   kind: AgentConnection
   status: ConnectionStatus
-  /** Where to fix a missing Accounted connection. */
+  /** Where to fix a missing Zimla Kontor connection. */
   settings_href?: string
 }
 

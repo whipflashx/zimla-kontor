@@ -1,8 +1,8 @@
 /**
- * Maps Arcim Sync canonical DTOs to Accounted internal types.
+ * Maps Arcim Sync canonical DTOs to Zimla Kontor internal types.
  *
  * These mappers transform the normalized data from any Swedish accounting
- * provider into the exact shapes Accounted expects for database insertion.
+ * provider into the exact shapes Zimla Kontor expects for database insertion.
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -304,7 +304,7 @@ function treatmentForRate(rate: number, currencyCode?: string): VatTreatment {
 /**
  * A free-text row: no quantity, no amount, no unit price. Providers ship
  * these as ordinary rows (Fortnox: DeliveredQuantity "0", Total 0, VAT 0);
- * Accounted models them as `line_type = 'text'`, which the invoice page
+ * Zimla Kontor models them as `line_type = 'text'`, which the invoice page
  * renders without amounts and the booking engine leaves out.
  */
 interface LineShape {
@@ -584,7 +584,7 @@ export interface MappedInvoice {
    *
    * `invoices` and `supplier_invoices` model that relation only through
    * `credited_invoice_id`, an
-   * Accounted id the mapper cannot know: the original may be inserted in the
+   * Zimla Kontor id the mapper cannot know: the original may be inserted in the
    * same run, a chunk later, or by an earlier run. So the importer pairs the
    * rows afterwards, from `creditedInvoiceRef`, when the provider named the
    * credited invoice (Bokio's invoiceRef and Fortnox's CreditInvoiceReference
@@ -626,7 +626,7 @@ export function mapCustomer(dto: CustomerDto, userId: string, companyId: string)
   const addr = formatAddress(dto.party.postalAddress)
   const customerType = inferCustomerType(dto)
   const number = getOrgNumber(dto.party)
-  // The provider exposes a single identity-number field, but Accounted stores a
+  // The provider exposes a single identity-number field, but Zimla Kontor stores a
   // personnummer in `personal_number` (individuals) and an org number in
   // `org_number` (businesses). Route it to the column the type expects: else a
   // Privatperson's personnummer lands in org_number and is hidden by the
@@ -722,7 +722,7 @@ function negate(n: number): number {
  * Providers disagree on the sign a kreditfaktura carries: Fortnox and Visma
  * report a credit invoice with negative amounts (lib/providers/fortnox,
  * lib/providers/visma) while Bokio states the magnitude beside
- * invoiceTypeCode 381. Both have to land on the single convention Accounted
+ * invoiceTypeCode 381. Both have to land on the single convention Zimla Kontor
  * stores, so the amounts are resolved from the magnitudes and the credit sign
  * is applied once, at the end. It is also what lets resolveInvoiceVat
  * classify the rate at all: it divides VAT by subtotal, which only yields a
@@ -893,11 +893,11 @@ export function mapSalesInvoice(
   const subtotal = sign(vat.subtotal)
   const vatAmount = sign(vat.vatAmount)
 
-  // Map Arcim status to Accounted status
+  // Map Arcim status to Zimla Kontor status
   const statusMap: Record<string, string> = {
     draft: 'draft',
     sent: 'sent',
-    booked: 'sent', // Accounted has no 'booked' status: treat as sent
+    booked: 'sent', // Zimla Kontor has no 'booked' status: treat as sent
     paid: 'paid',
     overdue: 'overdue',
     cancelled: 'cancelled',
@@ -970,7 +970,7 @@ export function mapSalesInvoice(
     our_reference: null,
     notes: isCreditNote ? creditNoteNote(dto.note, dto.creditedInvoiceRef) : (dto.note || null),
     // Always 'invoice'. invoices_document_type_check allows only
-    // ('invoice', 'proforma', 'delivery_note'), and Accounted models a
+    // ('invoice', 'proforma', 'delivery_note'), and Zimla Kontor models a
     // kreditfaktura as an invoice row with reversed amounts plus
     // credited_invoice_id, not as a document type of its own (see
     // app/api/invoices/route.ts and .../invoices/[id]/credit/route.ts).

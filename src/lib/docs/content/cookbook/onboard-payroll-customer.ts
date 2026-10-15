@@ -43,11 +43,11 @@ curl -X PATCH "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/salary/setting
 - \`salary_pay_day\` only sets the default \`payment_date\` of new runs.
 - \`salary_voucher_series\` is the verifikationsserie salary vouchers book under. A fresh company defaults to K; send the letter explicitly when provisioning so it is never a surprise.
 
-Read it back with \`GET /salary/settings\`. There is no separate "avtal" to configure: statutory parameters (arbetsgivaravgifter, traktamenten, karens, sjuklön) live centrally per year and are maintained by Accounted.
+Read it back with \`GET /salary/settings\`. There is no separate "avtal" to configure: statutory parameters (arbetsgivaravgifter, traktamenten, karens, sjuklön) live centrally per year and are maintained by Zimla Kontor.
 
 ### Calculation policies
 
-The law fixes what is paid (sjuklön at 80 %, one karensavdrag per sjuklöneperiod, semesterlön); how a monthly salary is turned into a day, an hour or a partial month follows the employment contract and the kollektivavtal, and every payroll system has its conventions. \`salary_calculation_policy\` on the same endpoint makes them explicit per company. Every key defaults to the calculation Accounted has always done; the other value of each is what Fortnox does, so a customer you take over from Fortnox keeps the öre on their payslips. Send only the keys you change; they are merged into the stored policy and the response always shows all six.
+The law fixes what is paid (sjuklön at 80 %, one karensavdrag per sjuklöneperiod, semesterlön); how a monthly salary is turned into a day, an hour or a partial month follows the employment contract and the kollektivavtal, and every payroll system has its conventions. \`salary_calculation_policy\` on the same endpoint makes them explicit per company. Every key defaults to the calculation Zimla Kontor has always done; the other value of each is what Fortnox does, so a customer you take over from Fortnox keeps the öre on their payslips. Send only the keys you change; they are merged into the stored policy and the response always shows all six.
 
 \`\`\`bash
 curl -X PATCH "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/salary/settings" \\
@@ -57,7 +57,7 @@ curl -X PATCH "https://app.gnubok.se/api/v1/companies/$COMPANY_ID/salary/setting
   -d '{ "salary_calculation_policy": { "partial_month": "annual_calendar_days", "sick_rate": "annual_hourly", "long_leave": "calendar_after_five_workdays" } }'
 \`\`\`
 
-| Key | Default (Accounted) | Fortnox parity | What it changes |
+| Key | Default (Zimla Kontor) | Fortnox parity | What it changes |
 |---|---|---|---|
 | \`partial_month\` | \`workdays\`: månadslön × arbetsdagar i anställning / arbetsdagar i månaden | \`annual_calendar_days\`: (månadslön × 12 / 365, rounded to öre) × kalenderdagar i anställning; a whole month pays the whole salary | Base salary the month an employment starts or ends. Needed for every Fortnox customer with mid-month starters or leavers. |
 | \`sick_rate\` | \`daily_divisor\`: månadslön / 21 per day (schedule divisor for part-time weeks), weighted by hours | \`annual_hourly\`: timlön = månadslön × 12 / (52 × veckoarbetstid); sjukavdrag per timme = timlön, sjuklön = 80 % of it | Sick days 1-14. The karensavdrag (20 % of an average week's sjuklön) is the same under both. |
@@ -117,7 +117,7 @@ Every field maps onto the semestersaldo the previous system prints per employee:
 
 | Field | Fortnox / Azets | Meaning |
 |---|---|---|
-| \`cutover_date\` | | First day of the first month Accounted runs (always the 1st). YTD and the pools apply from here. |
+| \`cutover_date\` | | First day of the first month Zimla Kontor runs (always the 1st). YTD and the pools apply from here. |
 | \`ytd_gross\`, \`ytd_tax\`, \`ytd_net\` | Ackumulerat i år | Gross, withheld tax and net paid so far this calendar year. Send \`"ytd_net": null\` when the old system cannot export net: the payslip then prints "Underlag saknas" for the accumulator instead of a false 0. Never send gross minus tax as net. |
 | \`vacation_as_of_date\` | Saldo per | The day the vacation pools below are struck per. Omitted = the day before \`cutover_date\`. See the as-of rule under the table. |
 | \`vacation_paid_days_remaining\` | Betalda (kvar) | Paid days left this vacation year. |
@@ -130,7 +130,7 @@ Every field maps onto the semestersaldo the previous system prints per employee:
 | \`opening_advance_vacation_debt\` | Förskottsskuld | SEK the employee owes for förskottssemester already taken (Semesterlagen 29 a §, deductible at termination within five years, then written off). Report only: its own row on \`GET /reports/vacation-liability\`, subtracted from the net liability. |
 | \`karens_periods_adjustment\` | | Sjuklöneperioder in the 12 months before cutover that the previous system handled, so the högriskskydd cap (10 karensavdrag per rolling 12 months) carries over. |
 
-**The as-of rule.** The vacation ledger deducts a booked run's vacation days only when the run's avvikelseperiod ends after \`vacation_as_of_date\`; a run whose window ended on or before it is treated as already inside the balance. With \`same_month\` the default (the day before cutover) is right: the September run deducts September. With \`previous_month\` the September run deducts August, so a balance struck per 31 August already contains August's leave and the run is skipped; if the old system would have deducted August in its own September run, its "per 31 August" balance does not contain those days, and you send \`"vacation_as_of_date": "2026-07-31"\` so Accounted deducts them. Ask the customer which month the last payroll in the old system deducted leave for; the as-of date is the last day of that month.
+**The as-of rule.** The vacation ledger deducts a booked run's vacation days only when the run's avvikelseperiod ends after \`vacation_as_of_date\`; a run whose window ended on or before it is treated as already inside the balance. With \`same_month\` the default (the day before cutover) is right: the September run deducts September. With \`previous_month\` the September run deducts August, so a balance struck per 31 August already contains August's leave and the run is skipped; if the old system would have deducted August in its own September run, its "per 31 August" balance does not contain those days, and you send \`"vacation_as_of_date": "2026-07-31"\` so Zimla Kontor deducts them. Ask the customer which month the last payroll in the old system deducted leave for; the as-of date is the last day of that month.
 
 A pågående sjukfall is registered as ordinary absence days on their real dates (step 5): the engine merges them into the running sjuklöneperiod. \`PUT /employees/{employeeId}/opening-balances\` sets one employee; \`PUT /employees/opening-balances\` (no employee id) takes the whole roster in one call. Both are full replaces: an omitted pool resets to 0. The balances lock when the first run books.
 

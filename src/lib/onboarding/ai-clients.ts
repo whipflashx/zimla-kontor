@@ -123,7 +123,7 @@ export function pickConnectedAiClient(clients: AiClient[], preferred?: AiClient)
 /**
  * Open an empty chat. Company identifiers and task details must never enter
  * third-party URLs, browser history or URL logs. The user reviews and copies
- * the prompt inside Accounted, then pastes it into their chosen client.
+ * the prompt inside Zimla Kontor, then pastes it into their chosen client.
  *
  * The one exception is a claude:// link to Claude Desktop or Cowork
  * (components/skills/run.ts): it is a local handoff to the app on the same
@@ -167,7 +167,7 @@ export function kvittojaktenSkillSlug(client: AiClient): string {
  * Open a chat with the Kvittojakten prompt already typed in: the one handoff
  * that travels in a query string. The rule above still holds because this
  * prompt names a skill and nothing else: no company, no count, no task
- * detail. The agent learns the company and the work from Accounted over MCP
+ * detail. The agent learns the company and the work from Zimla Kontor over MCP
  * after the chat opens. Never pass a prompt that carries tenant data here.
  */
 export function aiPrefilledChatLink(client: AiClient, prompt: string): string {

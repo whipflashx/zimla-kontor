@@ -10,7 +10,7 @@ import { isSelfHosted } from '@/lib/env/public-flags'
  *
  * The mark goes on the run's Mcp-Session-Id when the client sends one, and
  * otherwise on the whole API key for an hour: fail closed, at the price
- * that approvals through that key wait for Accounted's own UI meanwhile. A
+ * that approvals through that key wait for Zimla Kontor's own UI meanwhile. A
  * mark that cannot be read counts as set (server.ts). The
  * session header is not trusted for authorization and is not used for it: a
  * mark only ever takes rights away.

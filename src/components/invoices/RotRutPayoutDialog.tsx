@@ -110,7 +110,7 @@ const MAX_CASES_PER_FILE = 100
 const SKATTEVERKET_SERVICE_URL =
   'https://www.skatteverket.se/foretag/etjansterochblanketter/allaetjanster/tjanster/rotochrutforetag.4.361dc8c15312eff6fdfca4.html'
 // Skatteverket, "Grön teknik: företag": where the payout is requested until
-// Accounted generates the Begaran GRON_TEKNIK file.
+// Zimla Kontor generates the Begaran GRON_TEKNIK file.
 const SKATTEVERKET_GRON_TEKNIK_URL =
   'https://www.skatteverket.se/foretag/skatterochavdrag/gronteknik.4.676f4884175c97df4192a42.html'
 

@@ -79,7 +79,7 @@ const DEFAULT_MAX_STEPS = 5
 const MAX_QUESTION_CHARS = 4000
 const MAX_CONTEXT_CHARS = 24_000
 
-const BASE_RULES = `Du är en svensk bokföringsassistent i Accounted. Du hjälper användaren med bokföring enligt svensk redovisningssed (Bokföringslagen).
+const BASE_RULES = `Du är en svensk bokföringsassistent i Zimla Kontor. Du hjälper användaren med bokföring enligt svensk redovisningssed (Bokföringslagen).
 
 Regler:
 - Svara på svenska, kort och konkret.

@@ -6,7 +6,7 @@ import { pdfTextStrings } from '@/tests/pdf-text'
 
 function fakeCompany(): CompanySettings {
   return {
-    company_name: 'Gnubok',
+    company_name: 'Zimla Kontor',
     org_number: '5566778899',
     vat_number: 'SE556677889901',
     address_line1: 'Kungsgatan 1',

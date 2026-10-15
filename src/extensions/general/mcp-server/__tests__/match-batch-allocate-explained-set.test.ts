@@ -144,7 +144,7 @@ describe('gnubok_match_batch_allocate: already-explained guard at stage time', (
       expect(error.code).toBe('BATCH_TX_POSSIBLE_DUPLICATE')
       expect(error.retryable).toBe(false)
       expect(error.message_en).toContain('saknar behörigheten reconciliation:write')
-      expect(error.message_en).toContain('sidan Avstämning i Accounted')
+      expect(error.message_en).toContain('sidan Avstämning i Zimla Kontor')
       expect(error.message_en).toContain('kopplar om connectorn')
       // No call the key cannot make is offered as the way out.
       expect(error.message_en).not.toContain('pairs [{')
@@ -161,7 +161,7 @@ describe('gnubok_match_batch_allocate: already-explained guard at stage time', (
         `gnubok_link_transaction_to_journal_entry (transaction_id="${TX_ID}", journal_entry_id="${JE_A}"`,
       )
       expect(error.message_en).toContain('saknar behörigheten reconciliation:write')
-      expect(error.message_en).toContain('sidan Avstämning i Accounted')
+      expect(error.message_en).toContain('sidan Avstämning i Zimla Kontor')
       expect(error.message_en).toContain('koppla om connectorn')
       expect(error.message_en).not.toContain('pairs [{')
       expect(error.remediation).toMatchObject({

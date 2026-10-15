@@ -4,7 +4,7 @@ export const QUICKSTART_MD = `# Quickstart: send your first invoice
 
 ## What you'll need
 
-- A **live** API key (\`gnubok_sk_*\`, no \`test_\` infix) from the Accounted dashboard at **/settings/api**. Run the whole walkthrough with this one key: the create→send→pay sequence chains on real IDs (the customer's \`id\`, then the invoice's \`id\`) that only committed writes return. A **test** key (\`gnubok_sk_test_*\`) is useful to validate request *shapes* first: it points at the same company as a live key, but the wrapper forces every write into dry-run. Because a forced dry-run never persists (\`id: null\`, no emails), it can't complete the stateful flow. So: **use a live key for the walkthrough.** There is no separate sandbox company or host; to test without touching your bookkeeping, create a second, empty company in the dashboard and never connect a bank or Skatteverket to it.
+- A **live** API key (\`gnubok_sk_*\`, no \`test_\` infix) from the Zimla Kontor dashboard at **/settings/api**. Run the whole walkthrough with this one key: the create→send→pay sequence chains on real IDs (the customer's \`id\`, then the invoice's \`id\`) that only committed writes return. A **test** key (\`gnubok_sk_test_*\`) is useful to validate request *shapes* first: it points at the same company as a live key, but the wrapper forces every write into dry-run. Because a forced dry-run never persists (\`id: null\`, no emails), it can't complete the stateful flow. So: **use a live key for the walkthrough.** There is no separate sandbox company or host; to test without touching your bookkeeping, create a second, empty company in the dashboard and never connect a bank or Skatteverket to it.
 - \`curl\` or any HTTP client.
 
 ## 1. List the companies the key can access

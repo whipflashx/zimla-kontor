@@ -565,7 +565,7 @@ export const supplierPaymentBatchesGet = defineOperation({
     name: 'gnubok_get_supplier_payment_batch',
     title: 'Get Supplier Payment Batch',
     description:
-      'Read one betalfil: its lines (amount, date, payee, reference), each invoice\'s live status, and the file name. The XML itself is not returned here: the user downloads it in Accounted or over the v1 file endpoint.',
+      'Read one betalfil: its lines (amount, date, payee, reference), each invoice\'s live status, and the file name. The XML itself is not returned here: the user downloads it in Zimla Kontor or over the v1 file endpoint.',
     keywords: ['betalfil', 'visa betalfil', 'betalfilens rader', 'leverantörsbetalning'],
   },
   run: async (ctx, { supplier_payment_batch_id }) => {
@@ -714,7 +714,7 @@ export const supplierPaymentBatchesCancel = defineOperation({
   docs: {
     summary: 'Cancel (makulera) a supplier payment batch.',
     description:
-      'Marks an active batch cancelled: Accounted stops serving its file and its invoices can go into a new batch. The batch and its lines are kept (they are underlag for the payment instruction). A file already uploaded to the bank is NOT recalled: stop those payments in the bank. Cannot be undone; create a new batch instead. Idempotent. Dry-runnable.',
+      'Marks an active batch cancelled: Zimla Kontor stops serving its file and its invoices can go into a new batch. The batch and its lines are kept (they are underlag for the payment instruction). A file already uploaded to the bank is NOT recalled: stop those payments in the bank. Cannot be undone; create a new batch instead. Idempotent. Dry-runnable.',
     useWhen: 'A betalfil was created by mistake or with wrong amounts, before (or instead of) uploading it.',
     doNotUseFor: 'Stopping a payment the bank already has (do that in the bank) or un-paying an invoice.',
     pitfalls: [
@@ -744,7 +744,7 @@ export const supplierPaymentBatchesCancel = defineOperation({
     name: 'gnubok_cancel_supplier_payment_batch',
     title: 'Cancel Supplier Payment Batch',
     description:
-      'Stage cancelling a betalfil: Accounted stops serving its file and frees its invoices for a new batch. A file already uploaded to the bank is not recalled; stop it in the bank too. Cannot be undone.',
+      'Stage cancelling a betalfil: Zimla Kontor stops serving its file and frees its invoices for a new batch. A file already uploaded to the bank is not recalled; stop it in the bank too. Cannot be undone.',
     keywords: ['makulera betalfil', 'avbryt betalfil', 'ta bort betalfil', 'stoppa betalning'],
     stage: { pendingType: 'cancel_supplier_payment_batch', title: () => 'Makulera betalfil' },
   },

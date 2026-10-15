@@ -29,9 +29,9 @@ function supportedFormsSentence(): string {
   )
 }
 
-const buildBody = () => `# Onboarding: set up a company in Accounted from the conversation
+const buildBody = () => `# Onboarding: set up a company in Zimla Kontor from the conversation
 
-From "my company is not in Accounted yet" to a working ledger without the
+From "my company is not in Zimla Kontor yet" to a working ledger without the
 user opening the web app first. The only browser steps are the ones that
 legally need a human with BankID: connecting (creating the account),
 approving the bank consent, and authorising Skatteverket. Everything else
@@ -57,7 +57,7 @@ what you already know about the user (memory, earlier conversation):
 orgnr, company name, bank, previous system. Ask only for what is
 genuinely missing. AFTER the company is created, save the durable facts
 to memory (orgnr, company name, bank, fiscal year, moms period, previous
-system, that Accounted is set up): the user's next conversation should
+system, that Zimla Kontor is set up): the user's next conversation should
 need zero of these questions.
 
 ## When to use
@@ -270,7 +270,7 @@ message instead of making them ask.
   if a create call was interrupted.
 - A preflight org-number mismatch means the file is another company's
   bookkeeping: stop and confirm, never import across companies.
-- Bookkeeping duty starts when the company exists in Accounted with a fiscal
+- Bookkeeping duty starts when the company exists in Zimla Kontor with a fiscal
   period. Never create a company "to try things out" for a real
   organisation; use the sandbox in the web app for demos.
 `

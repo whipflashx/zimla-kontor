@@ -33,7 +33,7 @@ const MAX_COMPANIES_PER_RUN = 50
  *
  * Work list is a union keyed by company:
  *   1. System-mode entries: companies with a verified lasombud grant, synced
- *      on Accounted's own CCG credentials (no user token involved, so the
+ *      on Zimla Kontor's own CCG credentials (no user token involved, so the
  *      65-minute personal-token lifetime stops mattering here). Active only
  *      when SKATTEVERKET_SYSTEM_AUTH_MODE=on.
  *   2. User-mode entries: companies with an active personal token, exactly

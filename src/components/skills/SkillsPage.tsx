@@ -26,7 +26,7 @@ type PageState = 'loading' | 'locked' | 'waiting' | 'open'
 
 /**
  * Agentinstruktioner: what the company gives the AI it brings (flows,
- * knowledge, analyses), from Accounted, the community or the company itself,
+ * knowledge, analyses), from Zimla Kontor, the community or the company itself,
  * as a catalogue (Catalog.tsx). This component owns the AI connection and the
  * connect gate. `hrefBase` lets the sandbox demo link to its own pages.
  */

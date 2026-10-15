@@ -31,7 +31,7 @@ import { escapeXml } from '@/lib/xml/escape'
  *     FORALDRAPENNING for parental leave): the borttag flow is not used.
  *   - Hours emitted via FranvaroTimmarTFP (FK825) for VAB or FranvaroTimmarFP
  *     (FK827) for parental. The procent variants (824/826) are not used:
- *     Accounted tracks hours, not percent.
+ *     Zimla Kontor tracks hours, not percent.
  *   - FranvaroSpecifikationsnummer is persisted on salary_absence_days
  *     (column franvaro_specifikationsnummer; assigned by DB trigger on
  *     INSERT, never re-numbered). Skatteverket replaces a Frånvarouppgift

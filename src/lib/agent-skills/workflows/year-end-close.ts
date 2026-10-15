@@ -18,7 +18,7 @@ const CUTOFF_TOOL_NOTE = CUTOFF_SUSPENDED
   ? 'kontantmetoden cut-off, temporarily suspended (#3440): refuses with `KONTANTMETOD_CUTOFF_SUSPENDED`'
   : 'kontantmetoden cut-off (search-only, via `gnubok_stage_tool`)'
 
-const body = `# Årsbokslut (Year-End Close): Accounted
+const body = `# Årsbokslut (Year-End Close): Zimla Kontor
 
 The annual close for an aktiebolag. You prepare it with the owner, step by step; the one irreversible step (\`gnubok_run_year_end\`) happens only after the owner has said yes to it in so many words. Work like a consultant with a junior colleague's care: check first, ask one precise question at a time, never guess an amount.
 
@@ -50,8 +50,8 @@ Then tell the user in two or three lines what you found (company, year, K2/K3, m
 
 The opening balances of this year are the closing balances of the last one. Closing out of order breaks that chain.
 
-- **An earlier period in Accounted is open or locked (not closed):** stop working on this year. Tell the user: "FY[earlier] is not closed yet. It must be closed first, because this year's opening balances come from it." Offer to run this skill on the earlier year first, oldest first.
-- **The earlier year was closed in another system** (the company migrated and this year starts with imported IB): that is fine if this year's IB is posted. Do not run a year-end on a year whose full books are not in Accounted. If you are unsure which case it is, ask: "Was FY[earlier] closed in your previous system, with the opening balances imported here?"
+- **An earlier period in Zimla Kontor is open or locked (not closed):** stop working on this year. Tell the user: "FY[earlier] is not closed yet. It must be closed first, because this year's opening balances come from it." Offer to run this skill on the earlier year first, oldest first.
+- **The earlier year was closed in another system** (the company migrated and this year starts with imported IB): that is fine if this year's IB is posted. Do not run a year-end on a year whose full books are not in Zimla Kontor. If you are unsure which case it is, ask: "Was FY[earlier] closed in your previous system, with the opening balances imported here?"
 - **Readiness shows \`opening_balance_continuity\`:** this year's IB does not match last year's UB. Compare with \`gnubok_get_trial_balance\` (\`period_id\`) on both periods and show the user the accounts that differ. Do not correct IB yourself: this needs a human, and usually last year's accountant.
 
 ## Step 1: Readiness
@@ -61,7 +61,7 @@ The opening balances of this year are the closing balances of the last one. Clos
 | Blocker \`kind\` | Meaning | What you do |
 |---|---|---|
 | \`unbooked_transactions\` | Bank rows in the year are neither booked nor ignored | Load \`bookkeep\`. Book or ignore each one with the user; a private one is handled per that skill, never guessed. |
-| \`draft_entries\` | Unposted drafts in the period | Ask the user to finish or discard each draft in Accounted. You cannot delete. |
+| \`draft_entries\` | Unposted drafts in the period | Ask the user to finish or discard each draft in Zimla Kontor. You cannot delete. |
 | \`unexplained_voucher_gap\` | A gap in voucher numbering with no explanation (BFNAR 2013:2) | \`gnubok_list_voucher_gaps\`, ask the user why each gap exists, then \`gnubok_explain_voucher_gap\` with their answer in Swedish. Never invent a reason. |
 | \`kontantmetod_cutoff_required\` | Kontantmetoden: open receivables and payables must be booked at balansdagen (BFL 5 kap 2 §) | ${CUTOFF_ROW_ACTION} |
 | \`period_locked\` | The period was locked beforehand | \`gnubok_unlock_period\` (staged, high-risk), after telling the user why: the close posts into the period and locks it itself. |
@@ -69,7 +69,7 @@ The opening balances of this year are the closing balances of the last one. Clos
 | \`period_already_closed\`, \`closing_entry_exists\` | Already done | Verify with \`gnubok_list_fiscal_periods\` and go to Step 7. |
 | \`next_period_ib_posted\` | The next year already has opening balances (often from an import) | Stop and hand over. Removing them means reversing a posted entry: not yours to decide. |
 | \`opening_balance_continuity\` | IB and last year's UB differ | See "If a prior year is not closed". |
-| \`trial_balance_unbalanced\`, \`sequence_mismatch\` | Integrity faults | Stop. Tell the user to contact Accounted support with the message text. Never try to post a balancing entry. |
+| \`trial_balance_unbalanced\`, \`sequence_mismatch\` | Integrity faults | Stop. Tell the user to contact Zimla Kontor support with the message text. Never try to post a balancing entry. |
 
 **Warnings** do not block but must be read out. The common one: foreign-currency items open at balansdagen. Items that "saknar valutakurs" cannot be revalued at all: ask the user for the rate on each invoice. Items that can be revalued are handled by the close itself (Step 6).
 
@@ -90,7 +90,7 @@ ${CUTOFF_STEP}
 ## Step 4: Periodiseringar and avskrivningar
 
 ### Periodiseringar (accruals)
-- \`gnubok_propose_accruals({ fiscal_period_id })\` proposes what Accounted can compute today, mainly the change in semesterlöneskuld. Read \`notices\`: they say why a proposal was withheld (for example no employees).
+- \`gnubok_propose_accruals({ fiscal_period_id })\` proposes what Zimla Kontor can compute today, mainly the change in semesterlöneskuld. Read \`notices\`: they say why a proposal was withheld (for example no employees).
 - \`gnubok_list_accrual_schedules\` shows running periodiseringar (17xx/29xx) and what remains.
 - Everything else comes from the user. Ask concrete questions: prepaid rent or insurance covering next year, customer work done but not invoiced, costs for this year billed next year, an estimated fee for bokslut or revision.
 - Under K2, a recurring cost under 5 000 SEK per item that does not vary more than 20 % year on year need not be accrued; personnel costs always are. Under K3 there is no such threshold.
@@ -110,9 +110,9 @@ The close revalues open foreign-currency items at the balansdag rate by itself. 
 \`gnubok_propose_dispositioner({ fiscal_period_id })\` returns \`proposals\`, each with \`kind\`, \`label\`, \`description\`, \`amount\`, ready-balanced \`lines\`, \`warnings\` and \`required\`, plus \`completedDispositions\` already posted. The order is deliberate: periodiseringsfond återföring, överavskrivningar, periodiseringsfond avsättning, särskild löneskatt, bolagsskatt last (it depends on all the others).
 
 - **\`required: true\`** (a periodiseringsfond that must be reversed this year): not a choice. Tell the user and book it.
-- **Avsättning to periodiseringsfond and överavskrivningar** are choices that move taxable profit between years. Present the proposal and its effect in plain words, then load \`tax-planning\` for the decision. Ask one question per item: "Accounted proposes setting aside X SEK to a periodiseringsfond, the maximum allowed. That lowers this year's tax and the amount comes back as taxable income within six years. Do you want the full amount, less, or none?" Never pick for them.
+- **Avsättning to periodiseringsfond and överavskrivningar** are choices that move taxable profit between years. Present the proposal and its effect in plain words, then load \`tax-planning\` for the decision. Ask one question per item: "Zimla Kontor proposes setting aside X SEK to a periodiseringsfond, the maximum allowed. That lowers this year's tax and the amount comes back as taxable income within six years. Do you want the full amount, less, or none?" Never pick for them.
 - **Särskild löneskatt** on pension costs and **bolagsskatt** are calculations, not choices. Check them against the numbers, do not negotiate them.
-- **Booking.** The Bokslut page in Accounted posts these from the same proposal and is the preferred path. From here: stage one \`gnubok_create_voucher\` per accepted disposition, dated on balansdagen, with the proposal's \`lines\` unchanged. After each approval, call \`gnubok_propose_dispositioner\` again: bolagsskatt must be recomputed on the new base, so never post it from a stale proposal. If the user wants a different amount than proposed, send them to the Bokslut page rather than scaling lines by hand.
+- **Booking.** The Bokslut page in Zimla Kontor posts these from the same proposal and is the preferred path. From here: stage one \`gnubok_create_voucher\` per accepted disposition, dated on balansdagen, with the proposal's \`lines\` unchanged. After each approval, call \`gnubok_propose_dispositioner\` again: bolagsskatt must be recomputed on the new base, so never post it from a stale proposal. If the user wants a different amount than proposed, send them to the Bokslut page rather than scaling lines by hand.
 - Schablonintäkt on periodiseringsfonder is a tax-return adjustment, never booked.
 
 ## Step 6: The close (irreversible)
@@ -125,7 +125,7 @@ Preconditions: readiness says \`ready: true\`, the period is open and unlocked, 
 
 "This closes FY[year] for good. After this, nothing can be booked, corrected or reversed in [year], not even with a storno: a closed year is final. Any mistake found later is corrected in [next year]. The result that will be closed is [result] SEK. Reply 'Ja, stäng [year]' if you want me to approve it."
 
-Only on that clear yes: \`gnubok_approve_pending_operation({ operation_id, confirmed: true })\`. "OK", "sure" or silence is not enough: ask again. If the approval tool is not available to you, point the user to Granskning in Accounted, where the same confirmation is asked.
+Only on that clear yes: \`gnubok_approve_pending_operation({ operation_id, confirmed: true })\`. "OK", "sure" or silence is not enough: ask again. If the approval tool is not available to you, point the user to Granskning in Zimla Kontor, where the same confirmation is asked.
 
 Do not call \`gnubok_lock_period\`, \`gnubok_close_period\` or \`gnubok_set_opening_balances\` afterwards: the close did all of it, and they answer "already locked" / "already closed". They exist only for a manual or legacy flow.
 

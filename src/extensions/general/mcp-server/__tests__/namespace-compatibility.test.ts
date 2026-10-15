@@ -61,7 +61,7 @@ describe('MCP namespace compatibility', () => {
     eventBus.clear()
   })
 
-  it('maps every canonical tool to one valid, unique Accounted name', () => {
+  it('maps every canonical tool to one valid, unique Zimla Kontor name', () => {
     const accountedNames = canonicalTools.map((tool) =>
       toPublicToolName(tool.name, 'accounted')
     )
@@ -95,7 +95,7 @@ describe('MCP namespace compatibility', () => {
     expect(tools.every((tool) => tool.name.startsWith('gnubok_'))).toBe(true)
   })
 
-  it('advertises the Accounted identity, tools, and staging references when selected', async () => {
+  it('advertises the Zimla Kontor identity, tools, and staging references when selected', async () => {
     const initialized = await readResult(
       mcpRequest(
         'initialize',
@@ -172,7 +172,7 @@ describe('MCP namespace compatibility', () => {
     ).toBe(true)
   })
 
-  it('projects prompt and loaded-skill tool references for Accounted clients', async () => {
+  it('projects prompt and loaded-skill tool references for Zimla Kontor clients', async () => {
     const prompt = await readResult(
       mcpRequest(
         'prompts/get',

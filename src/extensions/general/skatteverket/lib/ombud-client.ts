@@ -19,8 +19,8 @@ const log = createLogger('skatteverket-ombud-client')
  *        The huvudmän (companies/persons) the AUTHENTICATED ombud may
  *        represent, with role + validity. The ombud identity comes from the
  *        token: with a personal BankID token that is the person, with the
- *        system (CCG, organisationscertifikat) token it is Accounted's org
- *        number. Only the system identity answers "who granted Accounted".
+ *        system (CCG, organisationscertifikat) token it is Zimla Kontor's org
+ *        number. Only the system identity answers "who granted Zimla Kontor".
  *   GET  /huvudman/autentisieradHuvudman?ombud&roll&giltigFrom&giltigTom
  *        The reverse view for a huvudman. Not used here.
  *   POST /ombud/autentisieratOmbud/huvudman/{huvudman}/djuplank/utseombud
@@ -32,8 +32,8 @@ const log = createLogger('skatteverket-ombud-client')
  *        Role descriptions: rollbeteckning + rollbeskrivning.
  *
  * Every call here runs on the SYSTEM identity: the whole point is to ask
- * the register what companies granted Accounted, and to mint deep links
- * that name Accounted as the ombud.
+ * the register what companies granted Zimla Kontor, and to mint deep links
+ * that name Zimla Kontor as the ombud.
  *
  * Two things the service description does not pin down, deliberately
  * handled tolerantly and logged so the first live call against the test
@@ -57,7 +57,7 @@ export function getOmbudApiBaseUrl(): string {
   return getSkatteverketEnvironment() === 'prod' ? OMBUD_API_PROD_BASE_URL : OMBUD_API_TEST_BASE_URL
 }
 
-/** The behörigheter Accounted asks companies for, keyed as the connection row stores them. */
+/** The behörigheter Zimla Kontor asks companies for, keyed as the connection row stores them. */
 export const OMBUD_ROLE_KEYS: readonly SkvBehorighet[] = ['lasombud', 'moms_ombud'] as const
 
 /**
@@ -94,7 +94,7 @@ export interface OmbudRoleLike {
 }
 
 /**
- * Which of Accounted's behörigheter a register role represents, or null
+ * Which of Zimla Kontor's behörigheter a register role represents, or null
  * when it is some other role (companies hand out many; only two matter).
  * A pinned code wins over the text match, and a pinned code that does NOT
  * match disqualifies the text fallback for that key: once Emil has told us
@@ -191,7 +191,7 @@ export class OmbudApiError extends Error {
 /**
  * Whose register call this is. A company's own (the grant lookup for its org
  * number, its deep link) is audited against that company; 'ombud_register'
- * marks Accounted's own calls as ombud that belong to no company (the
+ * marks Zimla Kontor's own calls as ombud that belong to no company (the
  * whole-register listing, /roller): the transport logs those instead, since
  * the audit table is per company.
  */
@@ -213,7 +213,7 @@ async function ombudRequest(method: 'GET' | 'POST', path: string, audit: SkvAudi
   } catch (err) {
     // api-client maps a system-mode 403 to OMBUD_GRANT_MISSING because on the
     // read services a 403 is "this company did not grant us". On the register
-    // itself a 403 means Accounted may not call the service at all (scope or
+    // itself a 403 means Zimla Kontor may not call the service at all (scope or
     // avtal): a run-level condition that must never be recorded as a
     // company's grant state.
     if (err instanceof SkatteverketAuthError && err.code === 'OMBUD_GRANT_MISSING') {
@@ -262,7 +262,7 @@ export type ListOmbudGrantsFilter = {
 
 /**
  * GET /ombud/autentisieratOmbud: every behörighetspost where the system
- * identity (Accounted's org number) is the ombud. Skatteverket returns
+ * identity (Zimla Kontor's org number) is the ombud. Skatteverket returns
  * current and FUTURE grants; use {@link isGrantActive} before trusting one.
  *
  * A 404 is "wrong URI" per the service description (4.7), yet its 1..*
@@ -354,7 +354,7 @@ export interface UtseOmbudDeepLink {
 
 /**
  * POST .../huvudman/{huvudman}/djuplank/utseombud on the system identity:
- * a link the company opens to appoint Accounted as ombud with the given
+ * a link the company opens to appoint Zimla Kontor as ombud with the given
  * roles pre-selected, then signs in the e-service with BankID.
  */
 export async function createUtseOmbudDeepLink(
@@ -420,7 +420,7 @@ export interface HuvudmanGrantSummary {
   roles: string[]
   /**
    * True when at least one post (active or not) classified as one of
-   * Accounted's behörigheter. False with a non-empty `roles` means the
+   * Zimla Kontor's behörigheter. False with a non-empty `roles` means the
    * register lists roles we cannot name: a code-pinning problem, not a
    * company decision.
    */
@@ -435,7 +435,7 @@ export interface HuvudmanGrantSummary {
 
 /**
  * Collapse behörighetsposter into one row per huvudman saying which of
- * Accounted's two behörigheter are active today. Roles outside the two are
+ * Zimla Kontor's two behörigheter are active today. Roles outside the two are
  * kept in `roles` for the probe detail but decide nothing.
  */
 export function summarizeGrants(posts: Behorighetspost[], today: string): Map<string, HuvudmanGrantSummary> {
@@ -479,7 +479,7 @@ export function summarizeGrants(posts: Behorighetspost[], today: string): Map<st
  * Org-number proof (founder decision 2026-10-02): a grant counts only when it
  * was signed on or after the company's own opt-in. Org numbers are public and
  * any tenant can type one; a grant signed BEFORE the tenant opted in was given
- * to Accounted for someone else's use of the number (a former customer who
+ * to Zimla Kontor for someone else's use of the number (a former customer who
  * left without withdrawing it), and must not be inherited. A grant signed
  * after the opt-in was signed by a firmatecknare for this very connection.
  */

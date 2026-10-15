@@ -232,7 +232,7 @@ describe('detectExpiringBankConnections', () => {
 })
 
 describe('detectSkvDisconnected', () => {
-  it('stays silent on a dead session when the company reads through Accounted as ombud', async () => {
+  it('stays silent on a dead session when the company reads through Zimla Kontor as ombud', async () => {
     enqueue({
       data: {
         status: 'needs_reconsent',

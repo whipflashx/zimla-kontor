@@ -34,7 +34,7 @@ registerEndpoint({
   path: '/api/v1/companies/:companyId/webhooks/:id/verify',
   summary: "Verify a webhook endpoint's ownership now.",
   description:
-    'Runs the ownership handshake against the webhook URL immediately and returns the result. Accounted POSTs a signed webhook.verification event (same X-Gnubok-Signature scheme and envelope as every delivery) whose data.object.challenge is a random value; the endpoint passes by answering, within 10 seconds and without a redirect, any 2xx with the JSON body {"challenge": "<the same value>"}. A pass sets verified_at and opens the webhook to deliveries; a failure answers 422 WEBHOOK_VERIFICATION_FAILED with details.reason. A webhook that is already verified is returned as-is without contacting the URL.',
+    'Runs the ownership handshake against the webhook URL immediately and returns the result. Zimla Kontor POSTs a signed webhook.verification event (same X-Gnubok-Signature scheme and envelope as every delivery) whose data.object.challenge is a random value; the endpoint passes by answering, within 10 seconds and without a redirect, any 2xx with the JSON body {"challenge": "<the same value>"}. A pass sets verified_at and opens the webhook to deliveries; a failure answers 422 WEBHOOK_VERIFICATION_FAILED with details.reason. A webhook that is already verified is returned as-is without contacting the URL.',
   useWhen:
     "After creating a webhook or changing its URL, once your receiver answers webhook.verification. Also to resume a webhook whose verification_status is 'paused' (a pre-verification endpoint whose grace window closed).",
   doNotUseFor:

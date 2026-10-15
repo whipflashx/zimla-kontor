@@ -13,7 +13,7 @@ const EXAMPLES: RegistrySkillId[] = ['kvittojakten', 'bookkeep', 'month-end-clos
 
 /**
  * The page's first job for everyone without an AI connected (most users):
- * say what their own AI does in Accounted, let them connect it in one click,
+ * say what their own AI does in Zimla Kontor, let them connect it in one click,
  * and show three real flows as the proof. The catalogue below stays
  * browsable, so the rest of the page is the fuller answer to "what for?".
  */

@@ -1,7 +1,7 @@
 /**
  * Validation for an asset's opening accumulated depreciation ("Redan
  * avskrivet per <datum>"): depreciation booked in a previous system before
- * the asset entered Accounted. Shared by the create schema (all doors) and
+ * the asset entered Zimla Kontor. Shared by the create schema (all doors) and
  * the update path, which has to judge the row as it will END UP.
  *
  * The amount never becomes a voucher: it is already in the imported ledger's
