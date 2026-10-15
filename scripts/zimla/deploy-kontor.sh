@@ -2,13 +2,26 @@
 # Driftsätter Zimla Kontor på kontor.zimla.io från den commit som är utcheckad (måste vara ren och pushad).
 #   scripts/zimla/deploy-kontor.sh
 # 1. Packar exakt den commiten (git archive) – samma arkiv blir /kallkod (AGPL-3.0 avsnitt 13).
-# 2. Bygger imagen zimla-kontor:<sha> på servern, kör nya migreringar, byter appen och väntar på health.
+# 2. Väntar på att GitHub Actions byggt imagen ghcr.io/whipflashx/zimla-kontor:<sha> (servern bygger aldrig:
+#    next build behöver ~6 GB och fick servern att swappa ihjäl sig 2026-10-15).
+# 3. Servern hämtar imagen, kör nya migreringar, byter appen och väntar på health.
 set -euo pipefail
 SERVER=${KONTOR_SERVER:-root@136.148.214.15}
 cd "$(git rev-parse --show-toplevel)"
 [ -z "$(git status --porcelain)" ] || { echo "Arbetskatalogen är inte ren – committa först." >&2; exit 1; }
 SHA=$(git rev-parse --short=7 HEAD)
 git fetch -q origin && git merge-base --is-ancestor HEAD origin/main || { echo "Commiten $SHA finns inte på origin/main – pusha först." >&2; exit 1; }
+FULL=$(git rev-parse HEAD)
+echo "→ väntar på imagen för $SHA (GitHub Actions)"
+for i in $(seq 1 90); do
+  RUN=$(gh run list --workflow image.yml --commit "$FULL" --json databaseId,status,conclusion -q '.[0]' 2>/dev/null || true)
+  case "$RUN" in
+    *'"conclusion":"success"'*) break ;;
+    *'"conclusion":"'[a-z]*) echo "Bygget i GitHub Actions misslyckades: $RUN" >&2; exit 1 ;;
+  esac
+  sleep 20
+done
+case "$RUN" in *'"conclusion":"success"'*) ;; *) echo "Imagen blev inte klar i tid." >&2; exit 1 ;; esac
 ARCHIVE=zimla-kontor-$SHA.tar.gz
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 git archive --format=tar.gz --prefix="zimla-kontor-$SHA/" -o "$TMP/$ARCHIVE" HEAD
@@ -19,8 +32,8 @@ ssh "$SERVER" SHA="$SHA" ARCHIVE="$ARCHIVE" 'bash -s' <<'REMOTE'
 set -euo pipefail
 REL=/opt/kontor-releases/zimla-kontor-$SHA
 rm -rf "$REL" && tar -xzf "/opt/kontor-releases/$ARCHIVE" -C /opt/kontor-releases
-echo "→ bygger zimla-kontor:$SHA (tar en stund)"
-docker build -q -f "$REL/docker/Dockerfile" -t "zimla-kontor:$SHA" "$REL" >/dev/null
+echo "→ hämtar ghcr.io/whipflashx/zimla-kontor:$SHA"
+docker pull -q "ghcr.io/whipflashx/zimla-kontor:$SHA" >/dev/null
 echo "→ migreringar"
 bash "$REL/scripts/zimla/migrate.sh" "$REL" | tail -1
 mkdir -p /opt/kontor
