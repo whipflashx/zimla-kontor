@@ -252,9 +252,9 @@ export const CAPABILITY_BLOCKED_MESSAGE_EN =
  * upsell copy would mislead the operator.
  */
 export const CAPABILITY_BLOCKED_MESSAGE_SELF_HOSTED_SV =
-  'Den här funktionen kräver en connector-nyckel från Zimla Kontor (GNUBOK_CONNECTOR_KEY) eller instansens egna API-uppgifter för tjänsten.'
+  'Den här funktionen är inte påkopplad än. Den kräver egna API-uppgifter för tjänsten eller en connector-nyckel från Accounted (GNUBOK_CONNECTOR_KEY).'
 export const CAPABILITY_BLOCKED_MESSAGE_SELF_HOSTED_EN =
-  'This feature requires an Zimla Kontor connector key (GNUBOK_CONNECTOR_KEY) or the instance\'s own API credentials for the service.'
+  'This feature is not switched on yet. It needs the instance\'s own API credentials for the service or an Accounted connector key (GNUBOK_CONNECTOR_KEY).'
 
 function blockedMessageSv(): string {
   return isSelfHosted() ? CAPABILITY_BLOCKED_MESSAGE_SELF_HOSTED_SV : CAPABILITY_BLOCKED_MESSAGE_SV

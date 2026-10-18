@@ -174,7 +174,12 @@ export default function SkattekontoPage() {
         fetch('/api/extensions/ext/skatteverket/skattekonto/transaktioner?include_ignored=1'),
       ])
 
-      if (saldoRes.status === 401) {
+      // 503 EXTENSION_DISABLED: the instance has no Skatteverket integration switched on.
+      // That is "not connected" (import a statement instead), not a broken fetch.
+      const skvDisabled =
+        saldoRes.status === 503 &&
+        (await saldoRes.clone().json().catch(() => null))?.code === 'EXTENSION_DISABLED'
+      if (saldoRes.status === 401 || skvDisabled) {
         setNotConnected(true)
         // A skattekontoutdrag file import populates the table without any
         // SKV connection: keep rendering those rows. The StartCard only

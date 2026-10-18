@@ -41,64 +41,64 @@
      agent provider raises it while the panel is docked and clears it again. */
   --agent-dock-w: 10px;
 
-  /* Grayscale Chrome Palette: paper white + warm beige */
+  /* Zimla: paper white, zinc neutrals, Zimla ink and emerald (same as zimla.io) */
 
   --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
+  --foreground: 240 6% 10%;
 
-  /* Warm-toned frame behind the floating page panel (frame layout) */
-  --frame: 40 18% 96%;
+  /* Zinc frame behind the floating page panel (frame layout) */
+  --frame: 240 5% 96.5%;
 
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
+  --card-foreground: 240 6% 10%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
+  --popover-foreground: 240 6% 10%;
 
-  --primary: 0 0% 9%;
+  --primary: 150 4% 13%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 40 11% 89%;                /* Warm beige paper chip */
-  --secondary-foreground: 0 0% 9%;
+  --secondary: 240 6% 90%;                /* Zinc chip */
+  --secondary-foreground: 240 6% 10%;
 
-  --muted: 40 8% 93%;
-  --muted-foreground: 0 0% 40%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
 
-  --accent: 40 8% 93%;
-  --accent-foreground: 0 0% 9%;
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 6% 10%;
 
-  --destructive: 6 36% 48%;               /* Muted terracotta */
+  --destructive: 0 65% 47%;               /* Red, restrained */
   --destructive-foreground: 0 0% 100%;
 
-  --border: 45 5% 85%;
-  --input: 45 5% 85%;
-  --ring: 0 0% 9%;
+  --border: 240 6% 90%;
+  --input: 240 6% 88%;
+  --ring: 142 76% 36%;
 
   /* Radius */
   --radius: 0.5rem;
 
-  /* Success: Sage green */
-  --success: 155 25% 40%;
+  /* Success: Zimla emerald */
+  --success: 142 76% 36%;
   --success-foreground: 0 0% 100%;
 
   /* Warning: Muted ochre */
-  --warning: 38 55% 50%;
+  --warning: 38 92% 50%;
   --warning-foreground: 0 0% 9%;
 
   /* Attn: darker ochre for the one-sentence attention line (.attn / AttnLine),
      derived from --warning but AA-safe as small text on the page background. */
-  --attn: 38 50% 34%;
+  --attn: 32 80% 32%;
 
-  --warm-accent: 38 45% 52%;
+  --warm-accent: 142 71% 45%;
 
   /* Chart colors */
-  --chart-1: 155 25% 40%;
-  --chart-2: 6 36% 48%;
-  --chart-3: 38 55% 50%;
-  --chart-4: 0 0% 50%;
+  --chart-1: 142 76% 36%;
+  --chart-2: 0 65% 47%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 240 5% 65%;
 
   /* Custom tokens */
-  --font-display: var(--font-hedvig-serif), Georgia, serif;
+  --font-display: var(--font-geist-sans), system-ui, sans-serif;
   --font-body: var(--font-geist-sans), system-ui, sans-serif;
 
   /* Shadows: barely-there; chrome relies on hairline borders */
@@ -150,37 +150,37 @@
 .dark {
   color-scheme: dark;
 
-  --background: 0 0% 7%;
-  --foreground: 0 0% 87%;
+  --background: 240 10% 4%;
+  --foreground: 0 0% 93%;
 
-  --frame: 0 0% 5%;
+  --frame: 240 10% 3%;
 
-  --card: 0 0% 11%;
-  --card-foreground: 0 0% 87%;
+  --card: 240 6% 8%;
+  --card-foreground: 0 0% 93%;
 
-  --popover: 0 0% 11%;
-  --popover-foreground: 0 0% 87%;
+  --popover: 240 6% 8%;
+  --popover-foreground: 0 0% 93%;
 
-  --primary: 0 0% 87%;
-  --primary-foreground: 0 0% 7%;
+  --primary: 0 0% 95%;
+  --primary-foreground: 240 6% 10%;
 
-  --secondary: 0 0% 14%;
-  --secondary-foreground: 0 0% 87%;
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 93%;
 
-  --muted: 0 0% 16%;
-  --muted-foreground: 0 0% 50%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
 
-  --accent: 0 0% 16%;
-  --accent-foreground: 0 0% 87%;
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 93%;
 
-  --destructive: 6 32% 56%;
+  --destructive: 0 62% 58%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 45 4% 18%;
-  --input: 45 4% 18%;
-  --ring: 0 0% 87%;
+  --border: 240 4% 17%;
+  --input: 240 4% 20%;
+  --ring: 142 70% 45%;
 
-  --success: 155 22% 48%;
+  --success: 142 70% 45%;
   --success-foreground: 0 0% 100%;
 
   --warning: 38 50% 55%;
@@ -188,12 +188,12 @@
 
   --attn: 38 45% 62%;
 
-  --warm-accent: 38 42% 58%;
+  --warm-accent: 142 70% 45%;
 
-  --chart-1: 155 22% 48%;
-  --chart-2: 6 32% 56%;
+  --chart-1: 142 70% 45%;
+  --chart-2: 0 62% 58%;
   --chart-3: 38 50% 55%;
-  --chart-4: 0 0% 55%;
+  --chart-4: 240 5% 55%;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
@@ -206,17 +206,17 @@
 :root[data-palette="neutral"],
 [data-palette-preview="neutral"] {
   --background: 0 0% 100%;
-  --primary: 0 0% 9%;
-  --secondary: 40 11% 89%;
-  --border: 45 5% 85%;
+  --primary: 150 4% 13%;
+  --secondary: 240 6% 90%;
+  --border: 240 6% 90%;
 }
 
 .dark[data-palette="neutral"],
 .dark [data-palette-preview="neutral"] {
-  --background: 0 0% 7%;
-  --primary: 0 0% 87%;
-  --secondary: 0 0% 14%;
-  --border: 45 4% 18%;
+  --background: 240 10% 4%;
+  --primary: 0 0% 95%;
+  --secondary: 240 4% 16%;
+  --border: 240 4% 17%;
 }
 
 :root[data-palette="indigo"],

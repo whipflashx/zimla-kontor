@@ -30,8 +30,8 @@ export function UpgradeNote({ children, className }: { children?: React.ReactNod
   if (isSelfHosted()) {
     return frame(
       <>
-        Den här funktionen kräver en connector-nyckel från Zimla Kontor (GNUBOK_CONNECTOR_KEY) eller
-        instansens egna API-uppgifter för tjänsten.
+        Den här funktionen är inte påkopplad än. Den kräver egna API-uppgifter för tjänsten
+        eller en connector-nyckel från Accounted (GNUBOK_CONNECTOR_KEY).
       </>,
     )
   }
