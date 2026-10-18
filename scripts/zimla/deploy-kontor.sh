@@ -35,7 +35,7 @@ rm -rf "$REL" && tar -xzf "/opt/kontor-releases/$ARCHIVE" -C /opt/kontor-release
 echo "→ hämtar ghcr.io/whipflashx/zimla-kontor:$SHA"
 docker pull -q "ghcr.io/whipflashx/zimla-kontor:$SHA" >/dev/null
 echo "→ migreringar"
-bash "$REL/scripts/zimla/migrate.sh" "$REL" | tail -1
+bash "$REL/scripts/zimla/migrate.sh" "$REL" </dev/null | tail -1   # docker exec -i äter annars resten av skriptet ur stdin
 mkdir -p /opt/kontor
 cp "$REL/docker-compose.yml" /opt/kontor/docker-compose.yml
 cp "$REL/scripts/zimla/docker-compose.override.yml" /opt/kontor/docker-compose.override.yml
