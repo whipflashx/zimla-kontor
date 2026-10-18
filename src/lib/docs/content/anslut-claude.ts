@@ -21,7 +21,7 @@ Det finns tre vägar in, beroende på vilken klient du använder. Alla tre når 
 
 ## Väg A: claude.ai eller Claude Desktop (ett klick)
 
-**[→ Anslut Zimla Kontor till Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Zimla Kontor&connectorUrl=https%3A%2F%2Fapp.accounted.se%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
+**[→ Anslut Zimla Kontor till Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Zimla Kontor&connectorUrl=https%3A%2F%2Fkontor.zimla.io%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
 
 Länken öppnar claude.ai med namn och adress ifyllda. Du granskar värdena och godkänner; länken fyller bara i formuläret och ger ingenting i sig. Ingen API-nyckel att hålla reda på.
 

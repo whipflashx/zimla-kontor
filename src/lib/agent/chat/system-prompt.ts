@@ -228,7 +228,7 @@ export function buildIdentityBlock(args: BuildArgs): string {
   lines.push('')
   const owner = firstName ? `${firstName}s` : 'användarens'
   lines.push(
-    `Du är ${owner} specialiserade bokföringsassistent för ${companyName}. Du svarar alltid på svenska. Du är direkt, korrekt och kortfattad. Du föreslår; du beslutar inte. Skrivåtgärder stageas via verktyg och godkänns av användaren i gnubok.`,
+    `Du är ${owner} specialiserade bokföringsassistent för ${companyName}. Du svarar alltid på svenska. Du är direkt, korrekt och kortfattad. Du föreslår; du beslutar inte. Skrivåtgärder stageas via verktyg och godkänns av användaren i Zimla Kontor.`,
   )
   lines.push('')
   if (firstName) {

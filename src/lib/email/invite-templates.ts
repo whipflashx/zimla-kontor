@@ -14,7 +14,7 @@ export interface InviteEmailData {
 
 export function generateInviteEmailSubject(data: InviteEmailData): string {
   const appName = data.appName ?? getBranding().appName
-  return `Du har bjudits in till ${data.companyName} på ${appName.toLowerCase()}`
+  return `Du har bjudits in till ${data.companyName} på ${appName}`
 }
 
 export function generateInviteEmailHtml(data: InviteEmailData): string {
@@ -39,7 +39,7 @@ export function generateInviteEmailHtml(data: InviteEmailData): string {
           Du har blivit inbjuden
         </h1>
         <p style="margin: 0; color: #666; font-size: 15px;">
-          <strong>${inviterEmail}</strong> har bjudit in dig till <strong>${companyName}</strong> på ${appName.toLowerCase()}.
+          <strong>${inviterEmail}</strong> har bjudit in dig till <strong>${companyName}</strong> på ${appName}.
         </p>
       </div>
 
@@ -62,7 +62,7 @@ export function generateInviteEmailHtml(data: InviteEmailData): string {
 
 export function generateInviteEmailText(data: InviteEmailData): string {
   const appName = data.appName ?? getBranding().appName
-  return `Du har bjudits in till ${data.companyName} på ${appName.toLowerCase()} av ${data.inviterEmail}.
+  return `Du har bjudits in till ${data.companyName} på ${appName} av ${data.inviterEmail}.
 
 Acceptera inbjudan: ${data.inviteUrl}
 
@@ -91,7 +91,7 @@ export function generateTeamInviteEmailSubject(data?: Pick<TeamInviteEmailData, 
   if (data?.appName) {
     return `Du har blivit inbjuden till ${data.appName}`
   }
-  return `Du har bjudits in till ett team på ${getBranding().appName.toLowerCase()}`
+  return `Du har bjudits in till ett team på ${getBranding().appName}`
 }
 
 export function generateTeamInviteEmailHtml(data: TeamInviteEmailData): string {
@@ -153,7 +153,7 @@ Acceptera inbjudan: ${data.inviteUrl}
 
 Länken är giltig i 7 dagar.`
   }
-  return `Du har bjudits in som konsult till ett team på ${getBranding().appName.toLowerCase()} av ${data.inviterEmail}. Du får tillgång till alla företag i teamet.
+  return `Du har bjudits in som konsult till ett team på ${getBranding().appName} av ${data.inviterEmail}. Du får tillgång till alla företag i teamet.
 
 Acceptera inbjudan: ${data.inviteUrl}
 

@@ -590,7 +590,7 @@ function closeExternalFailure(err: unknown): Failure {
   const message = messageOf(err)
   if (/not found/i.test(message)) return { ok: false, code: 'PERIOD_NOT_FOUND' }
   if (/already closed/i.test(message)) return { ok: false, code: 'FISCAL_PERIOD_CLOSE_EXTERNAL_ALREADY_CLOSED' }
-  if (/closing entry in Accounted/i.test(message)) {
+  if (/closing entry in Zimla Kontor/i.test(message)) {
     return { ok: false, code: 'FISCAL_PERIOD_CLOSE_EXTERNAL_HAS_CLOSING_ENTRY' }
   }
   if (/not ended yet/i.test(message)) return { ok: false, code: 'FISCAL_PERIOD_CLOSE_EXTERNAL_NOT_ENDED' }

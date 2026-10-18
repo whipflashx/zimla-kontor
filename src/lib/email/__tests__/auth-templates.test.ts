@@ -22,9 +22,9 @@ describe('buildAuthEmail', () => {
     expect(mail.subject).toBe(subject)
     expect(mail.html).toContain('Siffra')
     expect(mail.html).toContain(URL_EXAMPLE_HTML)
-    expect(mail.html).not.toMatch(/accounted/i)
+    expect(mail.html).not.toMatch(/zimla kontor/i)
     expect(mail.text).toContain(URL_EXAMPLE)
-    expect(mail.text).not.toMatch(/accounted/i)
+    expect(mail.text).not.toMatch(/zimla kontor/i)
   })
 
   it('renders the platform default without a brand', () => {
@@ -33,7 +33,7 @@ describe('buildAuthEmail', () => {
       appName: 'Zimla Kontor',
       actionUrl: 'https://kontor.zimla.io/auth/callback?token_hash=abc&type=recovery',
     })
-    expect(mail.html).toContain('ACCOUNTED')
+    expect(mail.html).toContain('ZIMLA KONTOR')
     expect(mail.html).toContain('https://kontor.zimla.io/auth/callback')
     expect(mail.html).toMatchSnapshot()
     expect(mail.text).toMatchSnapshot()
@@ -90,7 +90,7 @@ describe('buildAuthEmail', () => {
       'Bekräfta e-postadress: https://app.siffra.se/auth/callback?token_hash=abc&type=magiclink',
     )
     expect(mail.html).toContain('type=magiclink')
-    expect(mail.html).not.toMatch(/accounted/i)
+    expect(mail.html).not.toMatch(/zimla kontor/i)
   })
 
   it('falls back to a generic mail for unknown action types', () => {

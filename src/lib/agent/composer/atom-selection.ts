@@ -339,7 +339,7 @@ function buildUserPrompt(inputs: ComposerInputs): string {
     lines.push('')
   } else {
     lines.push(`# TIC-snapshot`)
-    lines.push('Saknas. Förlita dig på företagsnamn, gnubok-entity_type och övriga signaler.')
+    lines.push('Saknas. Förlita dig på företagsnamn, entity_type i Zimla Kontor och övriga signaler.')
     lines.push('')
   }
 

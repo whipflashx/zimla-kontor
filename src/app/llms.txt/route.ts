@@ -57,7 +57,7 @@ declarations, ingest SIE files, and subscribe to webhooks for state changes.
 - Health check: ${base}/api/v1/health
 - Docs (cookbook + reference): ${base}/docs/api
 - Error reference: ${base}/docs/api/errors
-- Security disclosure policy: ${base}/SECURITY.md (responsible disclosure to support@accounted.se)
+- Security disclosure policy: ${base}/SECURITY.md (responsible disclosure to support@zimla.io)
 
 ## Schema discovery
 

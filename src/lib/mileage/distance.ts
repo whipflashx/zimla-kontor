@@ -35,7 +35,7 @@ const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search'
 // visible attribution, all of which this module and the UI provide.
 const OSRM_URL = 'https://routing.openstreetmap.de/routed-car/route/v1/driving'
 // Nominatim's usage policy requires an identifying User-Agent.
-const USER_AGENT = 'Zimla Kontor korjournal (https://accounted.se)'
+const USER_AGENT = 'Zimla Kontor korjournal (https://kontor.zimla.io)'
 const REQUEST_TIMEOUT_MS = 5_000
 const DEFAULT_MIN_INTERVAL_MS = 1_100
 const HIT_TTL_MS = 24 * 60 * 60 * 1000

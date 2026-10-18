@@ -1119,7 +1119,7 @@ function MessageBubble({
                 key={s.tool_use_id}
                 className="rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground"
               >
-                Förslag stageat men ingen operation-id mottagen. Granska i accounted under <em>Förslag</em>.
+                Förslag stageat men ingen operation-id mottagen. Granska i Zimla Kontor under <em>Förslag</em>.
               </div>
             ),
           )}

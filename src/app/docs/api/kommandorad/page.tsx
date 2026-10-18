@@ -4,7 +4,7 @@ import { DocsMarkdown } from '@/lib/docs/markdown'
 import { KOMMANDORAD_MD } from '@/lib/docs/content/kommandorad'
 
 export const metadata: Metadata = {
-  title: 'Kommandoraden · accounted API',
+  title: 'Kommandoraden · Zimla Kontor API',
   description:
     'Använd alla Zimla Kontor-verktyg från terminalen, skript eller en agent (Claude Code, Codex, Cursor) med kommandot accounted: inloggning i webbläsaren, JSON-argument och skrivningar som du godkänner.',
 }

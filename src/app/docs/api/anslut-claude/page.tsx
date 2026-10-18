@@ -4,7 +4,7 @@ import { DocsMarkdown } from '@/lib/docs/markdown'
 import { ANSLUT_CLAUDE_MD } from '@/lib/docs/content/anslut-claude'
 
 export const metadata: Metadata = {
-  title: 'Anslut Claude · accounted API',
+  title: 'Anslut Claude · Zimla Kontor API',
   description:
     'Koppla Zimla Kontor till Claude (claude.ai, Claude Desktop, Claude Code) via MCP-servern: OAuth 2.1-connector, Claude Code-plugin eller npx accounted-mcp.',
 }

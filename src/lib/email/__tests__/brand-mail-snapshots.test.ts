@@ -91,9 +91,9 @@ describe('invite mail (template class: invite)', () => {
       replyTo: 'support@siffra.se',
     })
     expect(mail.html).toContain('https://app.siffra.se/invite/tok-1')
-    expect(mail.subject).toContain('siffra')
-    expect(mail.html).not.toMatch(/accounted/i)
-    expect(mail.text).not.toMatch(/accounted/i)
+    expect(mail.subject).toContain('Siffra')
+    expect(mail.html).not.toMatch(/zimla kontor/i)
+    expect(mail.text).not.toMatch(/zimla kontor/i)
     expect(mail.html).toMatchSnapshot()
   })
 
@@ -110,14 +110,14 @@ describe('invite mail (template class: invite)', () => {
     expect(mail.html).toMatchSnapshot()
   })
 
-  it('unverified sender domain: via-Accounted fallback (fromName without fromAddress)', async () => {
+  it('unverified sender domain: via-Zimla Kontor fallback (fromName without fromAddress)', async () => {
     resolveBrandForCompanyMock.mockResolvedValue(UNVERIFIED)
     const mail = await composeInvite()
     expect(mail.sender.fromName).toBe('Siffra')
     expect(mail.sender.fromAddress).toBeNull()
     // Links and body still carry the brand even in the fallback.
     expect(mail.html).toContain('https://app.siffra.se/invite/tok-1')
-    expect(mail.html).not.toMatch(/accounted/i)
+    expect(mail.html).not.toMatch(/zimla kontor/i)
   })
 })
 
@@ -146,7 +146,7 @@ describe('payslip mail (template class: payslip)', () => {
       fromAddress: 'noreply@post.siffra.se',
     })
     expect(mail.html).toContain('https://app.siffra.se/payslip/tok-1')
-    expect(mail.html).not.toMatch(/accounted/i)
+    expect(mail.html).not.toMatch(/zimla kontor/i)
     expect(mail.html).toMatchSnapshot()
   })
 
@@ -158,7 +158,7 @@ describe('payslip mail (template class: payslip)', () => {
     expect(mail.html).toMatchSnapshot()
   })
 
-  it('unverified sender domain: via-Accounted fallback', async () => {
+  it('unverified sender domain: via-Zimla Kontor fallback', async () => {
     resolveBrandForCompanyMock.mockResolvedValue(UNVERIFIED)
     const mail = await composePayslip()
     expect(mail.sender.fromName).toBe('Siffra')
@@ -189,7 +189,7 @@ describe('invoice mail (template class: invoice)', () => {
     const html = generateInvoiceEmailHtml({ invoice, customer, company })
     // Template content is company-branded and platform-free by design;
     // the brand must not inject itself into the customer-facing body.
-    expect(html).not.toMatch(/accounted/i)
+    expect(html).not.toMatch(/zimla kontor/i)
     expect(html).not.toContain('Siffra')
     expect(html).toContain('Kund AB')
   })
@@ -198,7 +198,7 @@ describe('invoice mail (template class: invoice)', () => {
     const sender = await getSenderForCompany('company-1')
     expect(sender.fromAddress).toBeNull()
     const html = generateInvoiceEmailHtml({ invoice, customer, company })
-    expect(html).not.toMatch(/accounted/i)
+    expect(html).not.toMatch(/zimla kontor/i)
     expect(html).toMatchSnapshot()
   })
 
@@ -241,7 +241,7 @@ describe('reminder mail (template class: reminder)', () => {
     const text = generateReminderEmailText(data)
     expect(sender.fromAddress).toBe('noreply@post.siffra.se')
     expect(html).toContain('https://app.siffra.se/invoice-action/tok-1')
-    expect(html).not.toMatch(/accounted/i)
+    expect(html).not.toMatch(/zimla kontor/i)
     expect(text).toContain('https://app.siffra.se/invoice-action/tok-1')
   })
 
@@ -252,7 +252,7 @@ describe('reminder mail (template class: reminder)', () => {
     const html = generateReminderEmailHtml(data)
     expect(sender.fromAddress).toBeNull()
     expect(html).toContain('https://kontor.zimla.io/invoice-action/tok-1')
-    expect(html).not.toMatch(/accounted/i)
+    expect(html).not.toMatch(/zimla kontor/i)
     expect(html).toMatchSnapshot()
   })
 

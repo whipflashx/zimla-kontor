@@ -889,7 +889,7 @@ describe('POST /webhook', () => {
 
       await route.handler(signedRequest(envelope({ messages: [textMessage('Hjälp')] })))
       expect(sendTextMock.mock.calls[0][1].template).toBe(TEMPLATE.m13Help)
-      expect(sendTextMock.mock.calls[0][1].body).toContain('support@accounted.se')
+      expect(sendTextMock.mock.calls[0][1].body).toContain('support@zimla.io')
     })
 
     it('other free text gets the M16 fallback', async () => {

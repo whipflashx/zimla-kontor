@@ -102,7 +102,7 @@ Missing email is a **non-blocking warning** (lönebesked can't be sent automatic
 
 The bank file comes from the API too. \`POST /salary-runs/{id}/payment-file\` with \`{ "format": "pain001" }\` (or \`"bg_lb"\`; omitted = the company's \`preferred_payment_format\`) returns the ISO 20022 pain.001 XML inline as \`data.content\` with a \`data.filename\`, plus the employee count, the total and any warnings. It needs the company's IBAN and BIC (bankgiro for LB) and each employee's clearing and account number, and the run must be approved. Write the content to disk and upload it in the bank's file channel; generating it does not change the run's state. Dry-run it first to see the preview without stamping the run.
 
-After the bank transfer settles (or you mark it on the same day for cash-method shops), tell Accounted:
+After the bank transfer settles (or you mark it on the same day for cash-method shops), tell Zimla Kontor:
 
 \`\`\`bash
 curl -X POST "https://kontor.zimla.io/api/v1/companies/$COMPANY_ID/salary-runs/$SR_ID/mark-paid" \\

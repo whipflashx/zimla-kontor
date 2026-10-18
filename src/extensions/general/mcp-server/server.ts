@@ -26197,7 +26197,7 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
       // chat-approval text: the key it will get is not known yet.
       const canApprove = isAnonymous || hasScope(keyScopes, 'pending_operations:approve')
       const instructions = projectToolReferencesInText([
-            'Accounted: Swedish double-entry bookkeeping via conversation.',
+            'Zimla Kontor: Swedish double-entry bookkeeping via conversation.',
             '',
             ...(isAnonymous
               ? [

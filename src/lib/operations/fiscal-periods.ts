@@ -250,7 +250,7 @@ export const fiscalPeriodsCloseExternal = defineOperation({
       'Closes and locks an imported historical räkenskapsår whose bokslut was done in the previous bookkeeping software, without a closing entry here, and writes the decision to the audit log. Only for migrated years: the year must have ended, have no closing entry in Zimla Kontor, and hold imported verifikat, no verifikat, or balance-sheet-only verifikat with the next year\'s IB already posted. Unbooked bank transactions in the year block it, as for a lock. Undo with reopen-external. Idempotent. Dry-runnable.',
     useWhen: 'After an SIE migration, the earlier years show as pending bokslut although their bokslut was done in the old system.',
     doNotUseFor:
-      'Closing a year bookkept in Accounted: run the year-end (POST /fiscal-periods/{id}/year-end), which transfers the result and carries the balances forward.',
+      'Closing a year bookkept in Zimla Kontor: run the year-end (POST /fiscal-periods/{id}/year-end), which transfers the result and carries the balances forward.',
     pitfalls: [
       'A year bookkept here with result accounts answers 409 FISCAL_PERIOD_CLOSE_EXTERNAL_NATIVE_BOOKKEEPING: run the year-end instead.',
       'A running year answers 409 FISCAL_PERIOD_CLOSE_EXTERNAL_NOT_ENDED.',

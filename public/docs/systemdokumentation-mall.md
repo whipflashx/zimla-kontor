@@ -1,6 +1,6 @@
 # Systemdokumentation
 
-**Mall för användare av Accounted**
+**Mall för användare av Zimla Kontor**
 Upprättad i enlighet med 5 kap. 11 § BFL och BFNAR 2013:2
 
 ---
@@ -9,9 +9,9 @@ Upprättad i enlighet med 5 kap. 11 § BFL och BFNAR 2013:2
 
 Varje bokföringsskyldig ska upprätta en systemdokumentation som beskriver bokföringssystemets organisation och uppbyggnad. Dokumentationen ska göra det möjligt att utan svårighet överblicka systemet och förstå hur bokföringen är organiserad.
 
-Denna mall är förifylld med uppgifter som gäller för Accounted. Avsnitt markerade med hakparenteser ska anpassas till ditt företags förhållanden. Radera denna instruktionssektion innan du arkiverar dokumentet.
+Denna mall är förifylld med uppgifter som gäller för Zimla Kontor. Avsnitt markerade med hakparenteser ska anpassas till ditt företags förhållanden. Radera denna instruktionssektion innan du arkiverar dokumentet.
 
-Accounted tar också fram en färdig systemdokumentation för just ditt företag, med aktuell kontoplan, delsystem, verifikationsserier, behandlingsregler, behörigheter, integrationer och programversion: **Rapporter > Export & arkiv > Systemdokumentation**, som PDF per räkenskapsår. Samma uppgifter finns i filen `revision/systemdokumentation.json` i **Importera/Exportera > Exportera > Komplett arkiv**. Denna mall kompletterar den med företagets egna rutiner och ansvariga.
+Zimla Kontor tar också fram en färdig systemdokumentation för just ditt företag, med aktuell kontoplan, delsystem, verifikationsserier, behandlingsregler, behörigheter, integrationer och programversion: **Rapporter > Export & arkiv > Systemdokumentation**, som PDF per räkenskapsår. Samma uppgifter finns i filen `revision/systemdokumentation.json` i **Importera/Exportera > Exportera > Komplett arkiv**. Denna mall kompletterar den med företagets egna rutiner och ansvariga.
 
 Systemdokumentationen ska bevaras lika länge som den räkenskapsinformation den avser: till och med det sjunde året efter utgången av det kalenderår då räkenskapsåret avslutades (7 kap. 2 § BFL).
 
@@ -31,10 +31,10 @@ Systemdokumentationen ska bevaras lika länge som den räkenskapsinformation den
 
 | Fält | Uppgift |
 |---|---|
-| Programnamn | Accounted |
+| Programnamn | Zimla Kontor |
 | Version | [ANGE VERSION ELLER DATUM FÖR SENASTE KONTROLL] |
 | Leverantör | [BOLAGSNAMN], org.nr [ORG-NR] |
-| Webbplats | [DOMÄN, för den molnbaserade tjänsten app.accounted.se] |
+| Webbplats | [DOMÄN, för den molnbaserade tjänsten kontor.zimla.io] |
 | Typ | [ ] Molnbaserad SaaS-tjänst (webbläsarbaserad)  [ ] Egen drift (självhostad) |
 | Databasplattform | PostgreSQL via Supabase (den molnbaserade tjänsten: AWS, Stockholm) |
 | Autentisering | E-post och lösenord. I den molnbaserade tjänsten krävs dessutom en andra faktor vid inloggning: engångskod från en autentiseringsapp (TOTP) eller BankID. Leverantören kan i undantagsfall ge ett tidsbegränsat undantag. Åtkomst via API-nyckel beskrivs i avsnitt 12. |
@@ -60,7 +60,7 @@ Systemdokumentationen ska bevaras lika länge som den räkenskapsinformation den
 3.4. Företagsspecifika anpassningar av kontoplanen:
 [BESKRIV EVENTUELLA TILLAGDA ELLER BORTTAGNA KONTON, t.ex. "Konto 4010 Inköp varor, 5010 Lokalhyra har lagts till. Inga standardkonton har tagits bort."]
 
-3.5. Vid SIE-import bevaras oanvända kontodefinitioner i klass 9. Oanvända konton under 1000 är det tidigare programmets interna konton och tas inte med. Konton med belopp måste mappas till konton 1000-8999 innan importen startas, eftersom Accounteds rapporter bara omfattar klass 1-8; för konton i klass 9 med belopp föreslås 2999 OBS-konto. Källfil och kontomappningar bevaras i importarkivet.
+3.5. Vid SIE-import bevaras oanvända kontodefinitioner i klass 9. Oanvända konton under 1000 är det tidigare programmets interna konton och tas inte med. Konton med belopp måste mappas till konton 1000-8999 innan importen startas, eftersom Zimla Kontors rapporter bara omfattar klass 1-8; för konton i klass 9 med belopp föreslås 2999 OBS-konto. Källfil och kontomappningar bevaras i importarkivet.
 
 ## 4. Samlingsplan (BFNAR 2013:2 punkt 9.2 c, 9.4, 9.11)
 
@@ -263,20 +263,20 @@ Momsperiod: [ ] Månad  [ ] Kvartal  [ ] Helår
 
 | Integration | Beskrivning | Dataflöde |
 |---|---|---|
-| Enable Banking (PSD2) | Bankkontosynkronisering | Bank -> Accounted (läsning av transaktioner och saldon) |
-| Skatteverket | Momsdeklaration, arbetsgivardeklaration (AGI), skattekonto | Accounted <-> Skatteverket (inlämning signeras med BankID) |
-| Peppol (accesspunkt Qvalia) | E-fakturor in och ut | Leverantör -> Accounted, Accounted -> kund |
-| Amazon Bedrock (AWS) | Maskinell kategorisering av transaktioner och avläsning av underlag, med Anthropics Claude-modeller körda inom Bedrock i EU | Accounted -> Amazon Bedrock -> Accounted (transaktions- och dokumentdata skickas, förslag returneras; datan lämnar inte EU) |
-| Resend | E-post ut (fakturor, påminnelser) och in (inmejlade underlag till dokumentinkorgen) | Accounted <-> Resend (USA) |
-| WhatsApp (Meta) | Kvitton och underlag som skickas via WhatsApp | Användare -> Meta -> Accounted |
-| BankID och bolagsuppgifter (TIC) | Inloggning med BankID och uppslag av företagsuppgifter | Accounted <-> TIC |
-| Stripe | Betallänkar på kundfakturor, betalningar och utbetalningar | Stripe -> Accounted |
-| Shopify, WooCommerce, Zettle | Order och återbetalningar som underlag | Webbutik -> Accounted |
-| Molnsynkronisering (Google Drive, Dropbox) | Kopia av Komplett arkiv i företagets egen molnlagring | Accounted -> företagets molnlagring |
-| Migrering (Fortnox, Visma eEkonomi, Bokio, Briox, Björn Lundén, Wint) | Hämtning av bokföring från tidigare program | Tidigare program -> Accounted |
-| Riksbanken | Valutakurser för belopp i utländsk valuta | Riksbanken -> Accounted |
-| AI-assistenter (API och MCP) | Externa assistenter med API-nyckel, se avsnitt 12 | Assistent <-> Accounted |
-| PostHog | Användningsstatistik för tjänsten | Accounted -> PostHog |
+| Enable Banking (PSD2) | Bankkontosynkronisering | Bank -> Zimla Kontor (läsning av transaktioner och saldon) |
+| Skatteverket | Momsdeklaration, arbetsgivardeklaration (AGI), skattekonto | Zimla Kontor <-> Skatteverket (inlämning signeras med BankID) |
+| Peppol (accesspunkt Qvalia) | E-fakturor in och ut | Leverantör -> Zimla Kontor, Zimla Kontor -> kund |
+| Amazon Bedrock (AWS) | Maskinell kategorisering av transaktioner och avläsning av underlag, med Anthropics Claude-modeller körda inom Bedrock i EU | Zimla Kontor -> Amazon Bedrock -> Zimla Kontor (transaktions- och dokumentdata skickas, förslag returneras; datan lämnar inte EU) |
+| Resend | E-post ut (fakturor, påminnelser) och in (inmejlade underlag till dokumentinkorgen) | Zimla Kontor <-> Resend (USA) |
+| WhatsApp (Meta) | Kvitton och underlag som skickas via WhatsApp | Användare -> Meta -> Zimla Kontor |
+| BankID och bolagsuppgifter (TIC) | Inloggning med BankID och uppslag av företagsuppgifter | Zimla Kontor <-> TIC |
+| Stripe | Betallänkar på kundfakturor, betalningar och utbetalningar | Stripe -> Zimla Kontor |
+| Shopify, WooCommerce, Zettle | Order och återbetalningar som underlag | Webbutik -> Zimla Kontor |
+| Molnsynkronisering (Google Drive, Dropbox) | Kopia av Komplett arkiv i företagets egen molnlagring | Zimla Kontor -> företagets molnlagring |
+| Migrering (Fortnox, Visma eEkonomi, Bokio, Briox, Björn Lundén, Wint) | Hämtning av bokföring från tidigare program | Tidigare program -> Zimla Kontor |
+| Riksbanken | Valutakurser för belopp i utländsk valuta | Riksbanken -> Zimla Kontor |
+| AI-assistenter (API och MCP) | Externa assistenter med API-nyckel, se avsnitt 12 | Assistent <-> Zimla Kontor |
+| PostHog | Användningsstatistik för tjänsten | Zimla Kontor -> PostHog |
 
 [STRYK DE INTEGRATIONER SOM INTE ANVÄNDS I DITT FÖRETAG]
 

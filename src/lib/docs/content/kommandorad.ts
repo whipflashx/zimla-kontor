@@ -44,7 +44,7 @@ Inloggningen sparas i \`~/.config/accounted/credentials.json\` (under \`$XDG_CON
 
 ## Hitta och kör verktyg
 
-- \`accounted guide\` förklarar hur du arbetar med Accounted: arbetsflöden, godkännanden och bolag.
+- \`accounted guide\` förklarar hur du arbetar med Zimla Kontor: arbetsflöden, godkännanden och bolag.
 - \`accounted tools\` listar de vanligaste verktygen, och \`accounted tools supplier invoice\` söker bland alla.
 - \`accounted describe create_customer\` visar ett verktygs definition och vilka argument det tar.
 - \`accounted call list_invoices '{"limit": 5}'\` kör ett verktyg.

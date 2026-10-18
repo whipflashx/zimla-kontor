@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`invite mail (template class: invite) > branded: brand sender, brand-domain link, no Accounted leakage 1`] = `
+exports[`invite mail (template class: invite) > branded: brand sender, brand-domain link, no Zimla Kontor leakage 1`] = `
 "
 <!DOCTYPE html>
 <html lang="sv">
@@ -19,7 +19,7 @@ exports[`invite mail (template class: invite) > branded: brand sender, brand-dom
           Du har blivit inbjuden
         </h1>
         <p style="margin: 0; color: #666; font-size: 15px;">
-          <strong>sara@siffra.se</strong> har bjudit in dig till <strong>Kund AB</strong> på siffra.
+          <strong>sara@siffra.se</strong> har bjudit in dig till <strong>Kund AB</strong> på Siffra.
         </p>
       </div>
 
@@ -54,12 +54,12 @@ exports[`invite mail (template class: invite) > unbranded: byte-identical to the
     <div style="background: #ffffff; border-radius: 12px; padding: 40px 32px; border: 1px solid #e5e5e5;">
       <!-- Header -->
       <div style="margin-bottom: 28px;">
-        <p style="margin: 0 0 4px 0; font-size: 13px; color: #888; letter-spacing: 0.05em;">ACCOUNTED</p>
+        <p style="margin: 0 0 4px 0; font-size: 13px; color: #888; letter-spacing: 0.05em;">ZIMLA KONTOR</p>
         <h1 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 600; color: #111;">
           Du har blivit inbjuden
         </h1>
         <p style="margin: 0; color: #666; font-size: 15px;">
-          <strong>sara@siffra.se</strong> har bjudit in dig till <strong>Kund AB</strong> på accounted.
+          <strong>sara@siffra.se</strong> har bjudit in dig till <strong>Kund AB</strong> på Zimla Kontor.
         </p>
       </div>
 

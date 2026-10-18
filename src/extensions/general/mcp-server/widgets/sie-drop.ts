@@ -218,7 +218,7 @@ export const SIE_DROP_HTML = `<!DOCTYPE html>
           drop.textContent = 'Preflight misslyckades: ' + (err && err.message ? err.message : 'okänt fel');
         });
       }).catch(function() {
-        note('Kunde inte beräkna filens kontrollsumma i denna miljö. Ladda upp via app.accounted.se/import?mode=sie i stället.');
+        note('Kunde inte beräkna filens kontrollsumma i denna miljö. Ladda upp via kontor.zimla.io/import?mode=sie i stället.');
       });
     };
     reader.readAsArrayBuffer(file);

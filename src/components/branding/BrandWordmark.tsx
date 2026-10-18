@@ -37,6 +37,31 @@ export function BrandWordmark({
   const branding = useBranding()
   const name = lowercase ? branding.appName.toLowerCase() : branding.appName
 
+  // Zimla Kontor (no host brand): Zimla's dot mark beside the name in the app's sans,
+  // the same signature as zimla.io. Byrå brands below keep their own serif wordmark.
+  if (!branding.brand && !branding.logoUrl) {
+    return (
+      <span
+        className={cn(
+          'inline-flex items-center tracking-tight text-foreground',
+          size === 'hero' ? 'gap-3 text-4xl md:text-[2.75rem]' : 'gap-2 text-base',
+          className,
+        )}
+        style={{ fontWeight: 600 }}
+      >
+        <Image
+          src={branding.logoPath}
+          alt=""
+          width={size === 'hero' ? 48 : 22}
+          height={size === 'hero' ? 48 : 22}
+          className={size === 'hero' ? 'h-12 w-12' : 'h-[22px] w-[22px]'}
+          priority={size === 'hero'}
+        />
+        {branding.appName}
+      </span>
+    )
+  }
+
   if (branding.logoUrl) {
     // The logo carries the brand alone; the app name moves into alt text so
     // the image keeps an accessible name.

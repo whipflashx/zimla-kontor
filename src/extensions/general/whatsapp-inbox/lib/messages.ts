@@ -78,7 +78,7 @@ const SV = {
       ? `Klart! Ditt nummer är kopplat till *${companyName}*.`
       : 'Klart! Ditt nummer är kopplat till *Zimla Kontor*.'
     const tips =
-      'Skicka kvitton, fakturor, avtal och annan post hit som foto eller PDF så lägger jag dem rätt i Accounted: kvitton och fakturor i *Underlag*, resten i *Arkiv*. ' +
+      'Skicka kvitton, fakturor, avtal och annan post hit som foto eller PDF så lägger jag dem rätt i Zimla Kontor: kvitton och fakturor i *Underlag*, resten i *Arkiv*. ' +
       'Två tips: skicka som _dokument_ (gem-ikonen) för bästa skärpa, och en fil per dokument. Flersidiga dokument skickas som PDF.'
     const outro =
       'Jag är en AI-assistent. Skriv *hjälp* för mänsklig support, *stopp* för att koppla från.'
@@ -176,7 +176,7 @@ const SV = {
   m12Start: () => 'Välkommen tillbaka! Ditt nummer är aktivt igen, skicka kvitton när du vill.',
 
   m13Help: () =>
-    'Du når en människa på *support@accounted.se*, vi svarar vardagar, oftast samma dag. Skriv gärna vilket företag det gäller.\n\n' +
+    'Du når en människa på *support@zimla.io*, vi svarar vardagar, oftast samma dag. Skriv gärna vilket företag det gäller.\n\n' +
     'Här i chatten tar jag annars emot kvitton och underlag (foto eller PDF).',
 
   m14Voice: () =>
@@ -245,7 +245,7 @@ const EN: typeof SV = {
       ? `Done! Your number is linked to *${companyName}*.`
       : 'Done! Your number is linked to *Zimla Kontor*.'
     const tips =
-      'Send receipts, invoices, agreements and other post here as a photo or PDF and I will file them where they belong in Accounted: receipts and invoices under *Underlag*, the rest in *Arkiv*. ' +
+      'Send receipts, invoices, agreements and other post here as a photo or PDF and I will file them where they belong in Zimla Kontor: receipts and invoices under *Underlag*, the rest in *Arkiv*. ' +
       'Two tips: send as a _document_ (the paperclip icon) for full sharpness, and one file per document. Multi-page documents go as PDF.'
     const outro =
       'I am an AI assistant. Type *hjälp* for human support, *stopp* to disconnect.'
@@ -333,7 +333,7 @@ const EN: typeof SV = {
   m12Start: () => 'Welcome back! Your number is active again, send receipts whenever you like.',
 
   m13Help: () =>
-    'You reach a human at *support@accounted.se*, we reply on weekdays, usually the same day. Please mention which company it concerns.\n\n' +
+    'You reach a human at *support@zimla.io*, we reply on weekdays, usually the same day. Please mention which company it concerns.\n\n' +
     'Here in the chat I otherwise receive receipts and documents (photo or PDF).',
 
   m14Voice: () =>

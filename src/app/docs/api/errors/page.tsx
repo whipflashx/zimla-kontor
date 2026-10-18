@@ -4,8 +4,8 @@ import { DocsMarkdown } from '@/lib/docs/markdown'
 import { buildErrorReferenceMd } from '@/lib/docs/content/errors'
 
 export const metadata: Metadata = {
-  title: 'Errors · accounted API',
-  description: 'Every stable error code returned by the accounted REST API, with HTTP status, description, and remediation.',
+  title: 'Errors · Zimla Kontor API',
+  description: 'Every stable error code returned by the Zimla Kontor REST API, with HTTP status, description, and remediation.',
 }
 
 export default function DocsApiErrorsPage() {

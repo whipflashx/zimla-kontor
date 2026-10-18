@@ -1,6 +1,6 @@
 # Arkivplan
 
-**Mall för användare av Accounted**
+**Mall för användare av Zimla Kontor**
 Upprättad i enlighet med BFNAR 2013:2 punkt 8.3
 
 ---
@@ -29,11 +29,11 @@ Fyll i de markerade fälten. Radera denna instruktionssektion innan du arkiverar
 
 | Fält | Uppgift |
 |---|---|
-| Programvara | Accounted ([DOMÄN, för den molnbaserade tjänsten app.accounted.se]) |
+| Programvara | Zimla Kontor ([DOMÄN, för den molnbaserade tjänsten kontor.zimla.io]) |
 | Leverantör | [BOLAGSNAMN], org.nr [ORG-NR] |
 | Lagringsplats | Molnbaserad tjänst, databas och filer lagrade i Sverige (Supabase på AWS, region eu-north-1, Stockholm) |
 | Åtkomst | Via webbläsare. Inloggning med e-post och lösenord; i den molnbaserade tjänsten krävs dessutom en andra faktor (engångskod från autentiseringsapp eller BankID). |
-| Kontoplan | BAS 2026 (konfigurerad i Accounted) |
+| Kontoplan | BAS 2026 (konfigurerad i Zimla Kontor) |
 
 ## 3. Förteckning över räkenskapsinformation
 
@@ -45,31 +45,31 @@ Med arkiveringstid 7 år avses till och med det sjunde året efter utgången av 
 
 | Räkenskapsinformation | Form | Lagringsplats | Arkiveringstid |
 |---|---|---|---|
-| Grundbokföring (registreringsordning) | Elektronisk | Accounted databas | 7 år |
-| Huvudbokföring (systematisk ordning) | Elektronisk | Accounted databas | 7 år |
-| Verifikationer (journalposter) | Elektronisk | Accounted databas | 7 år |
-| Rättelselogg (rättelser i samma verifikat: ursprungsvärde, nytt värde, tidpunkt, utförare) | Elektronisk | Accounted databas (oföränderlig logg) | 7 år |
+| Grundbokföring (registreringsordning) | Elektronisk | Zimla Kontors databas | 7 år |
+| Huvudbokföring (systematisk ordning) | Elektronisk | Zimla Kontors databas | 7 år |
+| Verifikationer (journalposter) | Elektronisk | Zimla Kontors databas | 7 år |
+| Rättelselogg (rättelser i samma verifikat: ursprungsvärde, nytt värde, tidpunkt, utförare) | Elektronisk | Zimla Kontors databas (oföränderlig logg) | 7 år |
 
 ### 3.2 Verifikationsunderlag
 
 | Räkenskapsinformation | Form | Lagringsplats | Arkiveringstid | Anmärkning |
 |---|---|---|---|---|
-| Kundfakturor (utgående) | Elektronisk (PDF) | Accounted dokumentarkiv | 7 år | Genereras i Accounted |
-| Leverantörsfakturor (inkommande) | Elektronisk (PDF/bild) | Accounted dokumentarkiv | 7 år | Uppladdade, skannade eller inmejlade |
-| Kvitton | Elektronisk (foto/PDF) | Accounted dokumentarkiv | 7 år | Fotograferade via appen eller skickade via WhatsApp |
-| Bankutdrag/kontoutdrag | Elektronisk | Accounted databas | 7 år | Synkroniserade via Enable Banking (PSD2) eller importerade bankfiler |
-| E-fakturor via Peppol (inkommande) | Elektronisk (UBL-XML, eventuell bifogad PDF) | Accounted dokumentarkiv | 7 år | Mottagna via Peppol-nätverket (accesspunkt Qvalia); originalfilen bevaras oförändrad |
-| Skattekontoutdrag (importerade filer) | Elektronisk (CSV/SKV-fil från Skatteverket) | Accounted databas (transaktionerna samt importlogg med filnamn och kontrollsumma) | 7 år | Importerade under Importera/Exportera, alternativt hämtade via Skatteverket-kopplingen |
-| Avtal och övriga underlag | [Elektronisk/Papper] | [Accounted / Fysisk pärm] | 7 år | [Ange var dessa förvaras] |
+| Kundfakturor (utgående) | Elektronisk (PDF) | Zimla Kontors dokumentarkiv | 7 år | Genereras i Zimla Kontor |
+| Leverantörsfakturor (inkommande) | Elektronisk (PDF/bild) | Zimla Kontors dokumentarkiv | 7 år | Uppladdade, skannade eller inmejlade |
+| Kvitton | Elektronisk (foto/PDF) | Zimla Kontors dokumentarkiv | 7 år | Fotograferade via appen eller skickade via WhatsApp |
+| Bankutdrag/kontoutdrag | Elektronisk | Zimla Kontors databas | 7 år | Synkroniserade via Enable Banking (PSD2) eller importerade bankfiler |
+| E-fakturor via Peppol (inkommande) | Elektronisk (UBL-XML, eventuell bifogad PDF) | Zimla Kontors dokumentarkiv | 7 år | Mottagna via Peppol-nätverket (accesspunkt Qvalia); originalfilen bevaras oförändrad |
+| Skattekontoutdrag (importerade filer) | Elektronisk (CSV/SKV-fil från Skatteverket) | Zimla Kontors databas (transaktionerna samt importlogg med filnamn och kontrollsumma) | 7 år | Importerade under Importera/Exportera, alternativt hämtade via Skatteverket-kopplingen |
+| Avtal och övriga underlag | [Elektronisk/Papper] | [Zimla Kontor / Fysisk pärm] | 7 år | [Ange var dessa förvaras] |
 
 ### 3.3 Årsbokslut och årsredovisning
 
 | Räkenskapsinformation | Form | Lagringsplats | Arkiveringstid |
 |---|---|---|---|
-| Resultaträkning | Elektronisk | Accounted rapportmodul | 7 år |
-| Balansräkning | Elektronisk | Accounted rapportmodul | 7 år |
-| Årsredovisning (AB) / Årsbokslut (EF) | [Elektronisk/Papper] | [Accounted / Bolagsverket / Fysisk pärm] | 7 år (10 år rekommenderat) |
-| NE-bilaga (EF) | Elektronisk | Accounted rapportmodul | 7 år |
+| Resultaträkning | Elektronisk | Zimla Kontors rapportmodul | 7 år |
+| Balansräkning | Elektronisk | Zimla Kontors rapportmodul | 7 år |
+| Årsredovisning (AB) / Årsbokslut (EF) | [Elektronisk/Papper] | [Zimla Kontor / Bolagsverket / Fysisk pärm] | 7 år (10 år rekommenderat) |
+| NE-bilaga (EF) | Elektronisk | Zimla Kontors rapportmodul | 7 år |
 | SIE-filer (export) | Elektronisk | [Ange var exporterade filer sparas] | 7 år |
 | Komplett arkiv (ZIP-arkiv med SIE-filer, rapporter, underlag och behandlingshistorik) | Elektronisk | [Ange var exporterade arkiv sparas, t.ex. extern disk eller Google Drive/Dropbox via Molnsynkronisering] | 7 år |
 
@@ -77,16 +77,16 @@ Med arkiveringstid 7 år avses till och med det sjunde året efter utgången av 
 
 | Räkenskapsinformation | Form | Lagringsplats | Arkiveringstid |
 |---|---|---|---|
-| Momsdeklarationer | Elektronisk | Accounted rapportmodul + Skatteverket | 7 år |
-| SRU-filer | Elektronisk | Accounted rapportmodul | 7 år |
+| Momsdeklarationer | Elektronisk | Zimla Kontors rapportmodul + Skatteverket | 7 år |
+| SRU-filer | Elektronisk | Zimla Kontors rapportmodul | 7 år |
 | Inkomstdeklaration | [Elektronisk/Papper] | [Skatteverket / Egen kopia] | 7 år |
 
 ### 3.5 Systemdokumentation
 
 | Dokument | Form | Lagringsplats | Arkiveringstid |
 |---|---|---|---|
-| Systemdokumentation (genererad: **Rapporter > Export & arkiv > Systemdokumentation**, samt denna mall) | Elektronisk | [Accounted / Egen lagring] | Samma som den räkenskapsinformation den avser |
-| Behandlingshistorik | Elektronisk | Accounted (automatiskt genererad) | Samma som den räkenskapsinformation den avser |
+| Systemdokumentation (genererad: **Rapporter > Export & arkiv > Systemdokumentation**, samt denna mall) | Elektronisk | [Zimla Kontor / Egen lagring] | Samma som den räkenskapsinformation den avser |
+| Behandlingshistorik | Elektronisk | Zimla Kontor (automatiskt genererad) | Samma som den räkenskapsinformation den avser |
 | Denna arkivplan | [Elektronisk/Papper] | [Ange lagringsplats] | Samma som den räkenskapsinformation den avser |
 
 ## 4. Pappersoriginal
@@ -103,7 +103,7 @@ Företagets hantering av pappersoriginal: [ ] Förstörs efter kontrollerad öve
 
 ## 5. Säkerhetskopiering och redundans
 
-5.1. Accounted sköter automatisk daglig säkerhetskopiering av databasen via Supabase-infrastrukturen.
+5.1. Zimla Kontor sköter automatisk daglig säkerhetskopiering av databasen via Supabase-infrastrukturen.
 
 5.2. Kunden rekommenderas att regelbundet ta ut en egen kopia under **Importera/Exportera > Exportera > Komplett arkiv** (ZIP-arkiv med SIE-filer, rapporter, underlag och behandlingshistorik) och spara den åtskild från originalet. Med tillägget Molnsynkronisering kan kopian laddas upp till Google Drive eller Dropbox. Om kopian förvaras utanför Sverige, se avsnitt 7.3.
 
@@ -114,9 +114,9 @@ Kundens kompletterande säkerhetskopiering:
 
 ## 6. Åtkomst efter avslutad prenumeration
 
-6.1. Vid uppsägning av Accounted-kontot har Kunden minst nittio (90) dagar efter uppsägningsdagens utgång att exportera all räkenskapsinformation, i enlighet med Användarvillkoren avsnitt 8.3.
+6.1. Vid uppsägning av Zimla Kontor-kontot har Kunden minst nittio (90) dagar efter uppsägningsdagens utgång att exportera all räkenskapsinformation, i enlighet med Användarvillkoren avsnitt 8.3.
 
-6.2. Räkenskapsinformation som omfattas av sjuårig arkiveringsskyldighet bevaras i skrivskyddat läge av Accounted, alternativt tillhandahålls som fullständig dataexport.
+6.2. Räkenskapsinformation som omfattas av sjuårig arkiveringsskyldighet bevaras i skrivskyddat läge av Zimla Kontor, alternativt tillhandahålls som fullständig dataexport.
 
 6.3. Det är Kundens ansvar att planera för dataportabilitet och säkerställa tillgång till räkenskapsinformation under hela arkiveringsperioden, oavsett om Tjänsten fortfarande används.
 

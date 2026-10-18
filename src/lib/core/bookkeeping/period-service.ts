@@ -400,7 +400,7 @@ export async function assertPeriodExternallyClosable(
 
   if (period.closing_entry_id) {
     throw new Error(
-      'Period has a closing entry in Accounted: use the normal year-end close instead'
+      'Period has a closing entry in Zimla Kontor: use the normal year-end close instead'
     )
   }
 

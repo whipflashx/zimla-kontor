@@ -2759,9 +2759,9 @@ const PERIOD: Record<string, StructuredErrorEntry> = {
   FISCAL_PERIOD_CLOSE_EXTERNAL_HAS_CLOSING_ENTRY: {
     httpStatus: 409,
     message_sv:
-      'Räkenskapsåret har ett bokslutsverifikat i Accounted: stäng det med det vanliga årsbokslutet i stället.',
+      'Räkenskapsåret har ett bokslutsverifikat i Zimla Kontor: stäng det med det vanliga årsbokslutet i stället.',
     message_en:
-      'The fiscal year has a closing entry in Accounted: close it through the normal year-end instead.',
+      'The fiscal year has a closing entry in Zimla Kontor: close it through the normal year-end instead.',
   },
   FISCAL_PERIOD_CLOSE_EXTERNAL_NOT_ENDED: {
     httpStatus: 409,

@@ -1,10 +1,10 @@
 import { API_V1_VERSION } from '@/lib/api/v1/version'
 
-export const LANDING_MD = `# accounted API
+export const LANDING_MD = `# Zimla Kontor API
 
 > Swedish double-entry bookkeeping as a public REST API for agents and integrations. API version \`${API_V1_VERSION}\`.
 
-The accounted API covers the financial workflows an integration needs: create invoices, ingest bank transactions, file VAT declarations, run payroll, and subscribe to webhooks for state changes. Every endpoint is designed for autonomous agents first: machine-readable schemas, dry-run previews, idempotent retries, and inline audit blocks on every write. (A few dashboard-only steps remain, e.g. generating salary payment files and sending payslips, and each cookbook calls out where one applies.)
+The Zimla Kontor API covers the financial workflows an integration needs: create invoices, ingest bank transactions, file VAT declarations, run payroll, and subscribe to webhooks for state changes. Every endpoint is designed for autonomous agents first: machine-readable schemas, dry-run previews, idempotent retries, and inline audit blocks on every write. (A few dashboard-only steps remain, e.g. generating salary payment files and sending payslips, and each cookbook calls out where one applies.)
 
 If you've used [Stripe's API](https://docs.stripe.com/api), the shape will feel familiar: bearer-token auth, dated API versions, webhook signature verification, idempotency keys. The accounting concepts are Swedish (BAS chart, BFL retention, K2/K3, momsdeklaration) but the surface is built for the same kind of integrator.
 
@@ -17,7 +17,7 @@ curl https://kontor.zimla.io/api/v1/companies \\
   -H "Authorization: Bearer gnubok_sk_live_..."
 \`\`\`
 
-Create keys in the accounted dashboard at **/settings/api**. Two key prefixes are available:
+Create keys in the Zimla Kontor dashboard at **/settings/api**. Two key prefixes are available:
 
 - \`gnubok_sk_live_*\`: hits real customer data. Use in production.
 - \`gnubok_sk_test_*\`: reads real company data, but every write is forced into dry-run and nothing persists (responses carry \`X-Gnubok-Mode: test\`). Safe for evals, demos, and agent learning. Same surface, different blast radius.
@@ -108,5 +108,5 @@ For LLM-based agents:
 - **[\`/llms.txt\`](/llms.txt)**: concise agent-discovery index.
 - **[\`/llms-full.txt\`](/llms-full.txt)**: full docs concatenated for ingestion.
 - **[\`/api/v1/openapi.json\`](/api/v1/openapi.json)**: machine-readable OpenAPI 3.1 spec.
-- **[\`/.well-known/skills/index.json\`](/.well-known/skills/index.json)**: accounted-specific skill catalogue.
+- **[\`/.well-known/skills/index.json\`](/.well-known/skills/index.json)**: Zimla Kontor skill catalogue.
 `

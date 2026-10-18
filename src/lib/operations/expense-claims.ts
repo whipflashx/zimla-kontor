@@ -278,7 +278,7 @@ export const expenseClaimsRecordPayout = defineOperation({
     useWhen:
       'The person was paid back from an account without a bank feed, or the transfer cannot be matched to a bank row.',
     doNotUseFor:
-      'A repayment that is a bank transaction in Accounted: match it (POST /transactions/{id}/match-expense-payout), or the row gets booked twice. Repayment through salary is the payroll flow.',
+      'A repayment that is a bank transaction in Zimla Kontor: match it (POST /transactions/{id}/match-expense-payout), or the row gets booked twice. Repayment through salary is the payroll flow.',
     pitfalls: [
       'All claims must belong to one person and one liability account (400 EXPENSE_PAYOUT_MIXED_CLAIMANTS / MIXED_LIABILITY).',
       'A paid claim returns 409 EXPENSE_PAYOUT_ALREADY_PAID; one on a payslip returns 409 EXPENSE_PAYOUT_ON_PAYSLIP.',

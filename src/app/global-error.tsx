@@ -22,9 +22,9 @@ function reloadKey(): string {
   );
 }
 
-// support@gnubok.se is hardcoded on purpose: this boundary renders when the root
+// support@zimla.io is hardcoded on purpose: this boundary renders when the root
 // layout failed, so the branding service and any provider are unavailable here.
-const SUPPORT_EMAIL = "support@gnubok.se";
+const SUPPORT_EMAIL = "support@zimla.io";
 
 function decideInitialPhase(): "reloading" | "fallback" {
   if (typeof window === "undefined") return "reloading";

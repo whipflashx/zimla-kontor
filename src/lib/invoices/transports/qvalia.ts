@@ -828,7 +828,7 @@ export function createQvaliaTransport(
     const peppolId = `${input.participant.scheme}:${input.participant.identifier}`
     const url = `${config.baseUrl}/partner/${partner}/account/${account}/peppol/${encodePathSegment(peppolId)}`
     const body = {
-      description: input.description ?? `Accounted: ${input.businessCard.companyName}`,
+      description: input.description ?? `Zimla Kontor: ${input.businessCard.companyName}`,
       businessCard: {
         companyName: input.businessCard.companyName,
         countryCode: input.businessCard.countryCode,

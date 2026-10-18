@@ -156,7 +156,7 @@ export async function GET(
     return new NextResponse(icsContent, {
       headers: {
         'Content-Type': 'text/calendar; charset=utf-8',
-        'Content-Disposition': 'attachment; filename="accounted.ics"',
+        'Content-Disposition': 'attachment; filename="zimla-kontor.ics"',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0',

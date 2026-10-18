@@ -44,7 +44,7 @@ The sign-in is saved in \`~/.config/accounted/credentials.json\` (under \`$XDG_C
 
 ## Find and run tools
 
-- \`accounted guide\` explains how to work with Accounted: workflows, approvals and companies.
+- \`accounted guide\` explains how to work with Zimla Kontor: workflows, approvals and companies.
 - \`accounted tools\` lists the common tools, and \`accounted tools supplier invoice\` searches all of them.
 - \`accounted describe create_customer\` shows a tool's definition and input schema.
 - \`accounted call list_invoices '{"limit": 5}'\` runs a tool.

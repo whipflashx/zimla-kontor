@@ -164,7 +164,7 @@ describe('runPeppolHealthCheck', () => {
     const [digest, senderMail] = sentMails()
     expect(sentMails()).toHaveLength(2)
     expect(digest.to).toBe('ops@example.test')
-    expect(digest.subject).toBe('[accounted peppol] 1 nytt Peppol-problem')
+    expect(digest.subject).toBe('[zimla kontor peppol] 1 nytt Peppol-problem')
     expect(digest.text).toContain('Leverans misslyckades | Acme AB (company-1) | faktura 1042 (leverans delivery-failed) | 1 tim | Validation error: BR-CO-15')
 
     expect(resolveMemberEmailMock).toHaveBeenCalledWith(service, 'company-1', 'user-1')
@@ -372,7 +372,7 @@ describe('runPeppolHealthCheck', () => {
 
     const digests = sentMails().filter((mail) => mail.to === 'ops@example.test')
     expect(digests).toHaveLength(1)
-    expect(digests[0].subject).toBe('[accounted peppol] 4 nya Peppol-problem')
+    expect(digests[0].subject).toBe('[zimla kontor peppol] 4 nya Peppol-problem')
     expect(digests[0].text.split('\n').filter((line) => line.startsWith('- '))).toHaveLength(4)
     // Only the failed delivery has a sender mail.
     expect(sentMails().filter((mail) => mail.to === 'owner@example.test')).toHaveLength(1)

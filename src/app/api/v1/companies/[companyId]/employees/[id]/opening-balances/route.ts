@@ -131,7 +131,7 @@ registerEndpoint({
     'vacation_as_of_date defaults to the day before cutover_date. Booked runs whose avvikelseperiod ends on or before it are treated as already inside the balance and not deducted again, so with salary_deviation_period = previous_month send the last day BEFORE the month the first run deducts (cutover 2026-09-01, first run deducts August: send 2026-07-31) or August\'s leave is never deducted.',
     'ytd_net: send null when the previous system cannot export historical net pay; the payslip prints "Underlag saknas" instead of a false 0. Never send gross minus tax as net.',
     '409 OPENING_BALANCES_LOCKED once the employee has a booked run; correcting that run unlocks.',
-    'The opening liability and the förskottsskuld are NOT booked by Accounted: they only feed the vacation-liability report (the förskottsskuld as its own row, subtracted from the net liability).',
+    'The opening liability and the förskottsskuld are NOT booked by Zimla Kontor: they only feed the vacation-liability report (the förskottsskuld as its own row, subtracted from the net liability).',
     'Extra betalda join the paid pool: the ledger\'s entitled days = Betalda + Extra betalda + days already taken. Obetalda lapse at the vacation-year close; Förskott days taken reduce the next year\'s entitlement.',
     'YTD affects payslip display and reports only; per-month tax and avgifter caps never read it.',
   ],

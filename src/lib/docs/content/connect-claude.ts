@@ -14,7 +14,7 @@ There are three ways to connect, depending on your client. All three reach the s
 
 ## Path A: claude.ai or Claude Desktop (one click)
 
-**[→ Connect Zimla Kontor to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Zimla Kontor&connectorUrl=https%3A%2F%2Fapp.accounted.se%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
+**[→ Connect Zimla Kontor to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Zimla Kontor&connectorUrl=https%3A%2F%2Fkontor.zimla.io%2Fapi%2Fextensions%2Fext%2Fmcp-server%2Fmcp%3Ftool_namespace%3Daccounted%26client%3Dclaude-connector%26auth%3Drequired)**
 
 The link opens claude.ai with the connector name and URL already filled in. You review the values and confirm; the link only prefills the dialog, it grants nothing on its own. No API key to manage.
 

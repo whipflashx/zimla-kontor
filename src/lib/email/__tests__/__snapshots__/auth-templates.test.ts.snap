@@ -62,12 +62,12 @@ exports[`buildAuthEmail > renders the platform default without a brand 1`] = `
     <div style="background: #ffffff; border-radius: 12px; padding: 40px 32px; border: 1px solid #e5e5e5;">
       <!-- Header -->
       <div style="margin-bottom: 28px;">
-        <p style="margin: 0 0 4px 0; font-size: 13px; color: #888; letter-spacing: 0.05em;">ACCOUNTED</p>
+        <p style="margin: 0 0 4px 0; font-size: 13px; color: #888; letter-spacing: 0.05em;">ZIMLA KONTOR</p>
         <h1 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 600; color: #111;">
           Återställ ditt lösenord
         </h1>
         <p style="margin: 0; color: #666; font-size: 15px;">
-          Vi har tagit emot en begäran om att återställa lösenordet för ditt konto hos Accounted. Klicka på knappen nedan för att välja ett nytt lösenord.
+          Vi har tagit emot en begäran om att återställa lösenordet för ditt konto hos Zimla Kontor. Klicka på knappen nedan för att välja ett nytt lösenord.
         </p>
       </div>
 
@@ -89,7 +89,7 @@ exports[`buildAuthEmail > renders the platform default without a brand 1`] = `
 exports[`buildAuthEmail > renders the platform default without a brand 2`] = `
 "Återställ ditt lösenord
 
-Vi har tagit emot en begäran om att återställa lösenordet för ditt konto hos Accounted. Klicka på knappen nedan för att välja ett nytt lösenord.
+Vi har tagit emot en begäran om att återställa lösenordet för ditt konto hos Zimla Kontor. Klicka på knappen nedan för att välja ett nytt lösenord.
 
 Återställ lösenord: https://kontor.zimla.io/auth/callback?token_hash=abc&type=recovery
 
