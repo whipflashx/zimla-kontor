@@ -13,7 +13,7 @@ SHA=$(git rev-parse --short=7 HEAD)
 git fetch -q origin && git merge-base --is-ancestor HEAD origin/main || { echo "Commiten $SHA finns inte på origin/main – pusha först." >&2; exit 1; }
 FULL=$(git rev-parse HEAD)
 echo "→ väntar på imagen för $SHA (GitHub Actions)"
-for i in $(seq 1 90); do
+for i in $(seq 1 180); do   # upp till 60 min
   RUN=$(gh run list -R whipflashx/zimla-kontor --workflow image.yml --commit "$FULL" --json databaseId,status,conclusion -q '.[0]' 2>/dev/null || true)
   case "$RUN" in
     *'"conclusion":"success"'*) break ;;
